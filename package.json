@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "6string",
+  "workspaces": [
+    "client",
+    "api"
+  ],
+  "scripts": {
+    "start:client": "yarn workspace client run start",
+    "start:api": "yarn workspace api run start:dev",
+    "docker:db": "yarn workspace api run docker:db"
+  },
+  "devDependencies": {
+    "typescript": "^4.1.3"
+  }
+}

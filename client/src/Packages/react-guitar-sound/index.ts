@@ -1,0 +1,47 @@
+import { useCallback, useEffect, useState } from 'react'
+
+import withSamples from './instruments/samples'
+import withSoundFont from './instruments/sound-font'
+import makePlayer, { Player, StringInstrument } from './util/player'
+
+export { withSamples, withSoundFont }
+export type { StringInstrument }
+
+const defaultInstrument = withSoundFont('acoustic_guitar_nylon')
+
+export default function useSound(props: {
+  instrument?: StringInstrument
+  tuning: number[]
+  muted?: boolean
+}) {
+  const { tuning, muted, instrument = defaultInstrument } = props
+  const [player, setPlayer] = useState<Player>()
+  const [playing, setPlaying] = useState(tuning.map(() => false))
+
+  useEffect(() => {
+    const promise = makePlayer(instrument, tuning, setPlaying)
+    promise.then(setPlayer)
+
+    return () => {
+      setPlayer(undefined)
+      promise.then((player) => {
+        player.dispose()
+      })
+    }
+  }, [instrument, tuning])
+
+  const play = useCallback(
+    (string: number, when = 0, fretting: number[]) => {
+      if (!muted) player?.play(string, fretting[string] ?? 0, when)
+    },
+    [muted, player],
+  )
+
+  // const strum = useCallback(
+  //   (up?: boolean) =>
+  //     tuning.forEach((_, i) => play(!up ? tuning.length - i - 1 : i, 0.05 * i)),
+  //   [tuning, play],
+  // )
+
+  return { play, playing, loading: !player }
+}
