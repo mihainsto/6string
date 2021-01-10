@@ -1,0 +1,12 @@
+FROM node:14-alpine
+RUN apk update && apk add bash
+
+EXPOSE 3000
+
+COPY . ./
+COPY ./api/.env ./api/.env
+COPY ./api/prisma/.env ./api/prisma/.env
+RUN yarn install
+RUN yarn workspace api run prisma generate
+RUN yarn workspace api run build
+
