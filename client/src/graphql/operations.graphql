@@ -1,0 +1,126 @@
+enum GuitarStyle {
+    FINGERPICK
+    STRUM
+}
+
+enum Difficulty {
+    EASY
+    HARD
+    MEDIUM
+}
+
+enum GuitarType {
+    ACOUSTIC
+    CLASSICAL
+    ELECTRICAL
+}
+
+enum OrderDirection {
+    asc
+    desc
+}
+
+enum SongOrderField {
+    artist
+    createdAt
+    difficulty
+    id
+    postedBy
+    style
+    title
+    tuning
+}
+
+enum GuitarOrientation {
+    LEFT_HANDED
+    RIGHT_HANDED
+}
+
+input UpdatePlaygroundSettings {
+    guitarOrientation: GuitarOrientation
+    guitarStyle: GuitarStyle
+    guitarType: GuitarType
+}
+
+input SongFilter {
+    difficulty: Difficulty
+    style: GuitarStyle
+    tuning: String
+}
+
+input SongOrder {
+    direction: OrderDirection!
+    field: SongOrderField!
+}
+
+query Songs($first: Int!, $after: String!, $query: String, $filter: SongFilter, $orderBy: SongOrder) {
+    songs(first: $first, after: $after, query: $query, filter: $filter, orderBy: $orderBy) {
+        edges {
+            node {
+                id
+                title
+                tuning
+                style
+                updatedAt
+                difficulty
+                artist
+            }
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        totalCount
+    }
+}
+
+query Song($id: String!) {
+    song(id: $id) {
+        id
+        title
+        tuning
+        style
+        updatedAt
+        difficulty
+        artist
+        tab {
+            tracks {
+                measures
+                offset
+            }
+            tempo
+            tempoName
+        }
+    }
+}
+
+query me {
+    me {
+        username
+        email
+        avatarUrl
+        playgroundSettings {
+            guitarOrientation
+            guitarStyle
+            guitarType
+        }
+    }
+}
+
+mutation Login($email: String!, $password: String!) {
+    login(data: { email: $email, password: $password }) {
+        refreshToken
+    }
+}
+
+mutation Register($username: String!, $email: String!, $password: String!) {
+    signup(data: { username: $username, email: $email, password: $password }) {
+        refreshToken
+    }
+}
+
+mutation updateUser($playgroundSettings: UpdatePlaygroundSettings, $avatarUrl: String, $username: String){
+    updateUser(data: {playgroundSettings: $playgroundSettings, avatarUrl: $avatarUrl, username: $username}) {
+        id
+    }
+}
