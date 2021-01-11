@@ -7,7 +7,6 @@
 dist/
 prisma/*.db
 coverage/
-
 prisma/migrations/dev/
 
 # testing

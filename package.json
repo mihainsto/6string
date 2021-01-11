@@ -8,7 +8,9 @@
   "scripts": {
     "start:client": "yarn workspace client run start",
     "start:api": "yarn workspace api run start:dev",
-    "docker:db": "yarn workspace api run docker:db"
+    "docker:db": "docker-compose up postgres",
+    "docker:reset": "docker exec -it 6string_api yarn workspace api run prisma:reset",
+    "docker:prod": "docker-compose up"
   },
   "devDependencies": {
     "typescript": "^4.1.3"
