@@ -1,13 +1,14 @@
 version: '3.7'
 services:
-  postgresprod:
+  postgres:
     image: postgres:12
-    container_name: postgresprod
+    container_name: 6string_postgres
     ports:
       - 5432:5432
     env_file:
       - ./api/.env
   client:
+    container_name: 6string_client
     build:
       context: .
       dockerfile: Dockerfile.client
@@ -15,13 +16,12 @@ services:
       - 5000:5000
   api:
     depends_on:
-      - postgresprod
+      - postgres
+    container_name: 6string_api
     build:
       context: .
       dockerfile: Dockerfile.api
     ports:
-      - 3000:3000
-    command: bash -c "yarn workspace api run prisma:reset && yarn workspace api run start:prod"
-
+      - 4000:4000
 
 

@@ -5,4 +5,4 @@ RUN yarn install
 RUN npm install -g serve
 RUN yarn workspace client run build
 EXPOSE 5000
-CMD ["yarn", "workspace", "client", "run", "start-heroku"]
+CMD ["yarn", "workspace", "client", "run", "start:prod"]
