@@ -52,7 +52,9 @@ const onSceneReady = (scene: Scene) => {
     const scalingFactor = new BABYLON.Vector3(1000, 1000, 1000)
 
     scene.meshes.forEach((mesh) => {
-      mesh.scaling = scalingFactor
+      if (mesh.name !== 'Hand' && mesh.name !== '__root__') {
+        mesh.scaling = scalingFactor
+      }
     })
 
     // Creating the strings
@@ -118,6 +120,17 @@ const onSceneReady = (scene: Scene) => {
     )
   })
 
+  SceneLoader.Append('/', 'RightHand.glb', scene, (scene) => {
+    const scalingFactor = new BABYLON.Vector3(60, 60, 60)
+    const position = new BABYLON.Vector3(0, 0, -40)
+    scene.unfreezeActiveMeshes()
+    scene.meshes.forEach((mesh) => {
+      if (mesh.name == 'Hand' || mesh.name == '__root__') {
+        mesh.scaling = scalingFactor
+        mesh.position = position
+      }
+    })
+  })
   //scene.debugLayer.show()
 
   // scene.onPointerDown = function (event, pickResult) {
