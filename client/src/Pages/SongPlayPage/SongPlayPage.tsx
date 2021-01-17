@@ -40,14 +40,14 @@ export const SongPlayPage: FC = () => {
         height: 100%;
       `}
     >
-      <div
-        css={css`
-          position: absolute;
-          width: 100%;
-        `}
-      >
-        <PlaygroundNav />
-      </div>
+      {/*<div*/}
+      {/*  css={css`*/}
+      {/*    position: absolute;*/}
+      {/*    width: 100%;*/}
+      {/*  `}*/}
+      {/*>*/}
+      {/*  <PlaygroundNav />*/}
+      {/*</div>*/}
 
       <BabylonMainPage />
       {tab && <Tabs tab={tab} />}

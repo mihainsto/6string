@@ -48,12 +48,13 @@ const onSceneReady = (scene: Scene) => {
   light.intensity = 0.7
 
   // Adding the guitar and the strings
-  SceneLoader.Append('/', 'guitar.babylon', scene, (scene) => {
-    const scalingFactor = new BABYLON.Vector3(1000, 1000, 1000)
-
+  SceneLoader.Append('/', 'NoMiddleStrings.glb', scene, (scene) => {
+    const scalingFactor = new Vector3(-100, 100, 100)
+    const position = new Vector3(0, -24.584, -0.002)
     scene.meshes.forEach((mesh) => {
-      if (mesh.name !== 'Hand' && mesh.name !== '__root__') {
+      if (mesh.name === '__root__') {
         mesh.scaling = scalingFactor
+        mesh.position = position
       }
     })
 
@@ -120,18 +121,22 @@ const onSceneReady = (scene: Scene) => {
     )
   })
 
-  SceneLoader.Append('/', 'RightHand.glb', scene, (scene) => {
-    const scalingFactor = new BABYLON.Vector3(60, 60, 60)
-    const position = new BABYLON.Vector3(0, 0, -40)
-    scene.unfreezeActiveMeshes()
-    scene.meshes.forEach((mesh) => {
-      if (mesh.name == 'Hand' || mesh.name == '__root__') {
-        mesh.scaling = scalingFactor
-        mesh.position = position
-      }
-    })
-  })
-  //scene.debugLayer.show()
+  // SceneLoader.Append('/', 'RightHand.glb', scene, (scene) => {
+  //   const scalingFactor = new BABYLON.Vector3(95, -95, 95)
+  //   const position = new BABYLON.Vector3(-27, 13, -16.69)
+  //   const rotation = new BABYLON.Vector3(0, 0, 0)
+  //   scene.unfreezeActiveMeshes()
+  //   scene.meshes.forEach((mesh) => {
+  //     if (mesh.name === '__root__') {
+  //       mesh.rotation = rotation
+  //       mesh.position = position
+  //       mesh.scaling = scalingFactor
+  //
+  //       //mesh.rotationQuaternion = rotation
+  //     }
+  //   })
+  // })
+  // scene.debugLayer.show()
 
   // scene.onPointerDown = function (event, pickResult) {
   //   const vector = { x: 0, y: 0, z: 0 }
@@ -188,6 +193,12 @@ const animationValues: {
 }
 
 const onRender = (scene: Scene) => {
+  // scene.meshes.forEach((mesh) => {
+  //   if (mesh.name === '__root__') {
+  //     console.log(mesh.rotation)
+  //   }
+  // })
+
   for (const guitarString in GuitarString) {
     const theString: GuitarString =
       GuitarString[guitarString as keyof typeof GuitarString]
