@@ -48,7 +48,7 @@ const onSceneReady = (scene: Scene) => {
   light.intensity = 0.7
 
   // Adding the guitar and the strings
-  SceneLoader.Append('/', 'NoMiddleStrings.glb', scene, (scene) => {
+  SceneLoader.Append('/', 'guitar.glb', scene, (scene) => {
     const scalingFactor = new Vector3(-100, 100, 100)
     const position = new Vector3(0, -24.584, -0.002)
     scene.meshes.forEach((mesh) => {
