@@ -1,12 +1,9 @@
 /** @jsxImportSource @emotion/react **/
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import '@babylonjs/loaders'
 import '@babylonjs/inspector'
 
 import * as BABYLON from '@babylonjs/core'
 import {
-  Axis,
   FreeCamera,
   HemisphericLight,
   MeshBuilder,
@@ -51,7 +48,7 @@ const onSceneReady = (scene: Scene) => {
   light.intensity = 0.7
 
   // Adding the guitar and the strings
-  SceneLoader.Append('/', 'GuitarwHand.glb', scene, (scene) => {
+  SceneLoader.Append('/', 'guitarscene.glb', scene, (scene) => {
     const scalingFactor = new Vector3(-100, 100, 100)
     const position = new Vector3(0, -24.584, -0.002)
     scene.meshes.forEach((mesh) => {
@@ -123,50 +120,9 @@ const onSceneReady = (scene: Scene) => {
       scene,
     )
   })
-
-  // SceneLoader.Append('/', 'RightHand.glb', scene, (scene) => {
-  //   const scalingFactor = new BABYLON.Vector3(95, -95, 95)
-  //   const position = new BABYLON.Vector3(-27, 13, -16.69)
-  //   const rotation = new BABYLON.Vector3(0, 0, 0)
-  //   scene.unfreezeActiveMeshes()
-  //   scene.meshes.forEach((mesh) => {
-  //     if (mesh.name === '__root__') {
-  //       mesh.rotation = rotation
-  //       mesh.position = position
-  //       mesh.scaling = scalingFactor
-  //
-  //       //mesh.rotationQuaternion = rotation
-  //     }
-  //   })
-  // })
-  scene.debugLayer.show()
-
-  // scene.onPointerDown = function (event, pickResult) {
-  //   const vector = { x: 0, y: 0, z: 0 }
-  //   //left mouse click
-  //   //Wheel button or middle button on mouse click
-  //   if (event.button == 1) {
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     // @ts-ignore
-  //     vector['x'] = pickResult.pickedPoint['x']
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     // @ts-ignore
-  //     vector['y'] = pickResult.pickedPoint['y']
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     // @ts-ignore
-  //     vector['z'] = pickResult.pickedPoint['z']
-  //     console.log(
-  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //       // @ts-ignore
-  //       'middle mouse click: ' + vector.x + ',' + vector.y + ',' + vector.z,
-  //     )
-  //   }
-  //   console.log(vector)
-  // }
+  //scene.debugLayer.show()
 }
-/**
- * Will run on every frame render.  We are spinning the box on y-axis.
- */
+
 const parameter = StringControlPoints[12]
 let oldNotes: Note[] | null = null
 const started = 0
@@ -226,7 +182,9 @@ const onRender = (scene: Scene) => {
     if (
       !(
         oldNotes?.length === currentNotes.length &&
-        currentNotes.every((v, i) => v.string === oldNotes[i].string)
+        currentNotes.every(
+          (v, i) => oldNotes && v.string === oldNotes[i].string,
+        )
       )
     ) {
       oldNotes = currentNotes
