@@ -1,10 +1,12 @@
 /** @jsxImportSource @emotion/react **/
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import '@babylonjs/loaders'
 import '@babylonjs/inspector'
 
 import * as BABYLON from '@babylonjs/core'
 import {
+  Axis,
   FreeCamera,
   HemisphericLight,
   MeshBuilder,
@@ -20,6 +22,7 @@ import {
   animateGuitarString,
   animateGuitarStringReturnType,
 } from './AnimateGuitarString'
+import { animateRightHandFinger } from './AnimateRightHandFinger'
 import SceneComponent from './BabylonjsHook/babylonjs-hook'
 import { GuitarString } from './types'
 import {
@@ -193,12 +196,6 @@ const animationValues: {
 }
 
 const onRender = (scene: Scene) => {
-  // scene.meshes.forEach((mesh) => {
-  //   if (mesh.name === '__root__') {
-  //     console.log(mesh.rotation)
-  //   }
-  // })
-
   for (const guitarString in GuitarString) {
     const theString: GuitarString =
       GuitarString[guitarString as keyof typeof GuitarString]
@@ -226,7 +223,12 @@ const onRender = (scene: Scene) => {
 
   if (currentNotes && Array.isArray(currentNotes)) {
     // If we have a new set of notes we start the animation
-    if (currentNotes !== oldNotes) {
+    if (
+      !(
+        oldNotes?.length === currentNotes.length &&
+        currentNotes.every((v, i) => v.string === oldNotes[i].string)
+      )
+    ) {
       oldNotes = currentNotes
       currentNotes.forEach((note) => {
         let theString: GuitarString = GuitarString.e
@@ -235,6 +237,8 @@ const onRender = (scene: Scene) => {
         else if (note.string === 4) theString = GuitarString.D
         else if (note.string === 5) theString = GuitarString.A
         else if (note.string === 6) theString = GuitarString.E
+
+        animateRightHandFinger({ string: theString, scene })
 
         animationValues[theString] = animateGuitarString({
           controlPointParameter: StringControlPoints[0],
