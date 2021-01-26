@@ -20,6 +20,7 @@ import {
   GuitarProTab,
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
+import { DebugBoneRangeSelect } from './debugRangeSelectForBones'
 import { Measure } from './Measure'
 import { Tabs } from './Tabs'
 
@@ -50,7 +51,8 @@ export const SongPlayPage: FC = () => {
       {/*</div>*/}
 
       <BabylonMainPage />
-      {tab && <Tabs tab={tab} />}
+      <DebugBoneRangeSelect />
+      {/*{tab && <Tabs tab={tab} />}*/}
     </div>
   )
 }

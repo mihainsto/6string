@@ -4,6 +4,7 @@ import '@babylonjs/inspector'
 
 import * as BABYLON from '@babylonjs/core'
 import {
+  Axis,
   FreeCamera,
   HemisphericLight,
   MeshBuilder,
@@ -19,6 +20,7 @@ import {
   animateGuitarString,
   animateGuitarStringReturnType,
 } from './AnimateGuitarString'
+import { animateLeftHand } from './AnimateLeftHand'
 import { animateRightHandFinger } from './AnimateRightHandFinger'
 import SceneComponent from './BabylonjsHook/babylonjs-hook'
 import { GuitarString } from './types'
@@ -119,8 +121,9 @@ const onSceneReady = (scene: Scene) => {
       },
       scene,
     )
+    //animateLeftHand({ chord: {}, scene: scene })
   })
-  //scene.debugLayer.show()
+  scene.debugLayer.show()
 }
 
 const parameter = StringControlPoints[12]
@@ -150,8 +153,47 @@ const animationValues: {
   B: null,
   e: null,
 }
-
+let lastValues: any
 const onRender = (scene: Scene) => {
+  // DEBUG
+  const lstorage = window.localStorage
+  const values: any = JSON.parse(lstorage.getItem('debug_bone')!) as any
+  if (JSON.stringify(lastValues) !== JSON.stringify(values)) {
+    if (values.boneId) {
+      const bone1 = scene.getBoneByID(values.boneId + '1')
+      const bone2 = scene.getBoneByID(values.boneId + '2')
+      const bone3 = scene.getBoneByID(values.boneId + '3')
+      if (bone1 && bone2 && bone3) {
+        const transformNode1 = bone1.getTransformNode()
+        const transformNode2 = bone2.getTransformNode()
+        const transformNode3 = bone3.getTransformNode()
+        if (transformNode1 && transformNode2 && transformNode3) {
+          transformNode1.rotate(Axis.Z, -1 * (lastValues.z1 / 100))
+          transformNode2.rotate(Axis.Z, -1 * (lastValues.z2 / 100))
+          transformNode3.rotate(Axis.Z, -1 * (lastValues.z3 / 100))
+          transformNode1.rotate(Axis.Z, values.z1 / 100)
+          transformNode2.rotate(Axis.Z, values.z2 / 100)
+          transformNode3.rotate(Axis.Z, values.z3 / 100)
+
+          transformNode1.rotate(Axis.Y, -1 * (lastValues.y1 / 100))
+          transformNode2.rotate(Axis.Y, -1 * (lastValues.y2 / 100))
+          transformNode3.rotate(Axis.Y, -1 * (lastValues.y3 / 100))
+          transformNode1.rotate(Axis.Y, values.y1 / 100)
+          transformNode2.rotate(Axis.Y, values.y2 / 100)
+          transformNode3.rotate(Axis.Y, values.y3 / 100)
+
+          transformNode1.rotate(Axis.X, -1 * (lastValues.x1 / 100))
+          transformNode2.rotate(Axis.X, -1 * (lastValues.x2 / 100))
+          transformNode3.rotate(Axis.X, -1 * (lastValues.x3 / 100))
+          transformNode1.rotate(Axis.X, values.x1 / 100)
+          transformNode2.rotate(Axis.X, values.x2 / 100)
+          transformNode3.rotate(Axis.X, values.x3 / 100)
+        }
+      }
+    }
+    lastValues = values
+  }
+  // END DEBUG
   for (const guitarString in GuitarString) {
     const theString: GuitarString =
       GuitarString[guitarString as keyof typeof GuitarString]
