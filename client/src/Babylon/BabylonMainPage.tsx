@@ -196,6 +196,7 @@ const onRender = (scene: Scene) => {
         else if (note.string === 5) theString = GuitarString.A
         else if (note.string === 6) theString = GuitarString.E
 
+        // Animating the fingers from right hand
         animateRightHandFinger({ string: theString, scene })
 
         animationValues[theString] = animateGuitarString({
