@@ -8,6 +8,7 @@ import {
   FreeCamera,
   HemisphericLight,
   MeshBuilder,
+  Quaternion,
   Scene,
   SceneLoader,
   Vector3,
@@ -163,31 +164,83 @@ const onRender = (scene: Scene) => {
       const bone1 = scene.getBoneByID(values.boneId + '1')
       const bone2 = scene.getBoneByID(values.boneId + '2')
       const bone3 = scene.getBoneByID(values.boneId + '3')
-      if (bone1 && bone2 && bone3) {
+      const carpal1 = scene.getBoneByID('lCarpal1')
+      const carpal2 = scene.getBoneByID('lCarpal2')
+      const carpal3 = scene.getBoneByID('lCarpal3')
+      const carpal4 = scene.getBoneByID('lCarpal4')
+
+      const handBone = scene.getBoneByID('lArmature')
+      if (
+        bone1 &&
+        bone2 &&
+        bone3 &&
+        carpal1 &&
+        carpal2 &&
+        carpal3 &&
+        carpal4 &&
+        handBone
+      ) {
         const transformNode1 = bone1.getTransformNode()
         const transformNode2 = bone2.getTransformNode()
         const transformNode3 = bone3.getTransformNode()
-        if (transformNode1 && transformNode2 && transformNode3) {
-          transformNode1.rotate(Axis.Z, -1 * (lastValues.z1 / 100))
-          transformNode2.rotate(Axis.Z, -1 * (lastValues.z2 / 100))
-          transformNode3.rotate(Axis.Z, -1 * (lastValues.z3 / 100))
-          transformNode1.rotate(Axis.Z, values.z1 / 100)
-          transformNode2.rotate(Axis.Z, values.z2 / 100)
-          transformNode3.rotate(Axis.Z, values.z3 / 100)
 
-          transformNode1.rotate(Axis.Y, -1 * (lastValues.y1 / 100))
-          transformNode2.rotate(Axis.Y, -1 * (lastValues.y2 / 100))
-          transformNode3.rotate(Axis.Y, -1 * (lastValues.y3 / 100))
-          transformNode1.rotate(Axis.Y, values.y1 / 100)
-          transformNode2.rotate(Axis.Y, values.y2 / 100)
-          transformNode3.rotate(Axis.Y, values.y3 / 100)
+        const carpal1TransformNode = carpal1.getTransformNode()
+        const carpal2TransformNode = carpal2.getTransformNode()
+        const carpal3TransformNode = carpal3.getTransformNode()
+        const carpal4TransformNode = carpal4.getTransformNode()
 
-          transformNode1.rotate(Axis.X, -1 * (lastValues.x1 / 100))
-          transformNode2.rotate(Axis.X, -1 * (lastValues.x2 / 100))
-          transformNode3.rotate(Axis.X, -1 * (lastValues.x3 / 100))
-          transformNode1.rotate(Axis.X, values.x1 / 100)
-          transformNode2.rotate(Axis.X, values.x2 / 100)
-          transformNode3.rotate(Axis.X, values.x3 / 100)
+        const transformNodeHand = handBone.getTransformNode()
+        if (
+          transformNode1 &&
+          transformNode2 &&
+          transformNode3 &&
+          carpal1TransformNode &&
+          carpal2TransformNode &&
+          carpal3TransformNode &&
+          carpal4TransformNode &&
+          transformNodeHand
+        ) {
+          transformNode1.rotation = new Vector3(
+            values.x1 / 100,
+            values.y1 / 100,
+            values.z1 / 100,
+          )
+          transformNode2.rotation = new Vector3(
+            values.x2 / 100,
+            values.y2 / 100,
+            values.z2 / 100,
+          )
+          transformNode3.rotation = new Vector3(
+            values.x3 / 100,
+            values.y3 / 100,
+            values.z3 / 100,
+          )
+
+          carpal1TransformNode.rotation = new Vector3(
+            values.carpal1X / 100,
+            values.carpal1Y / 100,
+            values.carpal1Z / 100,
+          )
+          carpal2TransformNode.rotation = new Vector3(
+            values.carpal2X / 100,
+            values.carpal2Y / 100,
+            values.carpal2Z / 100,
+          )
+          carpal3TransformNode.rotation = new Vector3(
+            values.carpal3X / 100,
+            values.carpal3Y / 100,
+            values.carpal3Z / 100,
+          )
+          carpal4TransformNode.rotation = new Vector3(
+            values.carpal4X / 100,
+            values.carpal4Y / 100,
+            values.carpal4Z / 100,
+          )
+          transformNodeHand.position = new Vector3(
+            values.handX / 100,
+            values.handY / 100,
+            values.handZ / 100,
+          )
         }
       }
     }

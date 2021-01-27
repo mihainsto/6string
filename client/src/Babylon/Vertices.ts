@@ -133,3 +133,69 @@ export const StringRadius = {
   B: 0.01651,
   e: 0.0127,
 }
+
+// Left hand fingers values
+// Case 1: each finger on a diff frets
+// of type: F1 - 1 F2 - 2 F3 - 3 F4 - 4
+export const FINGERS_DIFF_FRETS = {
+  1: {
+    handPosition: { x: null, y: null, z: null },
+    carpal: { lCarpal1: null, lCarpal2: null, lCarpal3: null, lCarpal4: null },
+    lIndex: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lMid: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lRing: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lPinky: { E: null, A: null, D: null, G: null, B: null, e: null },
+  },
+}
+
+// Case 2: two fingers on the first fret
+// of type: F1 - 1 F2 - 1 F3 - 2 F4 - 3
+export const TWO_FINGERS_FIRST_FRET = {
+  1: {
+    handPosition: { x: null, y: null, z: null },
+    carpal: { lCarpal1: null, lCarpal2: null, lCarpal3: null, lCarpal4: null },
+    lIndex: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lMid: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lRing: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lPinky: { E: null, A: null, D: null, G: null, B: null, e: null },
+  },
+}
+
+// Case 3: two fingers on the second fret
+// of type: F1 - 1 F2 - 2 F3 - 2 F4 - 3
+export const TWO_FINGERS_SECOND_FRET = {
+  1: {
+    handPosition: { x: null, y: null, z: null },
+    carpal: { lCarpal1: null, lCarpal2: null, lCarpal3: null, lCarpal4: null },
+    lIndex: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lMid: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lRing: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lPinky: { E: null, A: null, D: null, G: null, B: null, e: null },
+  },
+}
+
+// Case 4: two fingers on the first two fingers second
+// of type: F1 - 1 F2 - 1 F3 - 2 F4 - 2
+export const TWO_FINGERS_FIRST_SECOND_FRET = {
+  1: {
+    handPosition: { x: null, y: null, z: null },
+    carpal: { lCarpal1: null, lCarpal2: null, lCarpal3: null, lCarpal4: null },
+    lIndex: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lMid: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lRing: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lPinky: { E: null, A: null, D: null, G: null, B: null, e: null },
+  },
+}
+
+// Case 5: two fingers on the third fret
+// of type: F1 - 1 F2 - 2 F3 - 3 F4 - 3
+export const TWO_FINGERS_THIRD_FRET = {
+  1: {
+    handPosition: { x: null, y: null, z: null },
+    carpal: { lCarpal1: null, lCarpal2: null, lCarpal3: null, lCarpal4: null },
+    lIndex: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lMid: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lRing: { E: null, A: null, D: null, G: null, B: null, e: null },
+    lPinky: { E: null, A: null, D: null, G: null, B: null, e: null },
+  },
+}
