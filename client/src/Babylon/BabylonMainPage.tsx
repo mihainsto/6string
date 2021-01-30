@@ -21,7 +21,7 @@ import {
   animateGuitarString,
   animateGuitarStringReturnType,
 } from './AnimateGuitarString'
-import { animateLeftHand } from './AnimateLeftHand'
+import { poseLeftHandChord } from './AnimateLeftHand'
 import { animateRightHandFinger } from './AnimateRightHandFinger'
 import SceneComponent from './BabylonjsHook/babylonjs-hook'
 import { GuitarString } from './types'
@@ -124,7 +124,7 @@ const onSceneReady = (scene: Scene) => {
     )
     //animateLeftHand({ chord: {}, scene: scene })
   })
-  scene.debugLayer.show()
+  //scene.debugLayer.show()
 }
 
 const parameter = StringControlPoints[12]
@@ -157,6 +157,7 @@ const animationValues: {
 let lastValues: any
 const onRender = (scene: Scene) => {
   // DEBUG
+  poseLeftHandChord({ scene, chord: { A: 3, B: 1, D: 2, E: 0, G: 0, e: 4 } })
   const lstorage = window.localStorage
   const values: any = JSON.parse(lstorage.getItem('debug_bone')!) as any
   if (JSON.stringify(lastValues) !== JSON.stringify(values)) {
@@ -241,6 +242,13 @@ const onRender = (scene: Scene) => {
             values.handY / 100,
             values.handZ / 100,
           )
+          console.log({
+            v3: new Vector3(
+              values.handX / 100,
+              values.handY / 100,
+              values.handZ / 100,
+            ),
+          })
         }
       }
     }

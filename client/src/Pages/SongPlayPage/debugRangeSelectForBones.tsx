@@ -30,8 +30,8 @@ export const DebugBoneRangeSelect: FC = () => {
   const [carpal2Z, setCarpal2Z] = useState(0)
   const [carpal3Z, setCarpal3Z] = useState(0)
   const [carpal4Z, setCarpal4Z] = useState(0)
-  const [handX, setHandX] = useState(52)
-  const [handY, setHandY] = useState(17)
+  const [handX, setHandX] = useState(50)
+  const [handY, setHandY] = useState(18)
   const [handZ, setHandZ] = useState(11)
   const [resetField, setResetField] = useState(0)
 
