@@ -180,7 +180,7 @@ export const DebugBoneRangeSelect: FC = () => {
               >
                 <input
                   type="range"
-                  min="0"
+                  min="-300"
                   max="300"
                   value={y1}
                   onChange={(e) => setY1(parseInt(e.target.value))}
@@ -194,7 +194,7 @@ export const DebugBoneRangeSelect: FC = () => {
               >
                 <input
                   type="range"
-                  min="0"
+                  min="-300"
                   max="300"
                   value={y2}
                   onChange={(e) => setY2(parseInt(e.target.value))}
@@ -208,7 +208,7 @@ export const DebugBoneRangeSelect: FC = () => {
               >
                 <input
                   type="range"
-                  min="0"
+                  min="-300"
                   max="300"
                   value={y3}
                   onChange={(e) => setY3(parseInt(e.target.value))}
@@ -226,7 +226,7 @@ export const DebugBoneRangeSelect: FC = () => {
               >
                 <input
                   type="range"
-                  min="0"
+                  min="-300"
                   max="300"
                   value={x1}
                   onChange={(e) => setX1(parseInt(e.target.value))}
@@ -240,7 +240,7 @@ export const DebugBoneRangeSelect: FC = () => {
               >
                 <input
                   type="range"
-                  min="0"
+                  min="-300"
                   max="300"
                   value={x2}
                   onChange={(e) => setX2(parseInt(e.target.value))}
@@ -254,7 +254,7 @@ export const DebugBoneRangeSelect: FC = () => {
               >
                 <input
                   type="range"
-                  min="0"
+                  min="-300"
                   max="300"
                   value={x3}
                   onChange={(e) => setX3(parseInt(e.target.value))}

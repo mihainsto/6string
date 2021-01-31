@@ -157,7 +157,7 @@ const animationValues: {
 let lastValues: any
 const onRender = (scene: Scene) => {
   // DEBUG
-  poseLeftHandChord({ scene, chord: { A: 3, B: 1, D: 2, E: 0, G: 0, e: 4 } })
+  //poseLeftHandChord({ scene, chord: { A: 5, B: 4, D: 0, E: 0, G: 0, e: 3 } })
   const lstorage = window.localStorage
   const values: any = JSON.parse(lstorage.getItem('debug_bone')!) as any
   if (JSON.stringify(lastValues) !== JSON.stringify(values)) {
@@ -242,13 +242,6 @@ const onRender = (scene: Scene) => {
             values.handY / 100,
             values.handZ / 100,
           )
-          console.log({
-            v3: new Vector3(
-              values.handX / 100,
-              values.handY / 100,
-              values.handZ / 100,
-            ),
-          })
         }
       }
     }
