@@ -157,7 +157,7 @@ const animationValues: {
 let lastValues: any
 const onRender = (scene: Scene) => {
   // DEBUG
-  //poseLeftHandChord({ scene, chord: { A: 5, B: 4, D: 0, E: 0, G: 0, e: 3 } })
+  poseLeftHandChord({ scene, chord: { A: 0, B: 3, D: 0, E: 0, G: 2, e: 2 } })
   const lstorage = window.localStorage
   const values: any = JSON.parse(lstorage.getItem('debug_bone')!) as any
   if (JSON.stringify(lastValues) !== JSON.stringify(values)) {

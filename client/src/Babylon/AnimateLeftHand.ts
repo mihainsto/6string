@@ -9,7 +9,11 @@ import {
   LeftHandPoseType,
   PoseType,
 } from './types'
-import { FINGERS_DIFF_FRETS } from './Vertices'
+import {
+  FINGERS_DIFF_FRETS,
+  TWO_FINGERS_FIRST_FRET,
+  TWO_FINGERS_FIRST_SECOND_FRET,
+} from './Vertices'
 
 type PoseLeftHandValues = {
   handPosition: Vector3
@@ -129,7 +133,7 @@ export const poseLeftHandChord = ({
       nonZeroChordPairs.length === 4 &&
       nonZeroChordPairs[2][1] === nonZeroChordPairs[3][1]
     ) {
-      values = FINGERS_DIFF_FRETS[firstFret.toString()]
+      values = TWO_FINGERS_FIRST_SECOND_FRET[firstFret.toString()]
       // If the first is before the second we use the first for index
       if (
         compareGuitarString(
@@ -161,7 +165,7 @@ export const poseLeftHandChord = ({
     // Case 2: two fingers on the first fret
     // of type: F1 - 1 F2 - 1 F3 - 2 F4 - 3
     else {
-      values = FINGERS_DIFF_FRETS[firstFret.toString()]
+      values = TWO_FINGERS_FIRST_FRET[firstFret.toString()]
 
       const lRingFret = firstFret + 1
       const lPinkyFret = firstFret + 2
