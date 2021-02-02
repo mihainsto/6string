@@ -13,6 +13,7 @@ import {
   FINGERS_DIFF_FRETS,
   TWO_FINGERS_FIRST_FRET,
   TWO_FINGERS_FIRST_SECOND_FRET,
+  TWO_FINGERS_SECOND_FRET,
 } from './Vertices'
 
 type PoseLeftHandValues = {
@@ -195,7 +196,7 @@ export const poseLeftHandChord = ({
     nonZeroChordPairs[1][1] === nonZeroChordPairs[2][1] &&
     nonZeroChordPairs[0][1] !== nonZeroChordPairs[1][1]
   ) {
-    values = FINGERS_DIFF_FRETS[firstFret.toString()]
+    values = TWO_FINGERS_SECOND_FRET[firstFret.toString()]
 
     const lPinkyFret = firstFret + 2
     lIndexChordPair = nonZeroChordPairs[0]
