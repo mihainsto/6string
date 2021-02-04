@@ -1,6 +1,5 @@
 import { Axis, Scene, Vector3 } from '@babylonjs/core'
 
-import { compareGuitarString } from './GuitarHelpers'
 import {
   Chord,
   GuitarString,
@@ -8,14 +7,15 @@ import {
   LEFT_FINGERS,
   LeftHandPoseType,
   PoseType,
-} from './types'
+} from '../types'
+import { compareGuitarString } from '../utils/GuitarHelpers'
 import {
   FINGERS_DIFF_FRETS,
   TWO_FINGERS_FIRST_FRET,
   TWO_FINGERS_FIRST_SECOND_FRET,
   TWO_FINGERS_SECOND_FRET,
   TWO_FINGERS_THIRD_FRET,
-} from './Vertices'
+} from '../Vertices'
 
 type PoseLeftHandValues = {
   handPosition: Vector3
@@ -30,6 +30,7 @@ type PoseLeftHandValues = {
   lRing?: { '1': Vector3; '2': Vector3; '3': Vector3 }
   lPinky?: { '1': Vector3; '2': Vector3; '3': Vector3 }
 }
+
 // Posing the left hand by values
 const poseLeftHand = ({
   scene,

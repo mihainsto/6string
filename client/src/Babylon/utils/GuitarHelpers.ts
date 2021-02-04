@@ -1,4 +1,4 @@
-import { GuitarString } from './types'
+import { GuitarString } from '../types'
 
 // Returns true if the first is before the second else false
 export const compareGuitarString = (x: GuitarString, y: GuitarString) => {

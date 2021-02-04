@@ -1,6 +1,6 @@
 import { Axis, Scene } from '@babylonjs/core'
 
-import { GuitarString } from './types'
+import { GuitarString } from '../types'
 
 // TODO: Make the movement more fluent and refactor this
 // Basic snap movement of the right hand fingers

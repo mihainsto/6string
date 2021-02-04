@@ -1,8 +1,8 @@
 import { MeshBuilder, Vector3 } from '@babylonjs/core'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 
-import { GuitarString } from './types'
-import { strings } from './Vertices'
+import { GuitarString } from '../types'
+import { strings } from '../Vertices'
 
 export const updateString = (stringName: GuitarString, newPath: Vector3[]) => {
   if (strings[stringName])

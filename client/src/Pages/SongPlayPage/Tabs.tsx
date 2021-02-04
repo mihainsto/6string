@@ -8,20 +8,26 @@ import { FC } from 'react'
 import { standard } from 'react-guitar-tunings'
 import { ResizableBox } from 'react-resizable'
 import * as Tone from 'tone'
+import create from 'zustand'
 
 import useWindowSize from '../../Hooks/useWindowSize'
 import useSound from '../../Packages/react-guitar-sound'
+import { MeasureStore, NotesStore } from '../../State/BabylonState'
 import {
   GuitarProTab,
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
+import { Note } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
-
 const PLAY_SPEED_FACTOR = 0.2
 
 type TabsProps = {
   tab: GuitarProTab
 }
+
+const useNotesStore = create(NotesStore)
+const useMeasureStore = create(MeasureStore)
+
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false
   const [firstMeasureTopDistance, setFirstMeasureTopDistance] = useState(0)
@@ -72,9 +78,9 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
           currentBeat.notes.forEach((note) => {
             play(note.string, 0, strings)
           })
-          // TODO: find a better way to do this
           // Write the notes inside local storage to get them on the 3D side
-          writeStorage('currentNotes', JSON.stringify(currentBeat.notes))
+          useNotesStore.setState({ currentNotes: currentBeat.notes })
+
           // offset the currentNotesPlayed and currentMeasurePlayed if we reach the end of a measure
           if (
             currentNotesPlayed ==
