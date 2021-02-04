@@ -9,7 +9,10 @@ import { ResizableBox } from 'react-resizable'
 import * as Tone from 'tone'
 import create from 'zustand'
 
-import { getChordFromMeasure } from '../../Babylon/utils/GuitarHelpers'
+import {
+  getChordsFromMeasure,
+  getSingleChordFromMeasure,
+} from '../../Babylon/utils/GuitarHelpers'
 import useWindowSize from '../../Hooks/useWindowSize'
 import useSound from '../../Packages/react-guitar-sound'
 import { ChordStore, NotesStore } from '../../State/BabylonState'
@@ -54,8 +57,8 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     let currentNotesPlayed = cursorPosition.position
     let startTime = 0
 
-    const startChord = getChordFromMeasure(track.measures[0])
-    useChordStore.setState({ currentChord: startChord })
+    const chords = getChordsFromMeasure(track.measures[0])
+    useChordStore.setState({ currentChord: chords[0].chord })
 
     const playInterval = (time: number) => {
       if (track) {
@@ -70,6 +73,13 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
             position: currentNotesPlayed,
           })
           const strings = [0, 0, 0, 0, 0, 0]
+
+          // Write the chord for this notes
+          const currentChord = chords.find(
+            (el) => el.beatIndex === currentNotesPlayed,
+          )
+          currentChord &&
+            useChordStore.setState({ currentChord: currentChord.chord })
 
           // Getting the frets if capo
           currentBeat.notes.forEach((note) => {
@@ -92,10 +102,10 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
             currentMeasurePlayed += 1
 
             // Moving the chord to the next measure
-            const nextChord = getChordFromMeasure(
+            const nextChords = getChordsFromMeasure(
               track.measures[currentMeasurePlayed],
             )
-            useChordStore.setState({ currentChord: nextChord })
+            useChordStore.setState({ currentChord: nextChords[0].chord })
           } else {
             currentNotesPlayed += 1
           }

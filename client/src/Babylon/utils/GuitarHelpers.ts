@@ -52,7 +52,7 @@ export const transformStringNumberIntoEnum = (
   return GuitarString.E
 }
 
-export const getChordFromMeasure = (measure: MeasureType): Chord => {
+export const getSingleChordFromMeasure = (measure: MeasureType): Chord => {
   const beats = measure.voices[0].beats
   const chord: Chord = {
     E: 0,
@@ -70,4 +70,59 @@ export const getChordFromMeasure = (measure: MeasureType): Chord => {
     })
   })
   return chord
+}
+
+type chordsFromMeasure = {
+  beatIndex: number
+  chord: Chord
+}
+export const getChordsFromMeasure = (
+  measure: MeasureType,
+): chordsFromMeasure[] => {
+  const beats = measure.voices[0].beats
+  const chords: chordsFromMeasure[] = []
+  let currentChord: Chord = {
+    E: 0,
+    A: 0,
+    D: 0,
+    G: 0,
+    B: 0,
+    e: 0,
+  }
+  let lastBeat = 0
+  beats.map((beat, beatIndex) => {
+    beat.notes.map((note) => {
+      const noteString = transformStringNumberIntoEnum(note.string)
+
+      if (
+        currentChord[noteString] === 0 ||
+        currentChord[noteString] === note.value - 3
+      ) {
+        // TODO: Remove the 3
+        currentChord[noteString] = note.value - 3
+      }
+      // else getting a conflict because the chord has a value there
+      // that means we create a new chord
+      else {
+        for (let i = lastBeat; i < beatIndex; i++) {
+          chords.push({ beatIndex: i, chord: currentChord })
+        }
+        lastBeat = beatIndex
+        currentChord = {
+          E: 0,
+          A: 0,
+          D: 0,
+          G: 0,
+          B: 0,
+          e: 0,
+        }
+        // TODO: Remove the 3
+        currentChord[noteString] = note.value - 3
+      }
+    })
+  })
+  for (let i = lastBeat; i < beats.length; i++) {
+    chords.push({ beatIndex: i, chord: currentChord })
+  }
+  return chords
 }
