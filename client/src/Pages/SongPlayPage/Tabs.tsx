@@ -2,7 +2,6 @@
 
 import { css } from '@emotion/react'
 import { Button } from '@material-ui/core'
-import { writeStorage } from '@rehooks/local-storage'
 import React, { createRef, useEffect, useState } from 'react'
 import { FC } from 'react'
 import { standard } from 'react-guitar-tunings'
@@ -10,14 +9,14 @@ import { ResizableBox } from 'react-resizable'
 import * as Tone from 'tone'
 import create from 'zustand'
 
+import { getChordFromMeasure } from '../../Babylon/utils/GuitarHelpers'
 import useWindowSize from '../../Hooks/useWindowSize'
 import useSound from '../../Packages/react-guitar-sound'
-import { MeasureStore, NotesStore } from '../../State/BabylonState'
+import { ChordStore, NotesStore } from '../../State/BabylonState'
 import {
   GuitarProTab,
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
-import { Note } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
 const PLAY_SPEED_FACTOR = 0.2
 
@@ -26,7 +25,7 @@ type TabsProps = {
 }
 
 const useNotesStore = create(NotesStore)
-const useMeasureStore = create(MeasureStore)
+const useChordStore = create(ChordStore)
 
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false
@@ -54,6 +53,9 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     let currentMeasurePlayed = cursorPosition.measure
     let currentNotesPlayed = cursorPosition.position
     let startTime = 0
+
+    const startChord = getChordFromMeasure(track.measures[0])
+    useChordStore.setState({ currentChord: startChord })
 
     const playInterval = (time: number) => {
       if (track) {
@@ -88,6 +90,12 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
           ) {
             currentNotesPlayed = 0
             currentMeasurePlayed += 1
+
+            // Moving the chord to the next measure
+            const nextChord = getChordFromMeasure(
+              track.measures[currentMeasurePlayed],
+            )
+            useChordStore.setState({ currentChord: nextChord })
           } else {
             currentNotesPlayed += 1
           }
@@ -108,7 +116,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     Tone.Transport.scheduleRepeat((time) => {
       if (startTime == 0) {
         startTime = time * 1000
-        console.log({ startTime })
       }
       playInterval(time)
     }, '0.1s')

@@ -1,11 +1,12 @@
 import { Scene } from '@babylonjs/core'
 
-import { NotesStore } from '../State/BabylonState'
+import { ChordStore, NotesStore } from '../State/BabylonState'
 import { Note } from '../Types/guitarProTabs.types'
 import {
   animateGuitarString,
   animateGuitarStringReturnType,
 } from './Animation/AnimateGuitarString'
+import { poseLeftHandChord } from './Animation/AnimateLeftHand'
 import { animateRightHandFinger } from './Animation/AnimateRightHandFinger'
 import { GuitarString } from './types'
 import {
@@ -33,6 +34,7 @@ const animationValues: {
 }
 
 const { getState: getNotes } = NotesStore
+const { getState: getChord } = ChordStore
 
 export const onRender = (scene: Scene) => {
   for (const guitarString in GuitarString) {
@@ -67,6 +69,9 @@ export const onRender = (scene: Scene) => {
         )
       )
     ) {
+      const chord = getChord().currentChord
+      chord && poseLeftHandChord({ scene, chord })
+
       oldNotes = currentNotes
       currentNotes.forEach((note) => {
         let theString: GuitarString = GuitarString.e
