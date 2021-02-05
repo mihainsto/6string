@@ -14,21 +14,9 @@ import {
 import { css } from '@emotion/react'
 import React from 'react'
 
-import { Note } from '../Types/guitarProTabs.types'
-import {
-  animateGuitarString,
-  animateGuitarStringReturnType,
-} from './AnimateGuitarString'
-import { animateRightHandFinger } from './AnimateRightHandFinger'
 import SceneComponent from './BabylonjsHook/babylonjs-hook'
-import { GuitarString } from './types'
-import {
-  StringControlPoints,
-  StringDirectionVectors,
-  StringPaths,
-  StringRadius,
-  strings,
-} from './Vertices'
+import { onRender } from './onRender'
+import { StringPaths, StringRadius, strings } from './Vertices'
 
 const onSceneReady = (scene: Scene) => {
   // This creates and positions a free camera (non-mesh)
@@ -119,99 +107,9 @@ const onSceneReady = (scene: Scene) => {
       },
       scene,
     )
+    //animateLeftHand({ chord: {}, scene: scene })
   })
   //scene.debugLayer.show()
-}
-
-const parameter = StringControlPoints[12]
-let oldNotes: Note[] | null = null
-const started = 0
-const animationsStatus = {
-  E: false,
-  A: false,
-  D: false,
-  G: false,
-  B: false,
-  e: false,
-}
-
-const animationValues: {
-  E: animateGuitarStringReturnType | null
-  A: animateGuitarStringReturnType | null
-  D: animateGuitarStringReturnType | null
-  G: animateGuitarStringReturnType | null
-  B: animateGuitarStringReturnType | null
-  e: animateGuitarStringReturnType | null
-} = {
-  E: null,
-  A: null,
-  D: null,
-  G: null,
-  B: null,
-  e: null,
-}
-
-const onRender = (scene: Scene) => {
-  for (const guitarString in GuitarString) {
-    const theString: GuitarString =
-      GuitarString[guitarString as keyof typeof GuitarString]
-
-    // The animation step
-    if (animationValues[theString] && !animationValues[theString]!.done) {
-      animationValues[theString] = animateGuitarString({
-        controlPointParameter: StringControlPoints[0],
-        controlZFactor: 0,
-        directionVector: StringDirectionVectors[theString],
-        path: StringPaths[theString],
-        stringName: GuitarString[theString],
-        animationRatio: scene.getAnimationRatio(),
-        min: -0.1,
-        max: 0.1,
-        ...animationValues[theString],
-      })
-    }
-  }
-
-  const storage = window.localStorage
-  const currentNotes: Note[] | null = JSON.parse(
-    storage.getItem('currentNotes')!,
-  ) as Note[] | null
-
-  if (currentNotes && Array.isArray(currentNotes)) {
-    // If we have a new set of notes we start the animation
-    if (
-      !(
-        oldNotes?.length === currentNotes.length &&
-        currentNotes.every(
-          (v, i) => oldNotes && v.string === oldNotes[i].string,
-        )
-      )
-    ) {
-      oldNotes = currentNotes
-      currentNotes.forEach((note) => {
-        let theString: GuitarString = GuitarString.e
-        if (note.string === 2) theString = GuitarString.B
-        else if (note.string === 3) theString = GuitarString.G
-        else if (note.string === 4) theString = GuitarString.D
-        else if (note.string === 5) theString = GuitarString.A
-        else if (note.string === 6) theString = GuitarString.E
-
-        animateRightHandFinger({ string: theString, scene })
-
-        animationValues[theString] = animateGuitarString({
-          controlPointParameter: StringControlPoints[0],
-          controlZFactor: 0,
-          directionVector: StringDirectionVectors[theString],
-          path: StringPaths[theString],
-          stringName: GuitarString[theString],
-          animationRatio: scene.getAnimationRatio(),
-          min: -0.1,
-          max: 0.1,
-          restart: true,
-        })
-      })
-    }
-  }
 }
 
 export const BabylonMainPage = () => (

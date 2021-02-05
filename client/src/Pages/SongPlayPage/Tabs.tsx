@@ -2,26 +2,31 @@
 
 import { css } from '@emotion/react'
 import { Button } from '@material-ui/core'
-import { writeStorage } from '@rehooks/local-storage'
 import React, { createRef, useEffect, useState } from 'react'
 import { FC } from 'react'
 import { standard } from 'react-guitar-tunings'
 import { ResizableBox } from 'react-resizable'
 import * as Tone from 'tone'
+import create from 'zustand'
 
+import { getChordsFromTrack } from '../../Babylon/utils/GuitarHelpers'
 import useWindowSize from '../../Hooks/useWindowSize'
 import useSound from '../../Packages/react-guitar-sound'
+import { ChordStore, NotesStore } from '../../State/BabylonState'
 import {
   GuitarProTab,
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
-
 const PLAY_SPEED_FACTOR = 0.2
 
 type TabsProps = {
   tab: GuitarProTab
 }
+
+const useNotesStore = create(NotesStore)
+const useChordStore = create(ChordStore)
+
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false
   const [firstMeasureTopDistance, setFirstMeasureTopDistance] = useState(0)
@@ -49,6 +54,9 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     let currentNotesPlayed = cursorPosition.position
     let startTime = 0
 
+    const chords = getChordsFromTrack(track)
+    useChordStore.setState({ currentChord: chords[0].chord })
+
     const playInterval = (time: number) => {
       if (track) {
         const tickTime = (time * 1000 - startTime) * PLAY_SPEED_FACTOR
@@ -63,6 +71,15 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
           })
           const strings = [0, 0, 0, 0, 0, 0]
 
+          // Write the chord for this notes
+          const currentChord = chords.find(
+            (el) =>
+              el.beatIndex === currentNotesPlayed &&
+              el.measureIndex === currentMeasurePlayed,
+          )
+          currentChord &&
+            useChordStore.setState({ currentChord: currentChord.chord })
+
           // Getting the frets if capo
           currentBeat.notes.forEach((note) => {
             strings[note.string] = note.value + track.offset
@@ -72,9 +89,9 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
           currentBeat.notes.forEach((note) => {
             play(note.string, 0, strings)
           })
-          // TODO: find a better way to do this
           // Write the notes inside local storage to get them on the 3D side
-          writeStorage('currentNotes', JSON.stringify(currentBeat.notes))
+          useNotesStore.setState({ currentNotes: currentBeat.notes })
+
           // offset the currentNotesPlayed and currentMeasurePlayed if we reach the end of a measure
           if (
             currentNotesPlayed ==
@@ -102,7 +119,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     Tone.Transport.scheduleRepeat((time) => {
       if (startTime == 0) {
         startTime = time * 1000
-        console.log({ startTime })
       }
       playInterval(time)
     }, '0.1s')

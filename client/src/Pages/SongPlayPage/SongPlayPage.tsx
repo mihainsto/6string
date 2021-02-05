@@ -1,26 +1,18 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { Button } from '@material-ui/core'
 import { writeStorage } from '@rehooks/local-storage'
-import React, { createRef, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect } from 'react'
 import { FC } from 'react'
-import { standard } from 'react-guitar-tunings'
-import { Resizable, ResizableBox } from 'react-resizable'
 import { useParams } from 'react-router-dom'
 import * as Tone from 'tone'
 
 import { BabylonMainPage } from '../../Babylon/BabylonMainPage'
-import { PlaygroundNav } from '../../Components/Navigation/PlaygroundNav'
 import { useSongQuery } from '../../generated/graphql'
-import { useRect } from '../../Hooks/useRect'
-import useWindowSize from '../../Hooks/useWindowSize'
-import useSound from '../../Packages/react-guitar-sound'
 import {
   GuitarProTab,
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
-import { Measure } from './Measure'
 import { Tabs } from './Tabs'
 
 export const SongPlayPage: FC = () => {
@@ -28,8 +20,11 @@ export const SongPlayPage: FC = () => {
   // @ts-ignore
   const { id } = useParams()
   const { data, loading } = useSongQuery({ variables: { id } })
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const tab: GuitarProTab | undefined = data?.song.tab
   const track = tab?.tracks[0]
+
   useEffect(() => {
     writeStorage('currentNotes', null)
   }, [])
