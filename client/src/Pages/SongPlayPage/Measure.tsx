@@ -5,8 +5,6 @@ import { colors } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FC } from 'react'
 
-import { useRect } from '../../Hooks/useRect'
-import useWindowSize from '../../Hooks/useWindowSize'
 import { Measure as MeasureType } from '../../Types/guitarProTabs.types'
 import { Cursor } from './Cursor'
 
@@ -138,7 +136,8 @@ export const Measure: FC<MeasureProps> = React.memo(
                   left: ${rectLeft + beatPosition - 40}px;
                 `}
               >
-                {note.value}
+                {/*TODO: Remove the 3*/}
+                {note.value - 3}
               </div>
             )
           })

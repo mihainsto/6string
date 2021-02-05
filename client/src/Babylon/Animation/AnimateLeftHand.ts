@@ -1,11 +1,10 @@
-import { Axis, Scene, Vector3 } from '@babylonjs/core'
+import { Scene, Vector3 } from '@babylonjs/core'
 
 import {
   Chord,
   GuitarString,
   LEFT_CARPALS,
   LEFT_FINGERS,
-  LeftHandPoseType,
   PoseType,
 } from '../types'
 import { compareGuitarString } from '../utils/GuitarHelpers'
@@ -57,6 +56,7 @@ const poseLeftHand = ({
       }
     }
   })
+
   // Applying the rotation to the fingers
   for (const finger in LEFT_FINGERS) {
     if (values[finger as LEFT_FINGERS]) {
@@ -280,86 +280,116 @@ export const poseLeftHandChord = ({
           values.handPosition.y / 100,
           values.handPosition.z / 100,
         ),
-        ...(lIndexString && {
-          lIndex: {
-            '1': new Vector3(
-              values.lIndex[lIndexString]['1'].x / 100,
-              values.lIndex[lIndexString]['1'].y / 100,
-              values.lIndex[lIndexString]['1'].z / 100,
-            ),
-            '2': new Vector3(
-              values.lIndex[lIndexString]['2'].x / 100,
-              values.lIndex[lIndexString]['2'].y / 100,
-              values.lIndex[lIndexString]['2'].z / 100,
-            ),
-            '3': new Vector3(
-              values.lIndex[lIndexString]['3'].x / 100,
-              values.lIndex[lIndexString]['3'].y / 100,
-              values.lIndex[lIndexString]['3'].z / 100,
-            ),
-          },
-        }),
-        ...(lMidString && {
-          lMid: {
-            '1': new Vector3(
-              values.lMid[lMidString]['1'].x / 100,
-              values.lMid[lMidString]['1'].y / 100,
-              values.lMid[lMidString]['1'].z / 100,
-            ),
-            '2': new Vector3(
-              values.lMid[lMidString]['2'].x / 100,
-              values.lMid[lMidString]['2'].y / 100,
-              values.lMid[lMidString]['2'].z / 100,
-            ),
-            '3': new Vector3(
-              values.lMid[lMidString]['3'].x / 100,
-              values.lMid[lMidString]['3'].y / 100,
-              values.lMid[lMidString]['3'].z / 100,
-            ),
-          },
-        }),
-        ...(lRingString && {
-          lRing: {
-            '1': new Vector3(
-              values.lRing[lRingString]['1'].x / 100,
-              values.lRing[lRingString]['1'].y / 100,
-              values.lRing[lRingString]['1'].z / 100,
-            ),
-            '2': new Vector3(
-              values.lRing[lRingString]['2'].x / 100,
-              values.lRing[lRingString]['2'].y / 100,
-              values.lRing[lRingString]['2'].z / 100,
-            ),
-            '3': new Vector3(
-              values.lRing[lRingString]['3'].x / 100,
-              values.lRing[lRingString]['3'].y / 100,
-              values.lRing[lRingString]['3'].z / 100,
-            ),
-          },
-        }),
-        ...(lPinkyString && {
-          lPinky: {
-            '1': new Vector3(
-              values.lPinky[lPinkyString]['1'].x / 100,
-              values.lPinky[lPinkyString]['1'].y / 100,
-              values.lPinky[lPinkyString]['1'].z / 100,
-            ),
-            '2': new Vector3(
-              values.lPinky[lPinkyString]['2'].x / 100,
-              values.lPinky[lPinkyString]['2'].y / 100,
-              values.lPinky[lPinkyString]['2'].z / 100,
-            ),
-            '3': new Vector3(
-              values.lPinky[lPinkyString]['3'].x / 100,
-              values.lPinky[lPinkyString]['3'].y / 100,
-              values.lPinky[lPinkyString]['3'].z / 100,
-            ),
-          },
-        }),
+        ...(lIndexString
+          ? {
+              lIndex: {
+                '1': new Vector3(
+                  values.lIndex[lIndexString]['1'].x / 100,
+                  values.lIndex[lIndexString]['1'].y / 100,
+                  values.lIndex[lIndexString]['1'].z / 100,
+                ),
+                '2': new Vector3(
+                  values.lIndex[lIndexString]['2'].x / 100,
+                  values.lIndex[lIndexString]['2'].y / 100,
+                  values.lIndex[lIndexString]['2'].z / 100,
+                ),
+                '3': new Vector3(
+                  values.lIndex[lIndexString]['3'].x / 100,
+                  values.lIndex[lIndexString]['3'].y / 100,
+                  values.lIndex[lIndexString]['3'].z / 100,
+                ),
+              },
+            }
+          : {
+              lIndex: {
+                '1': new Vector3(0, 0, 0),
+                '2': new Vector3(0, 0, 0),
+                '3': new Vector3(0, 0, 0),
+              },
+            }),
+        ...(lMidString
+          ? {
+              lMid: {
+                '1': new Vector3(
+                  values.lMid[lMidString]['1'].x / 100,
+                  values.lMid[lMidString]['1'].y / 100,
+                  values.lMid[lMidString]['1'].z / 100,
+                ),
+                '2': new Vector3(
+                  values.lMid[lMidString]['2'].x / 100,
+                  values.lMid[lMidString]['2'].y / 100,
+                  values.lMid[lMidString]['2'].z / 100,
+                ),
+                '3': new Vector3(
+                  values.lMid[lMidString]['3'].x / 100,
+                  values.lMid[lMidString]['3'].y / 100,
+                  values.lMid[lMidString]['3'].z / 100,
+                ),
+              },
+            }
+          : {
+              lMid: {
+                '1': new Vector3(0, 0, 0),
+                '2': new Vector3(0, 0, 0),
+                '3': new Vector3(0, 0, 0),
+              },
+            }),
+        ...(lRingString
+          ? {
+              lRing: {
+                '1': new Vector3(
+                  values.lRing[lRingString]['1'].x / 100,
+                  values.lRing[lRingString]['1'].y / 100,
+                  values.lRing[lRingString]['1'].z / 100,
+                ),
+                '2': new Vector3(
+                  values.lRing[lRingString]['2'].x / 100,
+                  values.lRing[lRingString]['2'].y / 100,
+                  values.lRing[lRingString]['2'].z / 100,
+                ),
+                '3': new Vector3(
+                  values.lRing[lRingString]['3'].x / 100,
+                  values.lRing[lRingString]['3'].y / 100,
+                  values.lRing[lRingString]['3'].z / 100,
+                ),
+              },
+            }
+          : {
+              lRing: {
+                '1': new Vector3(0, 0, 0),
+                '2': new Vector3(0, 0, 0),
+                '3': new Vector3(0, 0, 0),
+              },
+            }),
+        ...(lPinkyString
+          ? {
+              lPinky: {
+                '1': new Vector3(
+                  values.lPinky[lPinkyString]['1'].x / 100,
+                  values.lPinky[lPinkyString]['1'].y / 100,
+                  values.lPinky[lPinkyString]['1'].z / 100,
+                ),
+                '2': new Vector3(
+                  values.lPinky[lPinkyString]['2'].x / 100,
+                  values.lPinky[lPinkyString]['2'].y / 100,
+                  values.lPinky[lPinkyString]['2'].z / 100,
+                ),
+                '3': new Vector3(
+                  values.lPinky[lPinkyString]['3'].x / 100,
+                  values.lPinky[lPinkyString]['3'].y / 100,
+                  values.lPinky[lPinkyString]['3'].z / 100,
+                ),
+              },
+            }
+          : {
+              lPinky: {
+                '1': new Vector3(0, 0, 0),
+                '2': new Vector3(0, 0, 0),
+                '3': new Vector3(0, 0, 0),
+              },
+            }),
       },
     })
 
   return null
 }
-
-//export {}

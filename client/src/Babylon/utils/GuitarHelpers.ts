@@ -1,5 +1,5 @@
-import { Measure as MeasureType } from '../../Types/guitarProTabs.types'
-import { Chord, GuitarString } from '../types'
+import { Measure as MeasureType, Track } from '../../Types/guitarProTabs.types'
+import { Chord, GUITAR_STRINGS, GuitarString } from '../types'
 
 // Returns true if the first is before the second else false
 export const compareGuitarString = (x: GuitarString, y: GuitarString) => {
@@ -89,6 +89,15 @@ export const getChordsFromMeasure = (
     B: 0,
     e: 0,
   }
+
+  let lastChord: Chord = {
+    E: 0,
+    A: 0,
+    D: 0,
+    G: 0,
+    B: 0,
+    e: 0,
+  }
   let lastBeat = 0
   beats.map((beat, beatIndex) => {
     beat.notes.map((note) => {
@@ -104,10 +113,18 @@ export const getChordsFromMeasure = (
       // else getting a conflict because the chord has a value there
       // that means we create a new chord
       else {
+        // we complete the currentChord with the remained values from the last
+        // because we want to persist as many notes as we can
+        GUITAR_STRINGS.map((string) => {
+          if (currentChord[string] === 0) {
+            currentChord[string] = lastChord[string]
+          }
+        })
         for (let i = lastBeat; i < beatIndex; i++) {
           chords.push({ beatIndex: i, chord: currentChord })
         }
         lastBeat = beatIndex
+        lastChord = currentChord
         currentChord = {
           E: 0,
           A: 0,
@@ -124,5 +141,89 @@ export const getChordsFromMeasure = (
   for (let i = lastBeat; i < beats.length; i++) {
     chords.push({ beatIndex: i, chord: currentChord })
   }
+  return chords
+}
+
+type chordsFromTrack = {
+  measureIndex: number
+  beatIndex: number
+  chord: Chord
+}
+
+export const getChordsFromTrack = (track: Track): chordsFromTrack[] => {
+  const chords: chordsFromTrack[] = []
+  let currentChord: Chord = {
+    E: 0,
+    A: 0,
+    D: 0,
+    G: 0,
+    B: 0,
+    e: 0,
+  }
+
+  let lastChord: Chord = {
+    E: 0,
+    A: 0,
+    D: 0,
+    G: 0,
+    B: 0,
+    e: 0,
+  }
+
+  track.measures.map((measure, measureIndex) => {
+    let lastBeat = 0
+    const beats = measure.voices[0].beats
+    beats.map((beat, beatIndex) => {
+      beat.notes.map((note) => {
+        const noteString = transformStringNumberIntoEnum(note.string)
+
+        if (
+          currentChord[noteString] === 0 ||
+          currentChord[noteString] === note.value - 3
+        ) {
+          // TODO: Remove the 3
+          currentChord[noteString] = note.value - 3
+        }
+        // else getting a conflict because the chord has a value there
+        // that means we create a new chord
+        else {
+          // we complete the currentChord with the remained values from the last
+          // because we want to persist as many notes as we can
+          GUITAR_STRINGS.map((string) => {
+            if (currentChord[string] === 0) {
+              currentChord[string] = lastChord[string]
+            }
+          })
+          for (let i = lastBeat; i < beatIndex; i++) {
+            chords.push({
+              measureIndex: measureIndex,
+              beatIndex: i,
+              chord: currentChord,
+            })
+          }
+          lastBeat = beatIndex
+          lastChord = currentChord
+          currentChord = {
+            E: 0,
+            A: 0,
+            D: 0,
+            G: 0,
+            B: 0,
+            e: 0,
+          }
+          // TODO: Remove the 3
+          currentChord[noteString] = note.value - 3
+        }
+      })
+    })
+    for (let i = lastBeat; i < beats.length; i++) {
+      chords.push({
+        measureIndex: measureIndex,
+        beatIndex: i,
+        chord: currentChord,
+      })
+    }
+  })
+  console.log({ chords })
   return chords
 }

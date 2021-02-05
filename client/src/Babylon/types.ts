@@ -7,6 +7,15 @@ export enum GuitarString {
   e = 'e',
 }
 
+export const GUITAR_STRINGS: GuitarString[] = [
+  GuitarString.E,
+  GuitarString.A,
+  GuitarString.D,
+  GuitarString.G,
+  GuitarString.B,
+  GuitarString.e,
+]
+
 export type Chord = {
   E: number
   A: number

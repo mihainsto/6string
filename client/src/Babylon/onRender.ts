@@ -59,6 +59,9 @@ export const onRender = (scene: Scene) => {
 
   const currentNotes: Note[] | undefined = getNotes().currentNotes
 
+  const chord = getChord().currentChord
+  chord && poseLeftHandChord({ scene, chord })
+
   if (currentNotes && Array.isArray(currentNotes)) {
     // If we have a new set of notes we start the animation
     if (
@@ -69,9 +72,6 @@ export const onRender = (scene: Scene) => {
         )
       )
     ) {
-      const chord = getChord().currentChord
-      chord && poseLeftHandChord({ scene, chord })
-
       oldNotes = currentNotes
       currentNotes.forEach((note) => {
         let theString: GuitarString = GuitarString.e
@@ -85,7 +85,7 @@ export const onRender = (scene: Scene) => {
         animateRightHandFinger({ string: theString, scene })
 
         animationValues[theString] = animateGuitarString({
-          controlPointParameter: StringControlPoints[0],
+          controlPointParameter: StringControlPoints[note.value],
           controlZFactor: 0,
           directionVector: StringDirectionVectors[theString],
           path: StringPaths[theString],
