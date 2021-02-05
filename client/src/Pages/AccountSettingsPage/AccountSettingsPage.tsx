@@ -4,6 +4,9 @@ import { css } from '@emotion/react'
 import {
   Avatar,
   Button,
+  Card,
+  CardActions,
+  CardContent,
   colors,
   Input,
   Snackbar,
@@ -18,7 +21,6 @@ import { FC } from 'react'
 import { CloudinaryUploadModal } from '../../Components/CloudinaryUploadModal'
 import { PageLayout } from '../../Components/Layouts/PageLayout'
 import { Pages } from '../../Components/Navigation/LeftNav'
-import { TopNav } from '../../Components/Navigation/TopNav'
 import { useUpdateUserMutation } from '../../generated/graphql'
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
@@ -32,12 +34,15 @@ export const AccountSettingsPage: FC = () => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined | null>(
     undefined,
   )
+  const [email, setEmail] = useState<string | undefined>(undefined)
+
   const [updateUser] = useUpdateUserMutation()
   const getCloudinaryUrl = useCloudinaryUrl()
 
   useEffect(() => {
     setUsername(userData.data?.me.username as string)
     setAvatarUrl(userData.data?.me.avatarUrl as string)
+    setEmail(userData.data?.me.email)
   }, [userData.data])
 
   useEffect(() => {
@@ -76,91 +81,232 @@ export const AccountSettingsPage: FC = () => {
     <PageLayout page={Pages.Settings}>
       <div
         css={css`
-          margin-top: 150px;
-          padding: 20px 40px 0 40px;
+          padding: 0 50px;
         `}
       >
-        <Typography variant={'h5'} color={'textSecondary'}>
-          Account Settings
-        </Typography>
-
         <div
           css={css`
-            margin-top: 50px;
+            display: grid;
+            justify-content: center;
           `}
         >
-          <Typography variant={'subtitle1'}>Avatar</Typography>
           <div
             css={css`
-              margin-top: 10px;
-              display: inline-grid;
-              grid-template-columns: 1fr 1fr 1fr;
-              align-items: center;
+              text-align: left;
             `}
           >
-            <Avatar
-              src={avatarUrl ? getCloudinaryUrl(avatarUrl) : ''}
-              style={{ width: 70, height: 70 }}
+            <Typography variant={'h5'} color={'textSecondary'}>
+              Account Settings
+            </Typography>
+          </div>
+          <Card
+            variant="outlined"
+            css={css`
+              margin-top: 50px;
+              width: 900px;
+            `}
+          >
+            <CardContent
+              css={css`
+                text-align: left;
+              `}
             >
-              {userData.data?.me.username.substring(0, 2)}
-            </Avatar>
-            <div>
-              <Button
-                variant={'outlined'}
-                color={'primary'}
-                onClick={() => setImageUploadModal(true)}
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: space-between;
+                `}
               >
-                Upload
-              </Button>
-            </div>
-            <div
-              css={css`
-                margin-left: 20px;
-              `}
-            >
-              <Button variant={'outlined'} onClick={() => setAvatarUrl('')}>
-                Remove
-              </Button>
-            </div>
-          </div>
+                <Typography variant="h5">Avatar</Typography>
+                <Avatar
+                  src={avatarUrl ? getCloudinaryUrl(avatarUrl) : ''}
+                  style={{ width: 70, height: 70 }}
+                >
+                  {userData.data?.me.username.substring(0, 2)}
+                </Avatar>
+              </div>
 
-          <div
+              <div
+                css={css`
+                  margin-top: 10px;
+                  display: flex;
+                `}
+              >
+                <div>
+                  <Button
+                    variant={'outlined'}
+                    color={'primary'}
+                    onClick={() => setImageUploadModal(true)}
+                  >
+                    Upload
+                  </Button>
+                </div>
+                <div
+                  css={css`
+                    margin-left: 20px;
+                  `}
+                >
+                  <Button variant={'outlined'} onClick={() => setAvatarUrl('')}>
+                    Remove
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            variant="outlined"
             css={css`
-              margin-top: 50px;
+              margin-top: 25px;
+              width: 900px;
             `}
           >
-            <Typography variant={'subtitle1'}>Display Name</Typography>
-            <div
+            <CardContent
               css={css`
-                margin-top: 10px;
+                text-align: left;
               `}
             >
-              <TextField
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                variant={'filled'}
-                size={'small'}
-                label={'Change the username'}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-          </div>
-          <div
+              <Typography variant="h5">Display Name</Typography>
+
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 10px;
+                `}
+              >
+                <Typography variant="subtitle1" color={'textSecondary'}>
+                  Change your username
+                </Typography>
+                <TextField
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                  size="small"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            variant="outlined"
             css={css`
-              margin-top: 50px;
-              text-align: right;
+              margin-top: 25px;
+              width: 900px;
             `}
           >
-            <Button
-              color={'primary'}
-              variant={'contained'}
-              onClick={saveChangesClicked}
+            <CardContent
+              css={css`
+                text-align: left;
+              `}
             >
-              Save changes
-            </Button>
-          </div>
+              <Typography variant="h5">Email</Typography>
+
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 10px;
+                `}
+              >
+                <Typography variant="subtitle1" color={'textSecondary'}>
+                  Change your email
+                </Typography>
+                <TextField
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="outlined"
+                  size="small"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            variant="outlined"
+            css={css`
+              margin-top: 25px;
+              width: 900px;
+            `}
+          >
+            <CardContent
+              css={css`
+                text-align: left;
+              `}
+            >
+              <Typography variant="h5">Password</Typography>
+
+              <div
+                css={css`
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-top: 10px;
+                `}
+              >
+                <Typography variant="subtitle1" color={'textSecondary'}>
+                  Change your password
+                </Typography>
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                  `}
+                >
+                  <TextField
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    variant="outlined"
+                    size="small"
+                    label="Current password"
+                    type="password"
+                  />
+                  <TextField
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    variant="outlined"
+                    size="small"
+                    label="New password"
+                    type="password"
+                  />
+                  <TextField
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                    variant="outlined"
+                    size="small"
+                    label="Repeat new password"
+                    type="password"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <div
+          css={css`
+            margin-top: 25px;
+          `}
+        >
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            onClick={saveChangesClicked}
+          >
+            Save changes
+          </Button>
         </div>
       </div>
 
