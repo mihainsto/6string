@@ -5,14 +5,11 @@ import { writeStorage } from '@rehooks/local-storage'
 import React, { useEffect } from 'react'
 import { FC } from 'react'
 import { useParams } from 'react-router-dom'
-import * as Tone from 'tone'
 
 import { BabylonMainPage } from '../../Babylon/BabylonMainPage'
+import { PlaygroundNav } from '../../Components/Navigation/PlaygroundNav'
 import { useSongQuery } from '../../generated/graphql'
-import {
-  GuitarProTab,
-  Measure as MeasureType,
-} from '../../Types/guitarProTabs.types'
+import { GuitarProTab } from '../../Types/guitarProTabs.types'
 import { Tabs } from './Tabs'
 
 export const SongPlayPage: FC = () => {
@@ -35,14 +32,14 @@ export const SongPlayPage: FC = () => {
         height: 100%;
       `}
     >
-      {/*<div*/}
-      {/*  css={css`*/}
-      {/*    position: absolute;*/}
-      {/*    width: 100%;*/}
-      {/*  `}*/}
-      {/*>*/}
-      {/*  <PlaygroundNav />*/}
-      {/*</div>*/}
+      <div
+        css={css`
+          position: absolute;
+          width: 100%;
+        `}
+      >
+        <PlaygroundNav />
+      </div>
 
       <BabylonMainPage />
       {tab && <Tabs tab={tab} />}

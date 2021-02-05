@@ -9,6 +9,7 @@ import {
   Paper,
   Tab,
   Tabs,
+  TextField,
   Typography,
 } from '@material-ui/core'
 import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
@@ -19,17 +20,7 @@ import { useHistory } from 'react-router-dom'
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 
-export enum pages {
-  'Home' = 0,
-  'Songs' = 1,
-  'Playground' = 2,
-  'Submit_Tab' = 3,
-  'About' = 4,
-}
-type navProps = {
-  page?: pages
-}
-export const Nav: FC<navProps> = ({ page }) => {
+export const TopNav: FC = () => {
   const [token] = useLocalStorage('accessToken')
   const { data, loading } = useCurrentUser()
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
@@ -41,39 +32,28 @@ export const Nav: FC<navProps> = ({ page }) => {
     setMenuAnchorEl(null)
   }
   const history = useHistory()
-  const handleTabChange = (tab: number) => {
-    if (tab === pages.Home) {
-      history.push('/')
-    }
-    if (tab === pages.Songs) {
-      history.push('/songs')
-    }
-  }
+
   return (
     <div
       css={css`
-        padding: 20px 40px 0 40px;
+        padding: 20px 40px 0 200px;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
       `}
     >
-      <Typography color={'primary'} variant={'subtitle2'}>
-        Project-sixstring
-      </Typography>
-      <Tabs
-        value={page}
-        indicatorColor="primary"
-        textColor="primary"
-        centered
-        onChange={(event, value) => handleTabChange(value)}
+      <div
+        css={css`
+          width: 300px;
+        `}
       >
-        <Tab label={'Home'} />
-        <Tab label={'Songs'} />
-        <Tab label={'Playground'} />
-        <Tab label={'Submit Tab'} />
-        <Tab label={'About'} />
-      </Tabs>
+        <TextField
+          label="Search for a song"
+          variant="outlined"
+          size="small"
+          fullWidth
+        />
+      </div>
       <div>
         {!token && (
           <Button

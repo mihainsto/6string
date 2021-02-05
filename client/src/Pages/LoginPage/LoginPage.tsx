@@ -15,7 +15,7 @@ import React, { useState } from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { AuthLayout } from '../../Components/AuthLayout'
+import { AuthLayout } from '../../Components/Layouts/AuthLayout'
 import { useLoginMutation } from '../../generated/graphql'
 
 export const LoginPage: FC = () => {

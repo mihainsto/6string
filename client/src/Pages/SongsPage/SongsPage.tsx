@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import React, { FC, useEffect, useState } from 'react'
 
-import { Nav, pages } from '../../Components/Navigation/Nav'
+import { TopNav } from '../../Components/Navigation/TopNav'
 import {
   Difficulty,
   GuitarStyle,
@@ -108,7 +108,7 @@ export const SongsPage: FC = () => {
 
   return (
     <div>
-      <Nav page={pages.Songs} />
+      <TopNav />
       <div
         css={css`
           margin-top: 40px;
