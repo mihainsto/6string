@@ -3,12 +3,14 @@
 import { css } from '@emotion/react'
 import {
   Avatar,
+  Breadcrumbs,
   Button,
   Card,
   CardActions,
   CardContent,
   colors,
   Input,
+  Link,
   Snackbar,
   Tab,
   Tabs,
@@ -17,6 +19,7 @@ import {
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FC } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import { CloudinaryUploadModal } from '../../Components/CloudinaryUploadModal'
 import { PageLayout } from '../../Components/Layouts/PageLayout'
@@ -26,6 +29,7 @@ import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 
 export const AccountSettingsPage: FC = () => {
+  const history = useHistory()
   const userData = useCurrentUser()
   const [username, setUsername] = useState<string | null>(null)
   const [successSnackbar, setSuccessSnackbar] = useState(false)
@@ -95,9 +99,21 @@ export const AccountSettingsPage: FC = () => {
               text-align: left;
             `}
           >
-            <Typography variant={'h5'} color={'textSecondary'}>
-              Account Settings
-            </Typography>
+            <Breadcrumbs aria-label="breadcrumb">
+              <Link
+                color="inherit"
+                css={css`
+                  cursor: pointer;
+                `}
+                onClick={() => {
+                  history.push('/settings')
+                }}
+              >
+                Settings
+              </Link>
+
+              <Typography color="textPrimary">Account Settings</Typography>
+            </Breadcrumbs>
           </div>
           <Card
             variant="outlined"
