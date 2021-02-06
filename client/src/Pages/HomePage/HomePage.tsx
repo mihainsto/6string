@@ -41,7 +41,6 @@ export const HomePage: FC = () => {
   )
   const { data, fetchMore, refetch } = useSongsQuery({
     variables: {
-      after: '',
       first: first,
       // query: searchQuery,
       filter: songFilter,

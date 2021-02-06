@@ -53,7 +53,7 @@ input SongOrder {
     field: SongOrderField!
 }
 
-query Songs($first: Int!, $after: String!, $query: String, $filter: SongFilter, $orderBy: SongOrder) {
+query Songs($first: Int!, $after: String, $query: String, $filter: SongFilter, $orderBy: SongOrder) {
     songs(first: $first, after: $after, query: $query, filter: $filter, orderBy: $orderBy) {
         edges {
             node {
