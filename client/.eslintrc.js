@@ -32,7 +32,7 @@ module.exports = {
     'plugin:prettier/recommended', // Make sure this is the last one
   ],
   rules: {
-    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+    'prettier/prettier': 0,
     'react/display-name': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
@@ -40,5 +40,6 @@ module.exports = {
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
     'jsx-a11y/anchor-is-valid': 'off',
+    'jsx-a11y/no-autofocus': 'off',
   },
 }

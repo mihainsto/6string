@@ -29,7 +29,8 @@
     "soundfont-player": "^0.12.0",
     "tone": "^14.7.77",
     "web-vitals": "^1.1.0",
-    "zustand": "^3.3.1"
+    "zustand": "^3.3.1",
+    "date-fns": "^2.17.0"
   },
   "scripts": {
     "start": "react-scripts start",

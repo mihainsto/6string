@@ -62,6 +62,7 @@ query Songs($first: Int!, $after: String, $query: String, $filter: SongFilter, $
                 tuning
                 style
                 updatedAt
+                createdAt
                 difficulty
                 artist
             }

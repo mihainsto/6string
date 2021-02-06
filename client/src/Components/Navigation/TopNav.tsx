@@ -13,15 +13,17 @@ import {
   Typography,
 } from '@material-ui/core'
 import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
+import { useSearchStore } from '../../State/SearchState'
 
 export const TopNav: FC = () => {
   const [token] = useLocalStorage('accessToken')
+  const searchString = useSearchStore((state) => state.searchString)
   const { data, loading } = useCurrentUser()
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
   const getCloudinaryUrl = useCloudinaryUrl()
@@ -32,7 +34,7 @@ export const TopNav: FC = () => {
     setMenuAnchorEl(null)
   }
   const history = useHistory()
-
+  const textFieldRef = useRef<HTMLDivElement | null>(null)
   return (
     <div
       css={css`
@@ -48,9 +50,16 @@ export const TopNav: FC = () => {
         `}
       >
         <TextField
+          ref={textFieldRef}
           label="Search for a song"
           variant="outlined"
           size="small"
+          autoFocus={history.location.pathname === '/' && searchString !== ''}
+          value={searchString}
+          onChange={(e) => {
+            history.push('/')
+            useSearchStore.setState({ searchString: e.target.value })
+          }}
           fullWidth
         />
       </div>
@@ -63,7 +72,7 @@ export const TopNav: FC = () => {
             variant={'contained'}
             color={'primary'}
             size={'large'}
-            onClick={() => history.push('/login')}
+            onClick={(e) => history.push('/login')}
           >
             Login
           </Button>

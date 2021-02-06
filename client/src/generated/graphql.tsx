@@ -304,6 +304,7 @@ export type SongsQuery = { __typename?: 'Query' } & {
               | 'tuning'
               | 'style'
               | 'updatedAt'
+              | 'createdAt'
               | 'difficulty'
               | 'artist'
             >
@@ -399,6 +400,7 @@ export const SongsDocument = gql`
           tuning
           style
           updatedAt
+          createdAt
           difficulty
           artist
         }

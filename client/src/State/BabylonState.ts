@@ -2,11 +2,12 @@
 import create from 'zustand/vanilla'
 
 import { Chord } from '../Babylon/types'
-import { Measure as MeasureType, Note } from '../Types/guitarProTabs.types'
+import { Note } from '../Types/guitarProTabs.types'
 
 type NotesStoreType = {
   currentNotes: Note[] | undefined
 }
+
 type ChordStoreType = {
   currentChord: Chord | undefined
 }
