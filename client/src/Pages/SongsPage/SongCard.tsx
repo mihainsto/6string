@@ -14,10 +14,10 @@ import React, { useState } from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { SongEdge } from '../../generated/graphql'
+import { Song } from '../../generated/graphql'
 
 type SongCardProps = {
-  song: SongEdge
+  song: Song
 }
 export const SongCard: FC<SongCardProps> = ({ song }) => {
   const [expanded, setExpanded] = useState(false)
@@ -63,7 +63,7 @@ export const SongCard: FC<SongCardProps> = ({ song }) => {
                   margin-top: -3px;
                 }
               `}
-              onClick={() => history.push(`/playsong/${song.node.id}`)}
+              onClick={() => history.push(`/playsong/${song.id}`)}
             />
           )}
         </Typography>
@@ -72,7 +72,7 @@ export const SongCard: FC<SongCardProps> = ({ song }) => {
             flex-basis: 33%;
           `}
         >
-          {song.node.title}
+          {song.title}
         </Typography>
         <Typography
           css={css`
@@ -80,21 +80,17 @@ export const SongCard: FC<SongCardProps> = ({ song }) => {
           `}
           color={'textSecondary'}
         >
-          {song.node.artist}
+          {song.artist}
         </Typography>
-        <Typography color={'textSecondary'}>{song.node.difficulty}</Typography>
+        <Typography color={'textSecondary'}>{song.difficulty}</Typography>
       </AccordionSummary>
       <AccordionDetails
         css={css`
           flex-direction: column;
         `}
       >
-        <Typography color={'textSecondary'}>
-          Tuning: {song.node.tuning}
-        </Typography>
-        <Typography color={'textSecondary'}>
-          Style: {song.node.style}
-        </Typography>
+        <Typography color={'textSecondary'}>Tuning: {song.tuning}</Typography>
+        <Typography color={'textSecondary'}>Style: {song.style}</Typography>
       </AccordionDetails>
     </Accordion>
   )

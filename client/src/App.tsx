@@ -11,7 +11,6 @@ import { AccountSettingsPage } from './Pages/Settings/AccountSettingsPage'
 import { Settings } from './Pages/Settings/Settings'
 import { SongPlayPage } from './Pages/SongPlayPage/SongPlayPage'
 import { Tabs } from './Pages/SongPlayPage/Tabs'
-import { SongsPage } from './Pages/SongsPage/SongsPage'
 
 function App() {
   return (
@@ -25,9 +24,6 @@ function App() {
         </Route>
         <Route path="/register">
           <RegisterPage />
-        </Route>
-        <Route path="/songs">
-          <SongsPage />
         </Route>
         <Route path="/settings/account">
           <AccountSettingsPage />

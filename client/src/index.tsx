@@ -7,6 +7,7 @@ import {
   InMemoryCache,
 } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
+import { relayStylePagination } from '@apollo/client/utilities'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -26,7 +27,15 @@ const httpLink = createHttpLink({
   uri: process.env.REACT_APP_API_URL,
 })
 
-const cache = new InMemoryCache()
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        songs: relayStylePagination(),
+      },
+    },
+  },
+})
 
 const client = new ApolloClient({
   link: authLink.concat(httpLink),

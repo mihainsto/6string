@@ -7,7 +7,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  TextField,
 } from '@material-ui/core'
 import React, { FC, useEffect, useState } from 'react'
 
@@ -17,7 +16,7 @@ import {
   Difficulty,
   GuitarStyle,
   OrderDirection,
-  SongEdge,
+  Song,
   SongFilter,
   SongOrder,
   SongOrderField,
@@ -27,15 +26,10 @@ import { SongCard } from '../SongsPage/SongCard'
 
 export const HomePage: FC = () => {
   const first = 10
-  const [filtersOpen, setFiltersOpen] = useState(false)
-  const [activeDebounce, setActiveDebounce] = useState(false)
   const [queryField, setQueryField] = useState('')
   const [searchQuery, setSearchQuery] = useState<string | null>('')
   const [songFilter, setSongFilter] = useState<SongFilter | null>(null)
   const [songOrder, setSongOrder] = useState<SongOrder | null>(null)
-  const [cursor, setCursor] = useState('')
-  const [lastCursor, setLastCursor] = useState('')
-  const [songs, setSongs] = useState<SongEdge[]>([])
 
   const [styleSelect, setStyleSelect] = useState<GuitarStyle | 'ALL'>('ALL')
   const [tuningSelect, setTuningSelect] = useState<string>('ALL')
@@ -45,24 +39,21 @@ export const HomePage: FC = () => {
   const [sortBySelect, setSortBySelect] = useState<SongOrderField | 'None'>(
     'None',
   )
-  const { data } = useSongsQuery({
+  const { data, fetchMore, refetch } = useSongsQuery({
     variables: {
-      after: cursor,
+      after: '',
       first: first,
-      query: searchQuery,
+      // query: searchQuery,
       filter: songFilter,
       orderBy: songOrder,
     },
   })
 
-  const resetData = () => {
-    setSongs([])
-    setCursor('')
-    setLastCursor('')
-  }
+  useEffect(() => {
+    refetch()
+  }, [songFilter, songOrder])
+
   const setFilter = (filter: SongFilter) => {
-    resetData()
-    setSongs([])
     setSongFilter({
       ...songFilter,
       ...filter,
@@ -70,8 +61,6 @@ export const HomePage: FC = () => {
   }
 
   const setSortBy = (order: SongOrderField | null) => {
-    resetData()
-    setSongs([])
     if (order)
       setSongOrder({
         direction: OrderDirection.Asc,
@@ -81,31 +70,6 @@ export const HomePage: FC = () => {
       setSongOrder(null)
     }
   }
-  useEffect(() => setActiveDebounce(true), [])
-  useEffect(() => {
-    if (data?.songs.edges && searchQuery != null) {
-      const newSongs = [...songs, ...data?.songs.edges]
-      console.log(newSongs)
-
-      setSongs(newSongs as SongEdge[])
-      setLastCursor(data.songs.pageInfo.endCursor!)
-    }
-  }, [data, searchQuery])
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (!activeDebounce) return
-      setSearchQuery(null)
-      resetData()
-      if (queryField.length > 2) {
-        setSearchQuery(queryField)
-      } else if (queryField.length == 0) {
-        setSearchQuery('')
-      }
-    }, 300)
-
-    return () => clearTimeout(delayDebounceFn)
-  }, [queryField])
 
   return (
     <PageLayout page={Pages.Home}>
@@ -123,24 +87,9 @@ export const HomePage: FC = () => {
         >
           <div
             css={css`
-              text-align: right;
-              margin-top: 20px;
-            `}
-          >
-            <Button
-              color={filtersOpen ? 'secondary' : 'primary'}
-              variant={'contained'}
-              onClick={() => setFiltersOpen(!filtersOpen)}
-            >
-              Filters
-            </Button>
-          </div>
-          <div
-            css={css`
               margin-top: 20px;
               display: flex;
               justify-content: space-between;
-              display: ${!filtersOpen && 'none'};
             `}
           >
             <FormControl
@@ -235,25 +184,39 @@ export const HomePage: FC = () => {
               </Select>
             </FormControl>
           </div>
-          <div
-            css={css`
-              margin-top: 40px;
-            `}
-          >
-            {songs.map((song, index) => {
-              return <SongCard song={song} key={index} />
-            })}
+
+          {data?.songs.edges && (
             <div
               css={css`
-                text-align: center;
-                margin-top: 20px;
+                margin-top: 40px;
               `}
             >
-              <Button size={'large'} onClick={() => setCursor(lastCursor)}>
-                Load More
-              </Button>
+              {data.songs.edges.map((song, index) => {
+                return <SongCard song={song.node as Song} key={index} />
+              })}
+              {data.songs.pageInfo.hasNextPage && (
+                <div
+                  css={css`
+                    text-align: center;
+                    margin-top: 20px;
+                  `}
+                >
+                  <Button
+                    size={'large'}
+                    onClick={() => {
+                      fetchMore({
+                        variables: {
+                          after: data?.songs.pageInfo.endCursor,
+                        },
+                      })
+                    }}
+                  >
+                    Load More
+                  </Button>
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </div>
     </PageLayout>
