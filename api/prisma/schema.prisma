@@ -71,7 +71,7 @@ model Song {
     difficulty Difficulty
     tuning     String
     style      GuitarStyle?
-    tab        Tab
+    tab        Tab?
 }
 
 model Tab {

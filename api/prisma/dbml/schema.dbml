@@ -12,7 +12,7 @@ Table User {
   role Role [not null]
   avatarUrl String
   playgroundSettings PlaygroundSettings
-  Song Song
+  Song Song [not null]
 }
 
 Table PlaygroundSettings {
@@ -37,7 +37,7 @@ Table Song {
   difficulty Difficulty [not null]
   tuning String [not null]
   style GuitarStyle
-  tab Tab [not null]
+  tab Tab
 }
 
 Table Tab {
@@ -48,7 +48,7 @@ Table Tab {
   songId String [not null]
   tempo Int [not null]
   tempoName String [not null]
-  tracks Track
+  tracks Track [not null]
 }
 
 Table Track {

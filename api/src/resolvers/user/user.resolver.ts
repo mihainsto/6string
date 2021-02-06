@@ -52,7 +52,7 @@ export class UserResolver {
   @ResolveField('playgroundSettings')
   playgroundSettings(@Parent() user: User) {
     return this.prisma.user
-      .findOne({ where: { id: user.id } })
+      .findUnique({ where: { id: user.id } })
       .playgroundSettings();
   }
 }

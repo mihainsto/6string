@@ -16,7 +16,7 @@ export class SongService {
   ) {}
 
   async song({ songId }: { songId: string }) {
-    return this.prisma.song.findOne({
+    return this.prisma.song.findUnique({
       include: { tab: { include: { tracks: true } } },
       where: { id: songId },
     });
