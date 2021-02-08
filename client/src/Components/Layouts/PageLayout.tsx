@@ -13,7 +13,7 @@ export const PageLayout: FC<PageLayoutProps> = ({ children, page }) => {
   return (
     <div>
       <LeftNav page={page} />
-      <TopNav />
+      <TopNav homePage={page === Pages.Home ? true : false} />
       <div
         css={css`
           margin-left: 150px;

@@ -12,7 +12,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
-import { Brightness5 } from '@material-ui/icons'
+import { Favorite, FavoriteBorder } from '@material-ui/icons'
 import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
 import React, { useRef, useState } from 'react'
 import { FC } from 'react'
@@ -23,9 +23,14 @@ import { useCurrentUser } from '../../Hooks/useCurrentUser'
 import { useSearchStore } from '../../State/SearchState'
 import { useThemeStore } from '../../State/ThemeState'
 
-export const TopNav: FC = () => {
+type TopNavProps = {
+  homePage?: boolean
+}
+export const TopNav: FC<TopNavProps> = ({ homePage }) => {
   const [token] = useLocalStorage('accessToken')
   const searchString = useSearchStore((state) => state.searchString)
+  const favorites = useSearchStore((state) => state.favorites)
+  const toggleFavorites = useSearchStore((state) => state.toggleFavorites)
   const switchTheme = useThemeStore((state) => state.switchTheme)
   const { data, loading } = useCurrentUser()
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
@@ -50,22 +55,43 @@ export const TopNav: FC = () => {
     >
       <div
         css={css`
-          width: 300px;
+          display: flex;
+          align-items: center;
         `}
       >
-        <TextField
-          ref={textFieldRef}
-          label="Search for a song"
-          variant="outlined"
-          size="small"
-          autoFocus={history.location.pathname === '/' && searchString !== ''}
-          value={searchString}
-          onChange={(e) => {
-            history.push('/')
-            useSearchStore.setState({ searchString: e.target.value })
-          }}
-          fullWidth
-        />
+        <div
+          css={css`
+            width: 300px;
+          `}
+        >
+          <TextField
+            ref={textFieldRef}
+            label="Search for a song"
+            variant="outlined"
+            size="small"
+            autoFocus={history.location.pathname === '/' && searchString !== ''}
+            value={searchString}
+            onChange={(e) => {
+              history.push('/')
+              useSearchStore.setState({ searchString: e.target.value })
+            }}
+            fullWidth
+          />
+        </div>
+        {homePage && (
+          <button
+            css={css`
+              margin-left: 20px;
+            `}
+            onClick={() => toggleFavorites()}
+          >
+            {favorites ? (
+              <Favorite fontSize={'large'} />
+            ) : (
+              <FavoriteBorder fontSize={'large'} />
+            )}
+          </button>
+        )}
       </div>
       <div>
         {!token && (
