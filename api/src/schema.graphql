@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AddSongToFavoriteInput {
+  songId: ID!
+}
+
 type Auth {
   """JWT access token"""
   accessToken: String!
@@ -60,10 +64,12 @@ input LoginInput {
 }
 
 type Mutation {
+  addSongToFavorite(input: AddSongToFavoriteInput!): Song!
   changePassword(data: ChangePasswordInput!): User!
   createSong(input: CreateSongInput!): Song!
   login(data: LoginInput!): Auth!
   refreshToken(token: String!): Token!
+  removeSongFromFavorite(input: RemoveSongFromFavoriteInput!): Song!
   signup(data: SignupInput!): Auth!
   updateUser(data: UpdateUserInput!): User!
 }
@@ -100,7 +106,11 @@ type Query {
   helloWorld: String!
   me: User!
   song(id: String!): Song!
-  songs(after: String, before: String, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
+  songs(after: String, before: String, favorite: Boolean, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
+}
+
+input RemoveSongFromFavoriteInput {
+  songId: ID!
 }
 
 """User role"""
@@ -121,6 +131,7 @@ type Song {
   """Identifies the date and time when the object was created."""
   createdAt: Date!
   difficulty: Difficulty!
+  favorite: Boolean!
   id: ID!
   postedBy: User!
   style: GuitarStyle

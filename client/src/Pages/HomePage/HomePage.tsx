@@ -3,11 +3,6 @@
 import { css } from '@emotion/react'
 import {
   Button,
-  colors,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -17,22 +12,22 @@ import {
   TableSortLabel,
   useTheme,
 } from '@material-ui/core'
-import { FavoriteBorder, PlayCircleOutline } from '@material-ui/icons'
+import { Favorite, FavoriteBorder, PlayCircleOutline } from '@material-ui/icons'
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday'
 import ScheduleIcon from '@material-ui/icons/Schedule'
 import { format } from 'date-fns'
 import React, { FC, useEffect, useState } from 'react'
+import { Simulate } from 'react-dom/test-utils'
 import { useHistory } from 'react-router-dom'
 
 import { PageLayout } from '../../Components/Layouts/PageLayout'
 import { Pages } from '../../Components/Navigation/LeftNav'
 import {
-  Difficulty,
-  GuitarStyle,
   OrderDirection,
-  SongFilter,
   SongOrder,
   SongOrderField,
+  useAddSongToFavoriteMutation,
+  useRemoveSongFromFavoriteMutation,
   useSongsQuery,
 } from '../../generated/graphql'
 import { useSearchStore } from '../../State/SearchState'
@@ -40,20 +35,29 @@ import { useSearchStore } from '../../State/SearchState'
 export const HomePage: FC = () => {
   const first = 20
   const searchString = useSearchStore((state) => state.searchString)
+  const favorites = useSearchStore((state) => state.favorites)
   const history = useHistory()
   const [orderBy, setOrderBy] = useState<SongOrder | null>(null)
   const theme = useTheme()
+
   const { data, fetchMore, refetch } = useSongsQuery({
     variables: {
       first: first,
       query: searchString,
       orderBy: orderBy,
+      favorite: favorites,
     },
   })
+  const [addSongToFavoriteMutation] = useAddSongToFavoriteMutation()
+  const [removeSongFromFavoriteMutation] = useRemoveSongFromFavoriteMutation()
 
   useEffect(() => {
     refetch()
-  }, [orderBy, searchString])
+  }, [orderBy, searchString, favorites])
+
+  // const edges = !favorites
+  //   ? data?.songs.edges
+  //   : data?.songs.edges?.filter((edge) => edge.node.favorite === true)
 
   return (
     <PageLayout page={Pages.Home}>
@@ -199,7 +203,7 @@ export const HomePage: FC = () => {
               </TableHead>
               {data?.songs.edges && (
                 <TableBody>
-                  {data.songs.edges?.map((row, index) => (
+                  {data?.songs.edges?.map((row, index) => (
                     <TableRow
                       key={index}
                       css={css`
@@ -227,8 +231,36 @@ export const HomePage: FC = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <button>
-                          <FavoriteBorder />
+                        <button
+                          onClick={() => {
+                            !row.node.favorite
+                              ? addSongToFavoriteMutation({
+                                  variables: { input: { songId: row.node.id } },
+                                  optimisticResponse: {
+                                    addSongToFavorite: {
+                                      __typename: 'Song',
+                                      id: row.node.id,
+                                      favorite: true,
+                                    },
+                                  },
+                                })
+                              : removeSongFromFavoriteMutation({
+                                  variables: { input: { songId: row.node.id } },
+                                  optimisticResponse: {
+                                    removeSongFromFavorite: {
+                                      __typename: 'Song',
+                                      id: row.node.id,
+                                      favorite: false,
+                                    },
+                                  },
+                                })
+                          }}
+                        >
+                          {!row.node.favorite ? (
+                            <FavoriteBorder />
+                          ) : (
+                            <Favorite />
+                          )}
                         </button>
                       </TableCell>
                       <TableCell component="th" scope="row">

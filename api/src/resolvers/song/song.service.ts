@@ -1,7 +1,13 @@
 import { Injectable, Logger, UseGuards } from '@nestjs/common';
 import { PrismaService } from '../../services/prisma.service';
 import { Song } from '@prisma/client';
-import { CreateSongInput, SongFilter, SongOrder } from './song.inputs';
+import {
+  CreateSongInput,
+  AddSongToFavoriteInput,
+  SongFilter,
+  SongOrder,
+  RemoveSongFromFavoriteInput,
+} from './song.inputs';
 import { User } from '../user/user.model';
 import { PaginationArgs } from '../../common/pagination/pagination.args';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
@@ -22,17 +28,22 @@ export class SongService {
     });
   }
 
-  async songs({
-    paginationArgs,
-    query,
-    orderBy,
-    filter,
-  }: {
-    paginationArgs: PaginationArgs;
-    query: string;
-    orderBy: SongOrder;
-    filter: SongFilter;
-  }) {
+  async songs(
+    {
+      paginationArgs,
+      query,
+      orderBy,
+      filter,
+      favorite,
+    }: {
+      paginationArgs: PaginationArgs;
+      query?: string;
+      orderBy?: SongOrder;
+      filter?: SongFilter;
+      favorite?: boolean;
+    },
+    user: User | undefined
+  ) {
     return findManyCursorConnection(
       (args) =>
         this.prisma.song.findMany({
@@ -46,6 +57,14 @@ export class SongService {
               filter.difficulty && { difficulty: filter.difficulty }),
             ...(filter && filter.style && { style: filter.style }),
             ...(filter && filter.tuning && { tuning: filter.tuning }),
+            ...(user &&
+              favorite && {
+                favoriteUsers: {
+                  some: {
+                    id: user.id,
+                  },
+                },
+              }),
           },
           ...(orderBy && { orderBy: { [orderBy.field]: orderBy.direction } }),
           ...args,
@@ -61,6 +80,14 @@ export class SongService {
               filter.difficulty && { difficulty: filter.difficulty }),
             ...(filter && filter.style && { style: filter.style }),
             ...(filter && filter.tuning && { tuning: filter.tuning }),
+            ...(user &&
+              favorite && {
+                favoriteUsers: {
+                  some: {
+                    id: user.id,
+                  },
+                },
+              }),
           },
         }),
       {
@@ -107,5 +134,76 @@ export class SongService {
         style: input.style,
       },
     });
+  }
+
+  async addSongToFavorite({
+    input,
+    user,
+  }: {
+    input: AddSongToFavoriteInput;
+    user: User;
+  }): Promise<Song> {
+    const song = await this.prisma.song.findUnique({
+      where: { id: input.songId },
+    });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        favoriteSongs: {
+          connect: {
+            id: song.id,
+          },
+        },
+      },
+    });
+
+    return song;
+  }
+
+  async removeSongFromFavorite({
+    input,
+    user,
+  }: {
+    input: RemoveSongFromFavoriteInput;
+    user: User;
+  }): Promise<Song> {
+    const song = await this.prisma.song.findUnique({
+      where: { id: input.songId },
+    });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        favoriteSongs: {
+          disconnect: {
+            id: song.id,
+          },
+        },
+      },
+    });
+
+    return song;
+  }
+
+  async isFavorite({
+    songId,
+    user,
+  }: {
+    songId: string;
+    user: User;
+  }): Promise<boolean> {
+    const userDb = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        favoriteSongs: true,
+      },
+    });
+
+    const song = userDb.favoriteSongs.find((song) => song.id === songId);
+    if (song) {
+      return true;
+    }
+    return false;
   }
 }

@@ -23,6 +23,10 @@ export type Scalars = {
   JSON: any
 }
 
+export type AddSongToFavoriteInput = {
+  songId: Scalars['ID']
+}
+
 export type Auth = {
   __typename?: 'Auth'
   /** JWT access token */
@@ -74,12 +78,18 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  addSongToFavorite: Song
   changePassword: User
   createSong: Song
   login: Auth
   refreshToken: Token
+  removeSongFromFavorite: Song
   signup: Auth
   updateUser: User
+}
+
+export type MutationAddSongToFavoriteArgs = {
+  input: AddSongToFavoriteInput
 }
 
 export type MutationChangePasswordArgs = {
@@ -96,6 +106,10 @@ export type MutationLoginArgs = {
 
 export type MutationRefreshTokenArgs = {
   token: Scalars['String']
+}
+
+export type MutationRemoveSongFromFavoriteArgs = {
+  input: RemoveSongFromFavoriteInput
 }
 
 export type MutationSignupArgs = {
@@ -152,12 +166,17 @@ export type QuerySongArgs = {
 export type QuerySongsArgs = {
   after?: Maybe<Scalars['String']>
   before?: Maybe<Scalars['String']>
+  favorite?: Maybe<Scalars['Boolean']>
   filter?: Maybe<SongFilter>
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
   orderBy?: Maybe<SongOrder>
   query?: Maybe<Scalars['String']>
   skip?: Maybe<Scalars['Int']>
+}
+
+export type RemoveSongFromFavoriteInput = {
+  songId: Scalars['ID']
 }
 
 /** User role */
@@ -178,6 +197,7 @@ export type Song = {
   /** Identifies the date and time when the object was created. */
   createdAt: Scalars['Date']
   difficulty: Difficulty
+  favorite: Scalars['Boolean']
   id: Scalars['ID']
   postedBy: User
   style?: Maybe<GuitarStyle>
@@ -287,6 +307,7 @@ export type SongsQueryVariables = Exact<{
   query?: Maybe<Scalars['String']>
   filter?: Maybe<SongFilter>
   orderBy?: Maybe<SongOrder>
+  favorite?: Maybe<Scalars['Boolean']>
 }>
 
 export type SongsQuery = { __typename?: 'Query' } & {
@@ -307,6 +328,7 @@ export type SongsQuery = { __typename?: 'Query' } & {
               | 'createdAt'
               | 'difficulty'
               | 'artist'
+              | 'favorite'
             >
           }
         >
@@ -325,7 +347,14 @@ export type SongQueryVariables = Exact<{
 export type SongQuery = { __typename?: 'Query' } & {
   song: { __typename?: 'Song' } & Pick<
     Song,
-    'id' | 'title' | 'tuning' | 'style' | 'updatedAt' | 'difficulty' | 'artist'
+    | 'id'
+    | 'title'
+    | 'tuning'
+    | 'style'
+    | 'updatedAt'
+    | 'difficulty'
+    | 'artist'
+    | 'favorite'
   > & {
       tab: { __typename?: 'Tab' } & Pick<Tab, 'tempo' | 'tempoName'> & {
           tracks: Array<
@@ -378,6 +407,25 @@ export type UpdateUserMutation = { __typename?: 'Mutation' } & {
   updateUser: { __typename?: 'User' } & Pick<User, 'id'>
 }
 
+export type AddSongToFavoriteMutationVariables = Exact<{
+  input: AddSongToFavoriteInput
+}>
+
+export type AddSongToFavoriteMutation = { __typename?: 'Mutation' } & {
+  addSongToFavorite: { __typename?: 'Song' } & Pick<Song, 'id' | 'favorite'>
+}
+
+export type RemoveSongFromFavoriteMutationVariables = Exact<{
+  input: RemoveSongFromFavoriteInput
+}>
+
+export type RemoveSongFromFavoriteMutation = { __typename?: 'Mutation' } & {
+  removeSongFromFavorite: { __typename?: 'Song' } & Pick<
+    Song,
+    'id' | 'favorite'
+  >
+}
+
 export const SongsDocument = gql`
   query Songs(
     $first: Int!
@@ -385,6 +433,7 @@ export const SongsDocument = gql`
     $query: String
     $filter: SongFilter
     $orderBy: SongOrder
+    $favorite: Boolean
   ) {
     songs(
       first: $first
@@ -392,6 +441,7 @@ export const SongsDocument = gql`
       query: $query
       filter: $filter
       orderBy: $orderBy
+      favorite: $favorite
     ) {
       edges {
         node {
@@ -403,6 +453,7 @@ export const SongsDocument = gql`
           createdAt
           difficulty
           artist
+          favorite
         }
       }
       pageInfo {
@@ -431,6 +482,7 @@ export const SongsDocument = gql`
  *      query: // value for 'query'
  *      filter: // value for 'filter'
  *      orderBy: // value for 'orderBy'
+ *      favorite: // value for 'favorite'
  *   },
  * });
  */
@@ -466,6 +518,7 @@ export const SongDocument = gql`
       updatedAt
       difficulty
       artist
+      favorite
       tab {
         tracks {
           measures
@@ -710,4 +763,102 @@ export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserMutation,
   UpdateUserMutationVariables
+>
+export const AddSongToFavoriteDocument = gql`
+  mutation addSongToFavorite($input: AddSongToFavoriteInput!) {
+    addSongToFavorite(input: $input) {
+      id
+      favorite
+    }
+  }
+`
+export type AddSongToFavoriteMutationFn = Apollo.MutationFunction<
+  AddSongToFavoriteMutation,
+  AddSongToFavoriteMutationVariables
+>
+
+/**
+ * __useAddSongToFavoriteMutation__
+ *
+ * To run a mutation, you first call `useAddSongToFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddSongToFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addSongToFavoriteMutation, { data, loading, error }] = useAddSongToFavoriteMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddSongToFavoriteMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddSongToFavoriteMutation,
+    AddSongToFavoriteMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    AddSongToFavoriteMutation,
+    AddSongToFavoriteMutationVariables
+  >(AddSongToFavoriteDocument, baseOptions)
+}
+export type AddSongToFavoriteMutationHookResult = ReturnType<
+  typeof useAddSongToFavoriteMutation
+>
+export type AddSongToFavoriteMutationResult = Apollo.MutationResult<AddSongToFavoriteMutation>
+export type AddSongToFavoriteMutationOptions = Apollo.BaseMutationOptions<
+  AddSongToFavoriteMutation,
+  AddSongToFavoriteMutationVariables
+>
+export const RemoveSongFromFavoriteDocument = gql`
+  mutation removeSongFromFavorite($input: RemoveSongFromFavoriteInput!) {
+    removeSongFromFavorite(input: $input) {
+      id
+      favorite
+    }
+  }
+`
+export type RemoveSongFromFavoriteMutationFn = Apollo.MutationFunction<
+  RemoveSongFromFavoriteMutation,
+  RemoveSongFromFavoriteMutationVariables
+>
+
+/**
+ * __useRemoveSongFromFavoriteMutation__
+ *
+ * To run a mutation, you first call `useRemoveSongFromFavoriteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveSongFromFavoriteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeSongFromFavoriteMutation, { data, loading, error }] = useRemoveSongFromFavoriteMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveSongFromFavoriteMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RemoveSongFromFavoriteMutation,
+    RemoveSongFromFavoriteMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    RemoveSongFromFavoriteMutation,
+    RemoveSongFromFavoriteMutationVariables
+  >(RemoveSongFromFavoriteDocument, baseOptions)
+}
+export type RemoveSongFromFavoriteMutationHookResult = ReturnType<
+  typeof useRemoveSongFromFavoriteMutation
+>
+export type RemoveSongFromFavoriteMutationResult = Apollo.MutationResult<RemoveSongFromFavoriteMutation>
+export type RemoveSongFromFavoriteMutationOptions = Apollo.BaseMutationOptions<
+  RemoveSongFromFavoriteMutation,
+  RemoveSongFromFavoriteMutationVariables
 >

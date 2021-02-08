@@ -12,6 +12,7 @@ Table User {
   role Role [not null]
   avatarUrl String
   playgroundSettings PlaygroundSettings
+  favoriteSongs Song [not null]
   Song Song [not null]
 }
 
@@ -38,6 +39,7 @@ Table Song {
   tuning String [not null]
   style GuitarStyle
   tab Tab
+  favoriteUsers User [not null]
 }
 
 Table Tab {
@@ -59,6 +61,11 @@ Table Track {
   measures Json [not null]
   tab Tab [not null]
   tabId String [not null]
+}
+
+Table favoriteRelation {
+  favoritesongsId String [ref: > Song.id]
+  favoriteusersId String [ref: > User.id]
 }
 
 Enum Role {
