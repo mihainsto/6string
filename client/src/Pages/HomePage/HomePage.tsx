@@ -15,6 +15,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  useTheme,
 } from '@material-ui/core'
 import { FavoriteBorder, PlayCircleOutline } from '@material-ui/icons'
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday'
@@ -41,7 +42,7 @@ export const HomePage: FC = () => {
   const searchString = useSearchStore((state) => state.searchString)
   const history = useHistory()
   const [orderBy, setOrderBy] = useState<SongOrder | null>(null)
-
+  const theme = useTheme()
   const { data, fetchMore, refetch } = useSongsQuery({
     variables: {
       first: first,
@@ -203,8 +204,7 @@ export const HomePage: FC = () => {
                       key={index}
                       css={css`
                         &:hover {
-                          background-color: ${colors.grey[100]};
-
+                          background-color: ${theme.palette.action.hover};
                           & div:first-child {
                             visibility: visible;
                           }

@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { Button } from '@material-ui/core'
+import { Button, useTheme } from '@material-ui/core'
 import React, { createRef, useEffect, useState } from 'react'
 import { FC } from 'react'
 import { standard } from 'react-guitar-tunings'
@@ -29,6 +29,7 @@ const useChordStore = create(ChordStore)
 
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false
+  const theme = useTheme()
   const [firstMeasureTopDistance, setFirstMeasureTopDistance] = useState(0)
   const [playButtonState, setPlayButtonState] = useState<'PLAY' | 'PAUSE'>(
     'PLAY',
@@ -135,7 +136,7 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
       css={css`
         position: absolute;
         bottom: 0;
-        background-color: white;
+        background-color: ${theme.palette.background.default};
         box-shadow: 0 -5px 5px -5px #333;
       `}
       axis={'y'}

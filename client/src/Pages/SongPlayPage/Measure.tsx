@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { colors } from '@material-ui/core'
+import { colors, useTheme } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FC } from 'react'
 
@@ -38,6 +38,7 @@ export const Measure: FC<MeasureProps> = React.memo(
     cursorPosition,
     windowSize,
   }) => {
+    const theme = useTheme()
     const [rectLeft, setRectLeft] = useState(0)
     const [rectTop, setRectTop] = useState(0)
     const contentRef = React.createRef<HTMLDivElement>()
@@ -76,45 +77,45 @@ export const Measure: FC<MeasureProps> = React.memo(
             '4'
             '5'
             '6';
-          border-right: 2px solid ${colors.grey[900]};
-          border-left: 2px solid ${colors.grey[900]};
+          border-right: 2px solid ${theme.palette.text.primary};
+          border-left: 2px solid ${theme.palette.text.primary};
         `}
         key={key}
         ref={contentRef}
       >
         <div
           css={css`
-            border-top: 2px solid ${colors.grey[600]};
+            border-top: 2px solid ${theme.palette.text.hint};
             grid-area: 1;
           `}
         />
         <div
           css={css`
-            border-top: 2px solid ${colors.grey[600]};
+            border-top: 2px solid ${theme.palette.text.hint};
             grid-area: 2;
           `}
         />
         <div
           css={css`
-            border-top: 2px solid ${colors.grey[600]};
+            border-top: 2px solid ${theme.palette.text.hint};
             grid-area: 3;
           `}
         />
         <div
           css={css`
-            border-top: 2px solid ${colors.grey[600]};
+            border-top: 2px solid ${theme.palette.text.hint};
             grid-area: 4;
           `}
         />
         <div
           css={css`
-            border-top: 2px solid ${colors.grey[600]};
+            border-top: 2px solid ${theme.palette.text.hint};
             grid-area: 5;
           `}
         />
         <div
           css={css`
-            border-top: 2px solid ${colors.grey[600]};
+            border-top: 2px solid ${theme.palette.text.hint};
             grid-area: 6;
           `}
         />
@@ -129,7 +130,7 @@ export const Measure: FC<MeasureProps> = React.memo(
                 css={css`
                   position: absolute;
                   z-index: 2;
-                  background-color: white;
+                  background-color: ${theme.palette.background.default};
                   padding-left: 2px;
                   padding-right: 2px;
                   top: ${topOffset + notePositioning[note.string]}px;

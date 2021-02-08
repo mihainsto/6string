@@ -11,6 +11,7 @@ import {
   Tab,
   Tabs,
   Typography,
+  useTheme,
 } from '@material-ui/core'
 import {
   Home,
@@ -32,6 +33,7 @@ import { useHistory } from 'react-router-dom'
 
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
+import { useThemeStore } from '../../State/ThemeState'
 
 export enum Pages {
   'Home' = 'HOME',
@@ -45,6 +47,13 @@ type navProps = {
 }
 export const LeftNav: FC<navProps> = ({ page }) => {
   const history = useHistory()
+  const theme = useTheme()
+  const themeType = useThemeStore((state) => state.theme)
+  const hoverColor = theme.palette.text.primary
+  const textColor =
+    themeType === 'LIGHT'
+      ? theme.palette.text.secondary
+      : theme.palette.text.hint
 
   return (
     <nav
@@ -54,7 +63,10 @@ export const LeftNav: FC<navProps> = ({ page }) => {
         left: 0;
         height: 100%;
         padding: 30px 20px;
-        background-color: ${colors.blue[900]};
+        background-color: ${themeType === 'DARK' &&
+        theme.palette.background.paper};
+        border-right: ${themeType === 'LIGHT' &&
+        css`1px solid ${colors.grey['300']}`};
       `}
     >
       <div
@@ -64,7 +76,7 @@ export const LeftNav: FC<navProps> = ({ page }) => {
           align-items: center;
           grid-column-gap: 10px;
           grid-row-gap: 50px;
-          color: ${colors.grey[400]};
+          color: ${textColor};
         `}
       >
         <button
@@ -73,19 +85,15 @@ export const LeftNav: FC<navProps> = ({ page }) => {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: ${page === Pages.Home && colors.grey[100]};
+            color: ${textColor};
             &:hover {
-              color: ${colors.grey[100]};
+              color: ${hoverColor};
             }
+            color: ${page === Pages.Home && hoverColor};
           `}
         >
           {page === Pages.Home ? <HomeIcon /> : <HomeOutlined />}
-          <Typography
-            variant="h6"
-            css={css`
-              color: ${page === Pages.Home && colors.grey[100]};
-            `}
-          >
+          <Typography variant="h6" css={css``}>
             Home
           </Typography>
         </button>
@@ -96,9 +104,9 @@ export const LeftNav: FC<navProps> = ({ page }) => {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: ${page === Pages.Playground && colors.grey[100]};
+            color: ${page === Pages.Playground && hoverColor};
             &:hover {
-              color: ${colors.grey[100]};
+              color: ${hoverColor};
             }
           `}
         >
@@ -112,9 +120,9 @@ export const LeftNav: FC<navProps> = ({ page }) => {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: ${page === Pages.Playground && colors.grey[100]};
+            color: ${page === Pages.Playground && hoverColor};
             &:hover {
-              color: ${colors.grey[100]};
+              color: ${hoverColor};
             }
           `}
         >
@@ -128,9 +136,9 @@ export const LeftNav: FC<navProps> = ({ page }) => {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: ${page === Pages.Settings && colors.grey[100]};
+            color: ${page === Pages.Settings && hoverColor};
             &:hover {
-              color: ${colors.grey[100]};
+              color: ${hoverColor};
             }
           `}
         >

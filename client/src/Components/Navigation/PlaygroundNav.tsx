@@ -20,11 +20,13 @@ import { useHistory } from 'react-router-dom'
 
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
+import { useThemeStore } from '../../State/ThemeState'
 
 export const PlaygroundNav: FC = () => {
   const [token] = useLocalStorage('accessToken')
   const { data, loading } = useCurrentUser()
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
+  const switchTheme = useThemeStore((data) => data.switchTheme)
   const getCloudinaryUrl = useCloudinaryUrl()
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMenuAnchorEl(event.currentTarget)
@@ -121,7 +123,9 @@ export const PlaygroundNav: FC = () => {
                   <MenuItem onClick={() => history.push('/settings')}>
                     Settings
                   </MenuItem>
-                  <MenuItem>Favorites</MenuItem>
+                  <MenuItem onClick={() => switchTheme()}>
+                    Switch theme
+                  </MenuItem>
                   <MenuItem
                     onClick={() => {
                       writeStorage('accessToken', null)
