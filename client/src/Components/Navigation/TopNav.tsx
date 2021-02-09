@@ -1,25 +1,17 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import {
-  Avatar,
-  Button,
-  Menu,
-  MenuItem,
-  Paper,
-  Tab,
-  Tabs,
-  TextField,
-  Typography,
-} from '@material-ui/core'
+import { Avatar, Button, Menu, MenuItem, TextField } from '@material-ui/core'
 import { Favorite, FavoriteBorder } from '@material-ui/icons'
 import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
 import React, { useRef, useState } from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { useMeQuery } from '../../generated/graphql'
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
+import { useIsLoggedIn } from '../../Hooks/useIsLoggedIn'
 import { useSearchStore } from '../../State/SearchState'
 import { useThemeStore } from '../../State/ThemeState'
 
@@ -27,7 +19,7 @@ type TopNavProps = {
   homePage?: boolean
 }
 export const TopNav: FC<TopNavProps> = ({ homePage }) => {
-  const [token] = useLocalStorage('accessToken')
+  const isLoggedIn = useIsLoggedIn()
   const searchString = useSearchStore((state) => state.searchString)
   const favorites = useSearchStore((state) => state.favorites)
   const toggleFavorites = useSearchStore((state) => state.toggleFavorites)
@@ -85,16 +77,20 @@ export const TopNav: FC<TopNavProps> = ({ homePage }) => {
             `}
             onClick={() => toggleFavorites()}
           >
-            {favorites ? (
-              <Favorite fontSize={'large'} />
-            ) : (
-              <FavoriteBorder fontSize={'large'} />
+            {isLoggedIn && (
+              <>
+                {favorites ? (
+                  <Favorite fontSize={'large'} />
+                ) : (
+                  <FavoriteBorder fontSize={'large'} />
+                )}
+              </>
             )}
           </button>
         )}
       </div>
       <div>
-        {!token && (
+        {!isLoggedIn && (
           <Button
             css={css`
               padding: 10px 30px 10px 30px;
@@ -107,7 +103,7 @@ export const TopNav: FC<TopNavProps> = ({ homePage }) => {
             Login
           </Button>
         )}
-        {!loading && token && (
+        {!loading && isLoggedIn && (
           <div>
             {data && (
               <>
@@ -146,6 +142,7 @@ export const TopNav: FC<TopNavProps> = ({ homePage }) => {
                   <MenuItem
                     onClick={() => {
                       writeStorage('accessToken', null)
+                      location.reload()
                     }}
                   >
                     Log out

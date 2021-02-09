@@ -49,10 +49,10 @@ async function main() {
 
   const user3: User = await prisma.user.create({
     data: {
-      email: 'agent@gmail.com',
-      username: 'Agent',
+      email: 'mihai@gmail.com',
+      username: 'Mihai',
       avatarUrl: faker.image.cats(),
-      role: 'USER',
+      role: 'ADMIN',
       password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
       playgroundSettings: {
         create: {},

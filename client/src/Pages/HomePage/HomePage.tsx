@@ -29,6 +29,7 @@ import {
   useRemoveSongFromFavoriteMutation,
   useSongsQuery,
 } from '../../generated/graphql'
+import { useIsLoggedIn } from '../../Hooks/useIsLoggedIn'
 import { useSearchStore } from '../../State/SearchState'
 
 export const HomePage: FC = () => {
@@ -38,6 +39,7 @@ export const HomePage: FC = () => {
   const history = useHistory()
   const [orderBy, setOrderBy] = useState<SongOrder | null>(null)
   const theme = useTheme()
+  const isLoggedIn = useIsLoggedIn()
 
   const { data, fetchMore, refetch } = useSongsQuery({
     variables: {
@@ -255,10 +257,14 @@ export const HomePage: FC = () => {
                                 })
                           }}
                         >
-                          {!row.node.favorite ? (
-                            <FavoriteBorder />
-                          ) : (
-                            <Favorite />
+                          {isLoggedIn && (
+                            <>
+                              {!row.node.favorite ? (
+                                <FavoriteBorder />
+                              ) : (
+                                <Favorite />
+                              )}
+                            </>
                           )}
                         </button>
                       </TableCell>

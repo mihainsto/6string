@@ -430,7 +430,7 @@ export type MeQueryVariables = Exact<{ [key: string]: never }>
 export type MeQuery = { __typename?: 'Query' } & {
   me: { __typename?: 'User' } & Pick<
     User,
-    'username' | 'email' | 'avatarUrl'
+    'username' | 'email' | 'avatarUrl' | 'role'
   > & {
       playgroundSettings: { __typename?: 'PlaygroundSettings' } & Pick<
         PlaygroundSettings,
@@ -691,6 +691,7 @@ export const MeDocument = gql`
       username
       email
       avatarUrl
+      role
       playgroundSettings {
         id
         guitarOrientation

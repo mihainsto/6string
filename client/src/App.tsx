@@ -1,16 +1,19 @@
 import './App.css'
 
-import { ThemeProvider } from '@emotion/react'
 import {
   createMuiTheme,
   CssBaseline,
   MuiThemeProvider,
 } from '@material-ui/core'
-import { red } from '@material-ui/core/colors'
-import React from 'react'
-import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
+import { Role, useMeQuery } from './generated/graphql'
+import { useUserRole } from './Hooks/useUserRole'
+import { NotAdminPage } from './Pages/Error/NotAdminPage'
+import { NotLoggedInPage } from './Pages/Error/NotLoggedInPage'
 import { HomePage } from './Pages/HomePage/HomePage'
+import { LoadingPage } from './Pages/Loading/LoadingPage'
 import { LoginPage } from './Pages/LoginPage/LoginPage'
 import { RegisterPage } from './Pages/RegisterPage/RegisterPage'
 import { AccountSettingsPage } from './Pages/Settings/AccountSettingsPage'
@@ -29,43 +32,65 @@ function App() {
       type: themeType === 'DARK' ? 'dark' : 'light',
     },
   })
+  const [loggedIn, setLoggedIn] = useState(false)
+  const { data, loading } = useMeQuery()
+  const userRole = useUserRole()
 
+  useEffect(() => {
+    if (data?.me) {
+      setLoggedIn(true)
+    } else {
+      setLoggedIn(false)
+    }
+  }, [data])
   return (
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Switch>
-          <Route path="/" exact>
-            <HomePage />
-          </Route>
-          <Route path="/login">
-            <LoginPage />
-          </Route>
-          <Route path="/register">
-            <RegisterPage />
-          </Route>
-          <Route path="/settings/basic/account">
-            <AccountSettingsPage />
-          </Route>
-          <Route path="/settings/basic/notifications">
-            <NotificationSettingsPage />
-          </Route>
-          <Route path="/settings/playground">
-            <PlaygroundSettingsPage />
-          </Route>
-          <Route path="/settings/admin/songreview">
-            <ReviewNewSongsPage />
-          </Route>
-          <Route path="/settings/admin/users">
-            <ApplicationUsersPage />
-          </Route>
-          <Route path="/settings">
-            <Settings />
-          </Route>
-          <Route path="/playsong/:id">
-            <SongPlayPage />
-          </Route>
-        </Switch>
+        {loading ? (
+          <LoadingPage />
+        ) : (
+          <Switch>
+            <Route path="/" exact>
+              <HomePage />
+            </Route>
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <Route path="/register">
+              <RegisterPage />
+            </Route>
+            <Route path="/settings/basic/account">
+              {loggedIn ? <AccountSettingsPage /> : <NotLoggedInPage />}
+            </Route>
+            <Route path="/settings/basic/notifications">
+              {loggedIn ? <NotificationSettingsPage /> : <NotLoggedInPage />}
+            </Route>
+            <Route path="/settings/playground">
+              {loggedIn ? <PlaygroundSettingsPage /> : <NotLoggedInPage />}
+            </Route>
+            <Route path="/settings/admin/songreview">
+              {userRole === Role.Admin ? (
+                <PlaygroundSettingsPage />
+              ) : (
+                <NotAdminPage />
+              )}
+            </Route>
+            <Route path="/settings/admin/users">
+              {userRole === Role.Admin ? (
+                <ApplicationUsersPage />
+              ) : (
+                <NotAdminPage />
+              )}
+            </Route>
+            <Route path="/settings">
+              {loggedIn ? <Settings /> : <NotLoggedInPage />}
+            </Route>
+            <Route path="/playsong/:id">
+              <SongPlayPage />
+            </Route>
+          </Switch>
+        )}
       </Router>
     </MuiThemeProvider>
   )

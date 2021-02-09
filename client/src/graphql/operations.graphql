@@ -102,6 +102,7 @@ query me {
         username
         email
         avatarUrl
+        role
         playgroundSettings {
             id
             guitarOrientation

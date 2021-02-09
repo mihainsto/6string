@@ -15,9 +15,12 @@ import { useHistory } from 'react-router-dom'
 
 import { PageLayout } from '../../Components/Layouts/PageLayout'
 import { Pages } from '../../Components/Navigation/LeftNav'
+import { useIsAdmin } from '../../Hooks/useUserRole'
 
 export const Settings: FC = () => {
   const history = useHistory()
+  const isAdmin = useIsAdmin()
+
   return (
     <PageLayout page={Pages.Settings}>
       <div
@@ -113,53 +116,55 @@ export const Settings: FC = () => {
           </CardContent>
         </Card>
 
-        <Card
-          variant="outlined"
-          css={css`
-            margin-top: 50px;
-            width: 300px;
-          `}
-        >
-          <CardContent
+        {isAdmin && (
+          <Card
+            variant="outlined"
             css={css`
-              text-align: left;
+              margin-top: 50px;
+              width: 300px;
             `}
           >
-            <Typography variant="h5">Admin Settings</Typography>
-            <Typography variant="subtitle1" color="textSecondary">
-              Manage the platform
-            </Typography>
-            <div
+            <CardContent
               css={css`
-                margin-top: 25px;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
+                text-align: left;
               `}
             >
-              <Link
+              <Typography variant="h5">Admin Settings</Typography>
+              <Typography variant="subtitle1" color="textSecondary">
+                Manage the platform
+              </Typography>
+              <div
                 css={css`
-                  cursor: pointer;
+                  margin-top: 25px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 10px;
                 `}
-                onClick={() => {
-                  history.push('/settings/admin/songreview')
-                }}
               >
-                Review new songs
-              </Link>
-              <Link
-                css={css`
-                  cursor: pointer;
-                `}
-                onClick={() => {
-                  history.push('/settings/admin/users')
-                }}
-              >
-                Application users
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+                <Link
+                  css={css`
+                    cursor: pointer;
+                  `}
+                  onClick={() => {
+                    history.push('/settings/admin/songreview')
+                  }}
+                >
+                  Review new songs
+                </Link>
+                <Link
+                  css={css`
+                    cursor: pointer;
+                  `}
+                  onClick={() => {
+                    history.push('/settings/admin/users')
+                  }}
+                >
+                  Application users
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </PageLayout>
   )
