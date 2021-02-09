@@ -14,6 +14,10 @@ import { HomePage } from './Pages/HomePage/HomePage'
 import { LoginPage } from './Pages/LoginPage/LoginPage'
 import { RegisterPage } from './Pages/RegisterPage/RegisterPage'
 import { AccountSettingsPage } from './Pages/Settings/AccountSettingsPage'
+import { ApplicationUsersPage } from './Pages/Settings/ApplicationUsersPage'
+import { NotificationSettingsPage } from './Pages/Settings/NotificationSettingsPage'
+import { PlaygroundSettingsPage } from './Pages/Settings/PlaygroundSettingsPage'
+import { ReviewNewSongsPage } from './Pages/Settings/ReviewNewSongsPage'
 import { Settings } from './Pages/Settings/Settings'
 import { SongPlayPage } from './Pages/SongPlayPage/SongPlayPage'
 import { useThemeStore } from './State/ThemeState'
@@ -40,8 +44,20 @@ function App() {
           <Route path="/register">
             <RegisterPage />
           </Route>
-          <Route path="/settings/account">
+          <Route path="/settings/basic/account">
             <AccountSettingsPage />
+          </Route>
+          <Route path="/settings/basic/notifications">
+            <NotificationSettingsPage />
+          </Route>
+          <Route path="/settings/playground">
+            <PlaygroundSettingsPage />
+          </Route>
+          <Route path="/settings/admin/songreview">
+            <ReviewNewSongsPage />
+          </Route>
+          <Route path="/settings/admin/users">
+            <ApplicationUsersPage />
           </Route>
           <Route path="/settings">
             <Settings />

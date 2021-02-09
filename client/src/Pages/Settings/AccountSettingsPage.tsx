@@ -3,29 +3,18 @@
 import { css } from '@emotion/react'
 import {
   Avatar,
-  Breadcrumbs,
   Button,
-  Card,
-  CardActions,
-  CardContent,
-  colors,
-  Input,
-  Link,
   Snackbar,
-  Tab,
-  Tabs,
   TextField,
   Typography,
   useTheme,
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FC } from 'react'
-import { useHistory } from 'react-router-dom'
 
 import { CloudinaryUploadModal } from '../../Components/CloudinaryUploadModal'
 import { SettingsCard } from '../../Components/Features/Settings/SettingsCard'
-import { PageLayout } from '../../Components/Layouts/PageLayout'
-import { Pages } from '../../Components/Navigation/LeftNav'
+import { SettingsPageLayout } from '../../Components/Layouts/SettingsPageLayout'
 import {
   useChangePasswordMutation,
   useUpdateUserAvatarMutation,
@@ -36,8 +25,6 @@ import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 
 export const AccountSettingsPage: FC = () => {
-  const history = useHistory()
-  const theme = useTheme()
   const userData = useCurrentUser()
   const [username, setUsername] = useState<string | undefined>(undefined)
   const [successSnackbar, setSuccessSnackbar] = useState(false)
@@ -85,341 +72,306 @@ export const AccountSettingsPage: FC = () => {
   const [changePasswordMutation] = useChangePasswordMutation()
 
   return (
-    <PageLayout page={Pages.Settings}>
+    <SettingsPageLayout pageName="Account Settings">
       <div
         css={css`
-          padding: 0 50px;
+          margin-top: 50px;
         `}
       >
-        <div
-          css={css`
-            display: grid;
-            justify-content: center;
-          `}
+        <SettingsCard
+          actions={
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  updateAvatarUrlMutation({
+                    variables: {
+                      input: {
+                        avatarUrl: avatarUrl || '',
+                      },
+                    },
+                  })
+                    .then(() => setSuccessSnackbar(true))
+                    .catch(() => {
+                      setErrorSnackbarMessage(
+                        'Some error occurred, avatar not saved',
+                      )
+                      setErrorSnackbar(true)
+                    })
+                    .finally(() => userData.refetch())
+                }}
+              >
+                Save
+              </Button>
+            </>
+          }
         >
           <div
             css={css`
-              text-align: left;
+              display: flex;
+              justify-content: space-between;
             `}
           >
-            <Breadcrumbs aria-label="breadcrumb">
-              <Link
-                color="inherit"
-                css={css`
-                  cursor: pointer;
-                `}
+            <Typography variant="h5">Avatar</Typography>
+            <Avatar
+              src={avatarUrl ? getCloudinaryUrl(avatarUrl) : ''}
+              style={{ width: 70, height: 70 }}
+            >
+              {userData.data?.me.username.substring(0, 2)}
+            </Avatar>
+          </div>
+
+          <div
+            css={css`
+              display: flex;
+              margin-top: 10px;
+            `}
+          >
+            <div>
+              <Button
+                variant={'outlined'}
+                color={'primary'}
+                onClick={() => setImageUploadModal(true)}
+              >
+                Upload
+              </Button>
+            </div>
+            <div
+              css={css`
+                margin-left: 20px;
+              `}
+            >
+              <Button variant={'outlined'} onClick={() => setAvatarUrl('')}>
+                Remove
+              </Button>
+            </div>
+          </div>
+        </SettingsCard>
+      </div>
+
+      <div
+        css={css`
+          margin-top: 25px;
+        `}
+      >
+        <SettingsCard
+          actions={
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
                 onClick={() => {
-                  history.push('/settings')
+                  updateUserNameMutation({
+                    variables: {
+                      input: {
+                        username: username as string | '',
+                      },
+                    },
+                  })
+                    .then(() => setSuccessSnackbar(true))
+                    .catch(() => {
+                      setErrorSnackbarMessage(
+                        'Some error occurred, username not saved. You need to type something.',
+                      )
+                      setErrorSnackbar(true)
+                    })
+                    .finally(() => userData.refetch())
                 }}
               >
-                Settings
-              </Link>
-
-              <Typography color="textPrimary">Account Settings</Typography>
-            </Breadcrumbs>
-          </div>
+                Save
+              </Button>
+            </>
+          }
+        >
+          <Typography variant="h5">Display Name</Typography>
 
           <div
             css={css`
-              margin-top: 50px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 10px;
             `}
           >
-            <SettingsCard
-              actions={
-                <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => {
-                      updateAvatarUrlMutation({
-                        variables: {
-                          input: {
-                            avatarUrl: avatarUrl || '',
-                          },
+            <Typography variant="subtitle1" color={'textSecondary'}>
+              Change your username
+            </Typography>
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+              size="small"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+        </SettingsCard>
+      </div>
+
+      <div
+        css={css`
+          margin-top: 25px;
+        `}
+      >
+        <SettingsCard
+          actions={
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  updateUserEmailMutation({
+                    variables: {
+                      input: {
+                        email: email as string | '',
+                      },
+                    },
+                  })
+                    .then(() => setSuccessSnackbar(true))
+                    .catch(() => {
+                      setErrorSnackbarMessage(
+                        'Some error occurred, email not saved. You need to type something.',
+                      )
+                      setErrorSnackbar(true)
+                    })
+                    .finally(() => userData.refetch())
+                }}
+              >
+                Save
+              </Button>
+            </>
+          }
+        >
+          <Typography variant="h5">Email</Typography>
+
+          <div
+            css={css`
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 10px;
+            `}
+          >
+            <Typography variant="subtitle1" color={'textSecondary'}>
+              Change your email
+            </Typography>
+            <TextField
+              InputLabelProps={{
+                shrink: true,
+              }}
+              variant="outlined"
+              size="small"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+        </SettingsCard>
+      </div>
+
+      <div
+        css={css`
+          margin-top: 25px;
+        `}
+      >
+        <SettingsCard
+          actions={
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => {
+                  if (newPassword !== undefined && newPassword.length < 6) {
+                    setErrorSnackbarMessage('You need min 6 characters.')
+                    setErrorSnackbar(true)
+                  } else if (newPasswordRepeat !== newPassword) {
+                    setErrorSnackbarMessage("The password isn't matching")
+                    setErrorSnackbar(true)
+                  } else {
+                    changePasswordMutation({
+                      variables: {
+                        input: {
+                          oldPassword: currentPassword || '',
+                          newPassword: newPassword || '',
                         },
-                      })
-                        .then(() => setSuccessSnackbar(true))
-                        .catch(() => {
-                          setErrorSnackbarMessage(
-                            'Some error occurred, avatar not saved',
-                          )
-                          setErrorSnackbar(true)
-                        })
-                        .finally(() => userData.refetch())
-                    }}
-                  >
-                    Save
-                  </Button>
-                </>
-              }
-            >
-              <div
-                css={css`
-                  display: flex;
-                  justify-content: space-between;
-                `}
-              >
-                <Typography variant="h5">Avatar</Typography>
-                <Avatar
-                  src={avatarUrl ? getCloudinaryUrl(avatarUrl) : ''}
-                  style={{ width: 70, height: 70 }}
-                >
-                  {userData.data?.me.username.substring(0, 2)}
-                </Avatar>
-              </div>
-
-              <div
-                css={css`
-                  display: flex;
-                  margin-top: 10px;
-                `}
-              >
-                <div>
-                  <Button
-                    variant={'outlined'}
-                    color={'primary'}
-                    onClick={() => setImageUploadModal(true)}
-                  >
-                    Upload
-                  </Button>
-                </div>
-                <div
-                  css={css`
-                    margin-left: 20px;
-                  `}
-                >
-                  <Button variant={'outlined'} onClick={() => setAvatarUrl('')}>
-                    Remove
-                  </Button>
-                </div>
-              </div>
-            </SettingsCard>
-          </div>
-
-          <div
-            css={css`
-              margin-top: 25px;
-            `}
-          >
-            <SettingsCard
-              actions={
-                <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => {
-                      updateUserNameMutation({
-                        variables: {
-                          input: {
-                            username: username as string | '',
-                          },
-                        },
-                      })
-                        .then(() => setSuccessSnackbar(true))
-                        .catch(() => {
-                          setErrorSnackbarMessage(
-                            'Some error occurred, username not saved. You need to type something.',
-                          )
-                          setErrorSnackbar(true)
-                        })
-                        .finally(() => userData.refetch())
-                    }}
-                  >
-                    Save
-                  </Button>
-                </>
-              }
-            >
-              <Typography variant="h5">Display Name</Typography>
-
-              <div
-                css={css`
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-top: 10px;
-                `}
-              >
-                <Typography variant="subtitle1" color={'textSecondary'}>
-                  Change your username
-                </Typography>
-                <TextField
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  variant="outlined"
-                  size="small"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </div>
-            </SettingsCard>
-          </div>
-
-          <div
-            css={css`
-              margin-top: 25px;
-            `}
-          >
-            <SettingsCard
-              actions={
-                <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => {
-                      updateUserEmailMutation({
-                        variables: {
-                          input: {
-                            email: email as string | '',
-                          },
-                        },
-                      })
-                        .then(() => setSuccessSnackbar(true))
-                        .catch(() => {
-                          setErrorSnackbarMessage(
-                            'Some error occurred, email not saved. You need to type something.',
-                          )
-                          setErrorSnackbar(true)
-                        })
-                        .finally(() => userData.refetch())
-                    }}
-                  >
-                    Save
-                  </Button>
-                </>
-              }
-            >
-              <Typography variant="h5">Email</Typography>
-
-              <div
-                css={css`
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-top: 10px;
-                `}
-              >
-                <Typography variant="subtitle1" color={'textSecondary'}>
-                  Change your email
-                </Typography>
-                <TextField
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  variant="outlined"
-                  size="small"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </SettingsCard>
-          </div>
-
-          <div
-            css={css`
-              margin-top: 25px;
-            `}
-          >
-            <SettingsCard
-              actions={
-                <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => {
-                      if (newPassword !== undefined && newPassword.length < 6) {
-                        setErrorSnackbarMessage('You need min 6 characters.')
+                      },
+                    })
+                      .then(() => setSuccessSnackbar(true))
+                      .catch(() => {
+                        setErrorSnackbarMessage(
+                          'Some error occurred, password not saved. Check your input',
+                        )
                         setErrorSnackbar(true)
-                      } else if (newPasswordRepeat !== newPassword) {
-                        setErrorSnackbarMessage("The password isn't matching")
-                        setErrorSnackbar(true)
-                      } else {
-                        changePasswordMutation({
-                          variables: {
-                            input: {
-                              oldPassword: currentPassword || '',
-                              newPassword: newPassword || '',
-                            },
-                          },
-                        })
-                          .then(() => setSuccessSnackbar(true))
-                          .catch(() => {
-                            setErrorSnackbarMessage(
-                              'Some error occurred, password not saved. Check your input',
-                            )
-                            setErrorSnackbar(true)
-                          })
-                      }
-                    }}
-                  >
-                    Save
-                  </Button>
-                </>
-              }
-            >
-              <Typography variant="h5">Password</Typography>
-
-              <div
-                css={css`
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-top: 10px;
-                `}
+                      })
+                  }
+                }}
               >
-                <Typography variant="subtitle1" color={'textSecondary'}>
-                  Change your password
-                </Typography>
-                <div
-                  css={css`
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                  `}
-                >
-                  <TextField
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                    size="small"
-                    label="Current password"
-                    type="password"
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                  />
-                  <TextField
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                    size="small"
-                    label="New password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                  <TextField
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    variant="outlined"
-                    size="small"
-                    label="Repeat new password"
-                    type="password"
-                    value={newPasswordRepeat}
-                    onChange={(e) => setNewPasswordRepeat(e.target.value)}
-                  />
-                </div>
-              </div>
-            </SettingsCard>
+                Save
+              </Button>
+            </>
+          }
+        >
+          <Typography variant="h5">Password</Typography>
+
+          <div
+            css={css`
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 10px;
+            `}
+          >
+            <Typography variant="subtitle1" color={'textSecondary'}>
+              Change your password
+            </Typography>
+            <div
+              css={css`
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+              `}
+            >
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                size="small"
+                label="Current password"
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                size="small"
+                label="New password"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+              <TextField
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                variant="outlined"
+                size="small"
+                label="Repeat new password"
+                type="password"
+                value={newPasswordRepeat}
+                onChange={(e) => setNewPasswordRepeat(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        </SettingsCard>
       </div>
 
       <Snackbar
@@ -432,6 +384,6 @@ export const AccountSettingsPage: FC = () => {
         onSubmit={imageUploadModalOnSubmit}
         onClose={() => setImageUploadModal(false)}
       />
-    </PageLayout>
+    </SettingsPageLayout>
   )
 }

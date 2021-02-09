@@ -57,12 +57,21 @@ export const Settings: FC = () => {
                   cursor: pointer;
                 `}
                 onClick={() => {
-                  history.push('/settings/account')
+                  history.push('/settings/basic/account')
                 }}
               >
                 Account settings
               </Link>
-              <Link>Notifications settings</Link>
+              <Link
+                css={css`
+                  cursor: pointer;
+                `}
+                onClick={() => {
+                  history.push('/settings/basic/notifications')
+                }}
+              >
+                Notifications settings
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -90,7 +99,16 @@ export const Settings: FC = () => {
                 gap: 10px;
               `}
             >
-              <Link>Playground settings</Link>
+              <Link
+                css={css`
+                  cursor: pointer;
+                `}
+                onClick={() => {
+                  history.push('/settings/playground')
+                }}
+              >
+                Playground settings
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -119,8 +137,26 @@ export const Settings: FC = () => {
                 gap: 10px;
               `}
             >
-              <Link>Review new songs</Link>
-              <Link>Application users</Link>
+              <Link
+                css={css`
+                  cursor: pointer;
+                `}
+                onClick={() => {
+                  history.push('/settings/admin/songreview')
+                }}
+              >
+                Review new songs
+              </Link>
+              <Link
+                css={css`
+                  cursor: pointer;
+                `}
+                onClick={() => {
+                  history.push('/settings/admin/users')
+                }}
+              >
+                Application users
+              </Link>
             </div>
           </CardContent>
         </Card>

@@ -5,7 +5,7 @@ import { Button, Card, CardContent, useTheme } from '@material-ui/core'
 import React, { FC, ReactElement } from 'react'
 
 type SettingsCardProps = {
-  actions: ReactElement
+  actions?: ReactElement
 }
 
 export const SettingsCard: FC<SettingsCardProps> = ({ actions, children }) => {
