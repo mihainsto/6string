@@ -1,7 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PasswordService } from '../../services/password.service';
 import { PrismaService } from '../../services/prisma.service';
-import { ChangePasswordInput, UpdateUserInput } from './user.inputs';
+import {
+  ChangePasswordInput,
+  ToggleNotificationSettingsInput,
+  UpdateUserInput,
+} from './user.inputs';
+import { PlaygroundSettings, User, UserSettings } from './user.model';
 
 @Injectable()
 export class UserService {
@@ -50,5 +55,39 @@ export class UserService {
       },
       where: { id: userId },
     });
+  }
+
+  toggleNotificationSettings(
+    userId: string,
+    input: ToggleNotificationSettingsInput
+  ) {
+    return this.prisma.user.update({
+      data: {
+        userSettings: {
+          update: {
+            notificationEnabled: input.notificationEnabled,
+            notificationRecommended: input.notificationRecommended,
+            notificationAdminReview: input.notificationAdminReview,
+          },
+        },
+      },
+      where: {
+        id: userId,
+      },
+    });
+  }
+
+  async userSettings(userId: string): Promise<UserSettings> {
+    return this.prisma.user
+      .findUnique({ where: { id: userId } })
+      .userSettings();
+  }
+
+  async playgroundSettings(userId: string): Promise<PlaygroundSettings> {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    return this.prisma.user
+      .findUnique({ where: { id: userId } })
+      .playgroundSettings();
   }
 }

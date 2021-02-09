@@ -103,10 +103,18 @@ query me {
         email
         avatarUrl
         playgroundSettings {
+            id
             guitarOrientation
             guitarStyle
             guitarType
         }
+        userSettings{
+            id
+            notificationEnabled
+            notificationRecommended
+            notificationAdminReview
+        }
+
     }
 }
 
@@ -149,6 +157,17 @@ mutation changePassword($input: ChangePasswordInput!){
     }
 }
 
+mutation toggleNotificationSettings($input: ToggleNotificationSettingsInput!){
+    toggleNotificationSettings(input: $input){
+        id
+        userSettings {
+            id
+            notificationAdminReview
+            notificationEnabled
+            notificationRecommended
+        }
+    }
+}
 mutation updatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!){
     updatePlaygroundSettings(input: $input){
         id

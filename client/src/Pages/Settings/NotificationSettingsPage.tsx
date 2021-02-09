@@ -1,13 +1,20 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { Button, Switch, TextField, Typography } from '@material-ui/core'
+import { Switch, Typography } from '@material-ui/core'
 import React, { FC } from 'react'
 
 import { SettingsCard } from '../../Components/Features/Settings/SettingsCard'
 import { SettingsPageLayout } from '../../Components/Layouts/SettingsPageLayout'
+import { useToggleNotificationSettingsMutation } from '../../generated/graphql'
+import { useCurrentUser } from '../../Hooks/useCurrentUser'
 
 export const NotificationSettingsPage: FC = () => {
+  const { data, loading } = useCurrentUser()
+  const [
+    toggleNotificationSettingsMutation,
+  ] = useToggleNotificationSettingsMutation()
+
   return (
     <SettingsPageLayout pageName="Notifications">
       <div
@@ -29,7 +36,21 @@ export const NotificationSettingsPage: FC = () => {
             <Typography variant="subtitle1" color={'textSecondary'}>
               Disable / enable notifications
             </Typography>
-            <Switch />
+            {!loading && (
+              <Switch
+                checked={data?.me.userSettings.notificationEnabled}
+                onClick={() => {
+                  toggleNotificationSettingsMutation({
+                    variables: {
+                      input: {
+                        notificationEnabled: !data?.me.userSettings
+                          .notificationEnabled,
+                      },
+                    },
+                  })
+                }}
+              />
+            )}
           </div>
           <div
             css={css`
@@ -42,7 +63,21 @@ export const NotificationSettingsPage: FC = () => {
             <Typography variant="subtitle1" color={'textSecondary'}>
               Recomanded notifications
             </Typography>
-            <Switch />
+            {!loading && (
+              <Switch
+                checked={data?.me.userSettings.notificationRecommended}
+                onClick={() => {
+                  toggleNotificationSettingsMutation({
+                    variables: {
+                      input: {
+                        notificationRecommended: !data?.me.userSettings
+                          .notificationRecommended,
+                      },
+                    },
+                  })
+                }}
+              />
+            )}
           </div>
         </SettingsCard>
       </div>
@@ -66,7 +101,21 @@ export const NotificationSettingsPage: FC = () => {
             <Typography variant="subtitle1" color={'textSecondary'}>
               Song review notifications
             </Typography>
-            <Switch />
+            {!loading && (
+              <Switch
+                checked={data?.me.userSettings.notificationAdminReview}
+                onClick={() => {
+                  toggleNotificationSettingsMutation({
+                    variables: {
+                      input: {
+                        notificationAdminReview: !data?.me.userSettings
+                          .notificationAdminReview,
+                      },
+                    },
+                  })
+                }}
+              />
+            )}
           </div>
         </SettingsCard>
       </div>

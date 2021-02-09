@@ -85,6 +85,7 @@ export type Mutation = {
   refreshToken: Token
   removeSongFromFavorite: Song
   signup: Auth
+  toggleNotificationSettings: User
   updatePlaygroundSettings: User
   updateUser: User
   updateUserAvatar: User
@@ -118,6 +119,10 @@ export type MutationRemoveSongFromFavoriteArgs = {
 
 export type MutationSignupArgs = {
   data: SignupInput
+}
+
+export type MutationToggleNotificationSettingsArgs = {
+  input: ToggleNotificationSettingsInput
 }
 
 export type MutationUpdatePlaygroundSettingsArgs = {
@@ -276,6 +281,12 @@ export type Tab = {
   updatedAt: Scalars['Date']
 }
 
+export type ToggleNotificationSettingsInput = {
+  notificationAdminReview?: Maybe<Scalars['Boolean']>
+  notificationEnabled?: Maybe<Scalars['Boolean']>
+  notificationRecommended?: Maybe<Scalars['Boolean']>
+}
+
 export type Token = {
   __typename?: 'Token'
   /** JWT access token */
@@ -335,7 +346,20 @@ export type User = {
   role: Role
   /** Identifies the date and time when the object was last updated. */
   updatedAt: Scalars['Date']
+  userSettings: UserSettings
   username: Scalars['String']
+}
+
+export type UserSettings = {
+  __typename?: 'UserSettings'
+  /** Identifies the date and time when the object was created. */
+  createdAt: Scalars['Date']
+  id: Scalars['ID']
+  notificationAdminReview: Scalars['Boolean']
+  notificationEnabled: Scalars['Boolean']
+  notificationRecommended: Scalars['Boolean']
+  /** Identifies the date and time when the object was last updated. */
+  updatedAt: Scalars['Date']
 }
 
 export type SongsQueryVariables = Exact<{
@@ -410,7 +434,14 @@ export type MeQuery = { __typename?: 'Query' } & {
   > & {
       playgroundSettings: { __typename?: 'PlaygroundSettings' } & Pick<
         PlaygroundSettings,
-        'guitarOrientation' | 'guitarStyle' | 'guitarType'
+        'id' | 'guitarOrientation' | 'guitarStyle' | 'guitarType'
+      >
+      userSettings: { __typename?: 'UserSettings' } & Pick<
+        UserSettings,
+        | 'id'
+        | 'notificationEnabled'
+        | 'notificationRecommended'
+        | 'notificationAdminReview'
       >
     }
 }
@@ -464,6 +495,22 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { __typename?: 'Mutation' } & {
   changePassword: { __typename?: 'User' } & Pick<User, 'id'>
+}
+
+export type ToggleNotificationSettingsMutationVariables = Exact<{
+  input: ToggleNotificationSettingsInput
+}>
+
+export type ToggleNotificationSettingsMutation = { __typename?: 'Mutation' } & {
+  toggleNotificationSettings: { __typename?: 'User' } & Pick<User, 'id'> & {
+      userSettings: { __typename?: 'UserSettings' } & Pick<
+        UserSettings,
+        | 'id'
+        | 'notificationAdminReview'
+        | 'notificationEnabled'
+        | 'notificationRecommended'
+      >
+    }
 }
 
 export type UpdatePlaygroundSettingsMutationVariables = Exact<{
@@ -645,9 +692,16 @@ export const MeDocument = gql`
       email
       avatarUrl
       playgroundSettings {
+        id
         guitarOrientation
         guitarStyle
         guitarType
+      }
+      userSettings {
+        id
+        notificationEnabled
+        notificationRecommended
+        notificationAdminReview
       }
     }
   }
@@ -970,6 +1024,62 @@ export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordM
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<
   ChangePasswordMutation,
   ChangePasswordMutationVariables
+>
+export const ToggleNotificationSettingsDocument = gql`
+  mutation toggleNotificationSettings(
+    $input: ToggleNotificationSettingsInput!
+  ) {
+    toggleNotificationSettings(input: $input) {
+      id
+      userSettings {
+        id
+        notificationAdminReview
+        notificationEnabled
+        notificationRecommended
+      }
+    }
+  }
+`
+export type ToggleNotificationSettingsMutationFn = Apollo.MutationFunction<
+  ToggleNotificationSettingsMutation,
+  ToggleNotificationSettingsMutationVariables
+>
+
+/**
+ * __useToggleNotificationSettingsMutation__
+ *
+ * To run a mutation, you first call `useToggleNotificationSettingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleNotificationSettingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleNotificationSettingsMutation, { data, loading, error }] = useToggleNotificationSettingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useToggleNotificationSettingsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ToggleNotificationSettingsMutation,
+    ToggleNotificationSettingsMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    ToggleNotificationSettingsMutation,
+    ToggleNotificationSettingsMutationVariables
+  >(ToggleNotificationSettingsDocument, baseOptions)
+}
+export type ToggleNotificationSettingsMutationHookResult = ReturnType<
+  typeof useToggleNotificationSettingsMutation
+>
+export type ToggleNotificationSettingsMutationResult = Apollo.MutationResult<ToggleNotificationSettingsMutation>
+export type ToggleNotificationSettingsMutationOptions = Apollo.BaseMutationOptions<
+  ToggleNotificationSettingsMutation,
+  ToggleNotificationSettingsMutationVariables
 >
 export const UpdatePlaygroundSettingsDocument = gql`
   mutation updatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!) {

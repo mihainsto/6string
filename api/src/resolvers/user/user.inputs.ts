@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsNotEmpty, MinLength } from 'class-validator';
 import { GuitarOrientation, GuitarStyle, GuitarType } from './user.model';
+import { GraphQLBoolean } from 'graphql';
 
 @InputType()
 export class UpdatePlaygroundSettings {
@@ -68,4 +69,16 @@ export class ChangePasswordInput {
   @IsNotEmpty()
   @MinLength(8)
   newPassword: string;
+}
+
+@InputType()
+export class ToggleNotificationSettingsInput {
+  @Field(() => GraphQLBoolean, { nullable: true })
+  notificationEnabled?: boolean;
+
+  @Field(() => GraphQLBoolean, { nullable: true })
+  notificationRecommended?: boolean;
+
+  @Field(() => GraphQLBoolean, { nullable: true })
+  notificationAdminReview?: boolean;
 }

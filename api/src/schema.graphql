@@ -71,6 +71,7 @@ type Mutation {
   refreshToken(token: String!): Token!
   removeSongFromFavorite(input: RemoveSongFromFavoriteInput!): Song!
   signup(data: SignupInput!): Auth!
+  toggleNotificationSettings(input: ToggleNotificationSettingsInput!): User!
   updatePlaygroundSettings(input: UpdatePlaygroundSettingsInput!): User!
   updateUser(data: UpdateUserInput!): User!
   updateUserAvatar(input: UpdateUserAvatarInput!): User!
@@ -193,6 +194,12 @@ type Tab {
   updatedAt: Date!
 }
 
+input ToggleNotificationSettingsInput {
+  notificationAdminReview: Boolean
+  notificationEnabled: Boolean
+  notificationRecommended: Boolean
+}
+
 type Token {
   """JWT access token"""
   accessToken: String!
@@ -253,5 +260,18 @@ type User {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: Date!
+  userSettings: UserSettings!
   username: String!
+}
+
+type UserSettings {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  id: ID!
+  notificationAdminReview: Boolean!
+  notificationEnabled: Boolean!
+  notificationRecommended: Boolean!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
 }

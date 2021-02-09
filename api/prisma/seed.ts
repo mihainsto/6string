@@ -26,6 +26,9 @@ async function main() {
       playgroundSettings: {
         create: {},
       },
+      userSettings: {
+        create: {},
+      },
     },
   });
   const user2: User = await prisma.user.create({
@@ -36,6 +39,9 @@ async function main() {
       role: 'USER',
       password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
       playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
         create: {},
       },
     },
@@ -49,6 +55,9 @@ async function main() {
       role: 'USER',
       password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
       playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
         create: {},
       },
     },

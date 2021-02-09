@@ -10,10 +10,11 @@ import {
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { UserEntity } from '../../decorators/user.decorator';
-import { User } from './user.model';
+import { PlaygroundSettings, User, UserSettings } from './user.model';
 import { UserService } from 'src/resolvers/user/user.service';
 import {
   ChangePasswordInput,
+  ToggleNotificationSettingsInput,
   UpdatePlaygroundSettingsInput,
   UpdateUserAvatarInput,
   UpdateUserEmailInput,
@@ -92,10 +93,22 @@ export class UserResolver {
     );
   }
 
-  @ResolveField('playgroundSettings')
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async toggleNotificationSettings(
+    @UserEntity() user: User,
+    @Args('input') input: ToggleNotificationSettingsInput
+  ) {
+    return this.userService.toggleNotificationSettings(user.id, input);
+  }
+
+  @ResolveField('playgroundSettings', () => PlaygroundSettings)
   playgroundSettings(@Parent() user: User) {
-    return this.prisma.user
-      .findUnique({ where: { id: user.id } })
-      .playgroundSettings();
+    return this.userService.playgroundSettings(user.id);
+  }
+
+  @ResolveField('userSettings', () => UserSettings)
+  userSettings(@Parent() user: User) {
+    return this.userService.userSettings(user.id);
   }
 }

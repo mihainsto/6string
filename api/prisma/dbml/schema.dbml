@@ -12,12 +12,13 @@ Table User {
   role Role [not null]
   avatarUrl String
   playgroundSettings PlaygroundSettings
+  userSettings UserSettings
   favoriteSongs Song [not null]
   Song Song [not null]
 }
 
 Table PlaygroundSettings {
-  id Int [pk, increment]
+  id String [pk]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   user User [not null]
@@ -25,6 +26,17 @@ Table PlaygroundSettings {
   guitarStyle GuitarStyle [default: 'STRUM']
   guitarOrientation GuitarOrientation [default: 'RIGHT_HANDED']
   guitarType GuitarType [default: 'ACOUSTIC']
+}
+
+Table UserSettings {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user User [not null]
+  userId String [not null]
+  notificationEnabled Boolean [not null, default: true]
+  notificationRecommended Boolean [not null, default: true]
+  notificationAdminReview Boolean [not null, default: true]
 }
 
 Table Song {
@@ -96,6 +108,8 @@ Enum GuitarType {
 }
 
 Ref: PlaygroundSettings.userId - User.id
+
+Ref: UserSettings.userId - User.id
 
 Ref: Song.postedById > User.id
 
