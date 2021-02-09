@@ -85,7 +85,11 @@ export type Mutation = {
   refreshToken: Token
   removeSongFromFavorite: Song
   signup: Auth
+  updatePlaygroundSettings: User
   updateUser: User
+  updateUserAvatar: User
+  updateUserEmail: User
+  updateUserName: User
 }
 
 export type MutationAddSongToFavoriteArgs = {
@@ -93,7 +97,7 @@ export type MutationAddSongToFavoriteArgs = {
 }
 
 export type MutationChangePasswordArgs = {
-  data: ChangePasswordInput
+  input: ChangePasswordInput
 }
 
 export type MutationCreateSongArgs = {
@@ -116,8 +120,24 @@ export type MutationSignupArgs = {
   data: SignupInput
 }
 
+export type MutationUpdatePlaygroundSettingsArgs = {
+  input: UpdatePlaygroundSettingsInput
+}
+
 export type MutationUpdateUserArgs = {
   data: UpdateUserInput
+}
+
+export type MutationUpdateUserAvatarArgs = {
+  input: UpdateUserAvatarInput
+}
+
+export type MutationUpdateUserEmailArgs = {
+  input: UpdateUserEmailInput
+}
+
+export type MutationUpdateUserNameArgs = {
+  input: UpdateUserNameInput
 }
 
 /** Possible directions in which to order a list of items when provided an `orderBy` argument. */
@@ -281,10 +301,27 @@ export type UpdatePlaygroundSettings = {
   guitarType?: Maybe<GuitarType>
 }
 
+export type UpdatePlaygroundSettingsInput = {
+  playgroundSettings: UpdatePlaygroundSettings
+}
+
+export type UpdateUserAvatarInput = {
+  avatarUrl: Scalars['String']
+}
+
+export type UpdateUserEmailInput = {
+  email: Scalars['String']
+}
+
 export type UpdateUserInput = {
   avatarUrl?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
   playgroundSettings?: Maybe<UpdatePlaygroundSettings>
   username?: Maybe<Scalars['String']>
+}
+
+export type UpdateUserNameInput = {
+  username: Scalars['String']
 }
 
 export type User = {
@@ -397,14 +434,49 @@ export type RegisterMutation = { __typename?: 'Mutation' } & {
   signup: { __typename?: 'Auth' } & Pick<Auth, 'refreshToken'>
 }
 
-export type UpdateUserMutationVariables = Exact<{
-  playgroundSettings?: Maybe<UpdatePlaygroundSettings>
-  avatarUrl?: Maybe<Scalars['String']>
-  username?: Maybe<Scalars['String']>
+export type UpdateUserNameMutationVariables = Exact<{
+  input: UpdateUserNameInput
 }>
 
-export type UpdateUserMutation = { __typename?: 'Mutation' } & {
-  updateUser: { __typename?: 'User' } & Pick<User, 'id'>
+export type UpdateUserNameMutation = { __typename?: 'Mutation' } & {
+  updateUserName: { __typename?: 'User' } & Pick<User, 'id' | 'username'>
+}
+
+export type UpdateUserAvatarMutationVariables = Exact<{
+  input: UpdateUserAvatarInput
+}>
+
+export type UpdateUserAvatarMutation = { __typename?: 'Mutation' } & {
+  updateUserAvatar: { __typename?: 'User' } & Pick<User, 'id' | 'avatarUrl'>
+}
+
+export type UpdateUserEmailMutationVariables = Exact<{
+  input: UpdateUserEmailInput
+}>
+
+export type UpdateUserEmailMutation = { __typename?: 'Mutation' } & {
+  updateUserEmail: { __typename?: 'User' } & Pick<User, 'id' | 'email'>
+}
+
+export type ChangePasswordMutationVariables = Exact<{
+  input: ChangePasswordInput
+}>
+
+export type ChangePasswordMutation = { __typename?: 'Mutation' } & {
+  changePassword: { __typename?: 'User' } & Pick<User, 'id'>
+}
+
+export type UpdatePlaygroundSettingsMutationVariables = Exact<{
+  input: UpdatePlaygroundSettingsInput
+}>
+
+export type UpdatePlaygroundSettingsMutation = { __typename?: 'Mutation' } & {
+  updatePlaygroundSettings: { __typename?: 'User' } & Pick<User, 'id'> & {
+      playgroundSettings: { __typename?: 'PlaygroundSettings' } & Pick<
+        PlaygroundSettings,
+        'id' | 'guitarOrientation' | 'guitarStyle' | 'guitarType'
+      >
+    }
 }
 
 export type AddSongToFavoriteMutationVariables = Exact<{
@@ -704,65 +776,254 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<
   RegisterMutation,
   RegisterMutationVariables
 >
-export const UpdateUserDocument = gql`
-  mutation updateUser(
-    $playgroundSettings: UpdatePlaygroundSettings
-    $avatarUrl: String
-    $username: String
-  ) {
-    updateUser(
-      data: {
-        playgroundSettings: $playgroundSettings
-        avatarUrl: $avatarUrl
-        username: $username
-      }
-    ) {
+export const UpdateUserNameDocument = gql`
+  mutation updateUserName($input: UpdateUserNameInput!) {
+    updateUserName(input: $input) {
       id
+      username
     }
   }
 `
-export type UpdateUserMutationFn = Apollo.MutationFunction<
-  UpdateUserMutation,
-  UpdateUserMutationVariables
+export type UpdateUserNameMutationFn = Apollo.MutationFunction<
+  UpdateUserNameMutation,
+  UpdateUserNameMutationVariables
 >
 
 /**
- * __useUpdateUserMutation__
+ * __useUpdateUserNameMutation__
  *
- * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdateUserNameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserNameMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ * const [updateUserNameMutation, { data, loading, error }] = useUpdateUserNameMutation({
  *   variables: {
- *      playgroundSettings: // value for 'playgroundSettings'
- *      avatarUrl: // value for 'avatarUrl'
- *      username: // value for 'username'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useUpdateUserMutation(
+export function useUpdateUserNameMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    UpdateUserMutation,
-    UpdateUserMutationVariables
+    UpdateUserNameMutation,
+    UpdateUserNameMutationVariables
   >,
 ) {
-  return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(
-    UpdateUserDocument,
-    baseOptions,
-  )
+  return Apollo.useMutation<
+    UpdateUserNameMutation,
+    UpdateUserNameMutationVariables
+  >(UpdateUserNameDocument, baseOptions)
 }
-export type UpdateUserMutationHookResult = ReturnType<
-  typeof useUpdateUserMutation
+export type UpdateUserNameMutationHookResult = ReturnType<
+  typeof useUpdateUserNameMutation
 >
-export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>
-export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<
-  UpdateUserMutation,
-  UpdateUserMutationVariables
+export type UpdateUserNameMutationResult = Apollo.MutationResult<UpdateUserNameMutation>
+export type UpdateUserNameMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUserNameMutation,
+  UpdateUserNameMutationVariables
+>
+export const UpdateUserAvatarDocument = gql`
+  mutation updateUserAvatar($input: UpdateUserAvatarInput!) {
+    updateUserAvatar(input: $input) {
+      id
+      avatarUrl
+    }
+  }
+`
+export type UpdateUserAvatarMutationFn = Apollo.MutationFunction<
+  UpdateUserAvatarMutation,
+  UpdateUserAvatarMutationVariables
+>
+
+/**
+ * __useUpdateUserAvatarMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserAvatarMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserAvatarMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserAvatarMutation, { data, loading, error }] = useUpdateUserAvatarMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateUserAvatarMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateUserAvatarMutation,
+    UpdateUserAvatarMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    UpdateUserAvatarMutation,
+    UpdateUserAvatarMutationVariables
+  >(UpdateUserAvatarDocument, baseOptions)
+}
+export type UpdateUserAvatarMutationHookResult = ReturnType<
+  typeof useUpdateUserAvatarMutation
+>
+export type UpdateUserAvatarMutationResult = Apollo.MutationResult<UpdateUserAvatarMutation>
+export type UpdateUserAvatarMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUserAvatarMutation,
+  UpdateUserAvatarMutationVariables
+>
+export const UpdateUserEmailDocument = gql`
+  mutation updateUserEmail($input: UpdateUserEmailInput!) {
+    updateUserEmail(input: $input) {
+      id
+      email
+    }
+  }
+`
+export type UpdateUserEmailMutationFn = Apollo.MutationFunction<
+  UpdateUserEmailMutation,
+  UpdateUserEmailMutationVariables
+>
+
+/**
+ * __useUpdateUserEmailMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserEmailMutation, { data, loading, error }] = useUpdateUserEmailMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateUserEmailMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateUserEmailMutation,
+    UpdateUserEmailMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    UpdateUserEmailMutation,
+    UpdateUserEmailMutationVariables
+  >(UpdateUserEmailDocument, baseOptions)
+}
+export type UpdateUserEmailMutationHookResult = ReturnType<
+  typeof useUpdateUserEmailMutation
+>
+export type UpdateUserEmailMutationResult = Apollo.MutationResult<UpdateUserEmailMutation>
+export type UpdateUserEmailMutationOptions = Apollo.BaseMutationOptions<
+  UpdateUserEmailMutation,
+  UpdateUserEmailMutationVariables
+>
+export const ChangePasswordDocument = gql`
+  mutation changePassword($input: ChangePasswordInput!) {
+    changePassword(input: $input) {
+      id
+    }
+  }
+`
+export type ChangePasswordMutationFn = Apollo.MutationFunction<
+  ChangePasswordMutation,
+  ChangePasswordMutationVariables
+>
+
+/**
+ * __useChangePasswordMutation__
+ *
+ * To run a mutation, you first call `useChangePasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangePasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangePasswordMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ChangePasswordMutation,
+    ChangePasswordMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    ChangePasswordMutation,
+    ChangePasswordMutationVariables
+  >(ChangePasswordDocument, baseOptions)
+}
+export type ChangePasswordMutationHookResult = ReturnType<
+  typeof useChangePasswordMutation
+>
+export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>
+export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<
+  ChangePasswordMutation,
+  ChangePasswordMutationVariables
+>
+export const UpdatePlaygroundSettingsDocument = gql`
+  mutation updatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!) {
+    updatePlaygroundSettings(input: $input) {
+      id
+      playgroundSettings {
+        id
+        guitarOrientation
+        guitarStyle
+        guitarType
+      }
+    }
+  }
+`
+export type UpdatePlaygroundSettingsMutationFn = Apollo.MutationFunction<
+  UpdatePlaygroundSettingsMutation,
+  UpdatePlaygroundSettingsMutationVariables
+>
+
+/**
+ * __useUpdatePlaygroundSettingsMutation__
+ *
+ * To run a mutation, you first call `useUpdatePlaygroundSettingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePlaygroundSettingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updatePlaygroundSettingsMutation, { data, loading, error }] = useUpdatePlaygroundSettingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdatePlaygroundSettingsMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdatePlaygroundSettingsMutation,
+    UpdatePlaygroundSettingsMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    UpdatePlaygroundSettingsMutation,
+    UpdatePlaygroundSettingsMutationVariables
+  >(UpdatePlaygroundSettingsDocument, baseOptions)
+}
+export type UpdatePlaygroundSettingsMutationHookResult = ReturnType<
+  typeof useUpdatePlaygroundSettingsMutation
+>
+export type UpdatePlaygroundSettingsMutationResult = Apollo.MutationResult<UpdatePlaygroundSettingsMutation>
+export type UpdatePlaygroundSettingsMutationOptions = Apollo.BaseMutationOptions<
+  UpdatePlaygroundSettingsMutation,
+  UpdatePlaygroundSettingsMutationVariables
 >
 export const AddSongToFavoriteDocument = gql`
   mutation addSongToFavorite($input: AddSongToFavoriteInput!) {

@@ -16,31 +16,48 @@ import {
   Tabs,
   TextField,
   Typography,
+  useTheme,
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { CloudinaryUploadModal } from '../../Components/CloudinaryUploadModal'
+import { SettingsCard } from '../../Components/Features/Settings/SettingsCard'
 import { PageLayout } from '../../Components/Layouts/PageLayout'
 import { Pages } from '../../Components/Navigation/LeftNav'
-import { useUpdateUserMutation } from '../../generated/graphql'
+import {
+  useChangePasswordMutation,
+  useUpdateUserAvatarMutation,
+  useUpdateUserEmailMutation,
+  useUpdateUserNameMutation,
+} from '../../generated/graphql'
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 
 export const AccountSettingsPage: FC = () => {
   const history = useHistory()
+  const theme = useTheme()
   const userData = useCurrentUser()
-  const [username, setUsername] = useState<string | null>(null)
+  const [username, setUsername] = useState<string | undefined>(undefined)
   const [successSnackbar, setSuccessSnackbar] = useState(false)
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState(
+    'Some error occurred, settings not saved',
+  )
   const [errorSnackbar, setErrorSnackbar] = useState(false)
   const [imageUploadModal, setImageUploadModal] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | undefined | null>(
     undefined,
   )
   const [email, setEmail] = useState<string | undefined>(undefined)
+  const [currentPassword, setCurrentPassword] = useState<string | undefined>(
+    undefined,
+  )
+  const [newPassword, setNewPassword] = useState<string | undefined>(undefined)
+  const [newPasswordRepeat, setNewPasswordRepeat] = useState<
+    string | undefined
+  >(undefined)
 
-  const [updateUser] = useUpdateUserMutation()
   const getCloudinaryUrl = useCloudinaryUrl()
 
   useEffect(() => {
@@ -61,25 +78,11 @@ export const AccountSettingsPage: FC = () => {
     setAvatarUrl(cloudinaryId)
     setImageUploadModal(false)
   }
-  const saveChangesClicked = async () => {
-    try {
-      const { data } = await updateUser({
-        variables: {
-          ...(username && { username }),
-          ...(avatarUrl !== undefined && avatarUrl !== null && { avatarUrl }),
-        },
-      })
-      if (data?.updateUser.id) {
-        setSuccessSnackbar(true)
-      } else {
-        setErrorSnackbar(true)
-      }
-    } catch (e) {
-      setErrorSnackbar(true)
-    } finally {
-      await userData.refetch()
-    }
-  }
+
+  const [updateAvatarUrlMutation] = useUpdateUserAvatarMutation()
+  const [updateUserNameMutation] = useUpdateUserNameMutation()
+  const [updateUserEmailMutation] = useUpdateUserEmailMutation()
+  const [changePasswordMutation] = useChangePasswordMutation()
 
   return (
     <PageLayout page={Pages.Settings}>
@@ -115,17 +118,41 @@ export const AccountSettingsPage: FC = () => {
               <Typography color="textPrimary">Account Settings</Typography>
             </Breadcrumbs>
           </div>
-          <Card
-            variant="outlined"
+
+          <div
             css={css`
               margin-top: 50px;
-              width: 900px;
             `}
           >
-            <CardContent
-              css={css`
-                text-align: left;
-              `}
+            <SettingsCard
+              actions={
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => {
+                      updateAvatarUrlMutation({
+                        variables: {
+                          input: {
+                            avatarUrl: avatarUrl || '',
+                          },
+                        },
+                      })
+                        .then(() => setSuccessSnackbar(true))
+                        .catch(() => {
+                          setErrorSnackbarMessage(
+                            'Some error occurred, avatar not saved',
+                          )
+                          setErrorSnackbar(true)
+                        })
+                        .finally(() => userData.refetch())
+                    }}
+                  >
+                    Save
+                  </Button>
+                </>
+              }
             >
               <div
                 css={css`
@@ -144,8 +171,8 @@ export const AccountSettingsPage: FC = () => {
 
               <div
                 css={css`
-                  margin-top: 10px;
                   display: flex;
+                  margin-top: 10px;
                 `}
               >
                 <div>
@@ -167,20 +194,43 @@ export const AccountSettingsPage: FC = () => {
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </SettingsCard>
+          </div>
 
-          <Card
-            variant="outlined"
+          <div
             css={css`
               margin-top: 25px;
-              width: 900px;
             `}
           >
-            <CardContent
-              css={css`
-                text-align: left;
-              `}
+            <SettingsCard
+              actions={
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => {
+                      updateUserNameMutation({
+                        variables: {
+                          input: {
+                            username: username as string | '',
+                          },
+                        },
+                      })
+                        .then(() => setSuccessSnackbar(true))
+                        .catch(() => {
+                          setErrorSnackbarMessage(
+                            'Some error occurred, username not saved. You need to type something.',
+                          )
+                          setErrorSnackbar(true)
+                        })
+                        .finally(() => userData.refetch())
+                    }}
+                  >
+                    Save
+                  </Button>
+                </>
+              }
             >
               <Typography variant="h5">Display Name</Typography>
 
@@ -205,20 +255,43 @@ export const AccountSettingsPage: FC = () => {
                   onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
-            </CardContent>
-          </Card>
+            </SettingsCard>
+          </div>
 
-          <Card
-            variant="outlined"
+          <div
             css={css`
               margin-top: 25px;
-              width: 900px;
             `}
           >
-            <CardContent
-              css={css`
-                text-align: left;
-              `}
+            <SettingsCard
+              actions={
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => {
+                      updateUserEmailMutation({
+                        variables: {
+                          input: {
+                            email: email as string | '',
+                          },
+                        },
+                      })
+                        .then(() => setSuccessSnackbar(true))
+                        .catch(() => {
+                          setErrorSnackbarMessage(
+                            'Some error occurred, email not saved. You need to type something.',
+                          )
+                          setErrorSnackbar(true)
+                        })
+                        .finally(() => userData.refetch())
+                    }}
+                  >
+                    Save
+                  </Button>
+                </>
+              }
             >
               <Typography variant="h5">Email</Typography>
 
@@ -243,20 +316,51 @@ export const AccountSettingsPage: FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-            </CardContent>
-          </Card>
+            </SettingsCard>
+          </div>
 
-          <Card
-            variant="outlined"
+          <div
             css={css`
               margin-top: 25px;
-              width: 900px;
             `}
           >
-            <CardContent
-              css={css`
-                text-align: left;
-              `}
+            <SettingsCard
+              actions={
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => {
+                      if (newPassword !== undefined && newPassword.length < 6) {
+                        setErrorSnackbarMessage('You need min 6 characters.')
+                        setErrorSnackbar(true)
+                      } else if (newPasswordRepeat !== newPassword) {
+                        setErrorSnackbarMessage("The password isn't matching")
+                        setErrorSnackbar(true)
+                      } else {
+                        changePasswordMutation({
+                          variables: {
+                            input: {
+                              oldPassword: currentPassword || '',
+                              newPassword: newPassword || '',
+                            },
+                          },
+                        })
+                          .then(() => setSuccessSnackbar(true))
+                          .catch(() => {
+                            setErrorSnackbarMessage(
+                              'Some error occurred, password not saved. Check your input',
+                            )
+                            setErrorSnackbar(true)
+                          })
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                </>
+              }
             >
               <Typography variant="h5">Password</Typography>
 
@@ -286,6 +390,8 @@ export const AccountSettingsPage: FC = () => {
                     size="small"
                     label="Current password"
                     type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
                   />
                   <TextField
                     InputLabelProps={{
@@ -295,6 +401,8 @@ export const AccountSettingsPage: FC = () => {
                     size="small"
                     label="New password"
                     type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                   />
                   <TextField
                     InputLabelProps={{
@@ -304,25 +412,13 @@ export const AccountSettingsPage: FC = () => {
                     size="small"
                     label="Repeat new password"
                     type="password"
+                    value={newPasswordRepeat}
+                    onChange={(e) => setNewPasswordRepeat(e.target.value)}
                   />
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-        <div
-          css={css`
-            margin-top: 25px;
-          `}
-        >
-          <Button
-            color="primary"
-            variant="contained"
-            size="large"
-            onClick={saveChangesClicked}
-          >
-            Save changes
-          </Button>
+            </SettingsCard>
+          </div>
         </div>
       </div>
 
@@ -330,10 +426,7 @@ export const AccountSettingsPage: FC = () => {
         open={successSnackbar}
         message={'Settings saved successfully'}
       />
-      <Snackbar
-        open={errorSnackbar}
-        message={'Some error occurred, settings not saved'}
-      />
+      <Snackbar open={errorSnackbar} message={errorSnackbarMessage} />
       <CloudinaryUploadModal
         open={imageUploadModal}
         onSubmit={imageUploadModalOnSubmit}

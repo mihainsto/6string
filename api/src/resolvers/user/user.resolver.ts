@@ -12,7 +12,14 @@ import { UseGuards } from '@nestjs/common';
 import { UserEntity } from '../../decorators/user.decorator';
 import { User } from './user.model';
 import { UserService } from 'src/resolvers/user/user.service';
-import { ChangePasswordInput, UpdateUserInput } from './user.inputs';
+import {
+  ChangePasswordInput,
+  UpdatePlaygroundSettingsInput,
+  UpdateUserAvatarInput,
+  UpdateUserEmailInput,
+  UpdateUserInput,
+  UpdateUserNameInput,
+} from './user.inputs';
 
 @Resolver((of) => User)
 @UseGuards(GqlAuthGuard)
@@ -38,9 +45,45 @@ export class UserResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
+  async updateUserName(
+    @UserEntity() user: User,
+    @Args('input') input: UpdateUserNameInput
+  ) {
+    return this.userService.updateUser(user.id, input);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async updateUserEmail(
+    @UserEntity() user: User,
+    @Args('input') input: UpdateUserEmailInput
+  ) {
+    return this.userService.updateUser(user.id, input);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async updateUserAvatar(
+    @UserEntity() user: User,
+    @Args('input') input: UpdateUserAvatarInput
+  ) {
+    return this.userService.updateUser(user.id, input);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async updatePlaygroundSettings(
+    @UserEntity() user: User,
+    @Args('input') input: UpdatePlaygroundSettingsInput
+  ) {
+    return this.userService.updateUser(user.id, input);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
   async changePassword(
     @UserEntity() user: User,
-    @Args('data') changePassword: ChangePasswordInput
+    @Args('input') changePassword: ChangePasswordInput
   ) {
     return this.userService.changePassword(
       user.id,

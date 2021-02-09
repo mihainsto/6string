@@ -122,9 +122,42 @@ mutation Register($username: String!, $email: String!, $password: String!) {
     }
 }
 
-mutation updateUser($playgroundSettings: UpdatePlaygroundSettings, $avatarUrl: String, $username: String){
-    updateUser(data: {playgroundSettings: $playgroundSettings, avatarUrl: $avatarUrl, username: $username}) {
+mutation updateUserName($input: UpdateUserNameInput!){
+    updateUserName(input: $input){
         id
+        username
+    }
+}
+
+mutation updateUserAvatar($input: UpdateUserAvatarInput!){
+    updateUserAvatar(input: $input){
+        id
+        avatarUrl
+    }
+}
+
+mutation updateUserEmail($input: UpdateUserEmailInput!){
+    updateUserEmail(input: $input){
+        id
+        email
+    }
+}
+
+mutation changePassword($input: ChangePasswordInput!){
+    changePassword(input: $input){
+        id
+    }
+}
+
+mutation updatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!){
+    updatePlaygroundSettings(input: $input){
+        id
+        playgroundSettings{
+            id,
+            guitarOrientation,
+            guitarStyle,
+            guitarType
+        }
     }
 }
 

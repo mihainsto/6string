@@ -17,7 +17,6 @@ import CalendarTodayIcon from '@material-ui/icons/CalendarToday'
 import ScheduleIcon from '@material-ui/icons/Schedule'
 import { format } from 'date-fns'
 import React, { FC, useEffect, useState } from 'react'
-import { Simulate } from 'react-dom/test-utils'
 import { useHistory } from 'react-router-dom'
 
 import { PageLayout } from '../../Components/Layouts/PageLayout'
@@ -55,9 +54,9 @@ export const HomePage: FC = () => {
     refetch()
   }, [orderBy, searchString, favorites])
 
-  // const edges = !favorites
-  //   ? data?.songs.edges
-  //   : data?.songs.edges?.filter((edge) => edge.node.favorite === true)
+  const edges = !favorites
+    ? data?.songs.edges
+    : data?.songs.edges?.filter((edge) => edge.node.favorite === true)
 
   return (
     <PageLayout page={Pages.Home}>
@@ -201,9 +200,9 @@ export const HomePage: FC = () => {
                   </TableCell>
                 </TableRow>
               </TableHead>
-              {data?.songs.edges && (
+              {edges && (
                 <TableBody>
-                  {data?.songs.edges?.map((row, index) => (
+                  {edges?.map((row, index) => (
                     <TableRow
                       key={index}
                       css={css`
@@ -267,7 +266,10 @@ export const HomePage: FC = () => {
                         {row.node.title}
                       </TableCell>
                       <TableCell align="right">{row.node.artist}</TableCell>
-                      <TableCell align="right">{row.node.difficulty}</TableCell>
+                      <TableCell align="right">
+                        {row.node.difficulty[0] +
+                          row.node.difficulty.substr(1).toLowerCase()}
+                      </TableCell>
                       <TableCell align="right">
                         {format(new Date(row.node.createdAt), 'MM-dd-yyyy')}
                       </TableCell>

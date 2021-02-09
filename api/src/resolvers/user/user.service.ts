@@ -15,6 +15,7 @@ export class UserService {
       data: {
         username: newUserData.username,
         avatarUrl: newUserData.avatarUrl,
+        email: newUserData.email,
         playgroundSettings: {
           update: newUserData.playgroundSettings,
         },

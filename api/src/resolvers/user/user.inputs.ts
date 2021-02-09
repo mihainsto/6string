@@ -24,6 +24,37 @@ export class UpdateUserInput {
 
   @Field({ nullable: true })
   playgroundSettings?: UpdatePlaygroundSettings;
+
+  @Field({ nullable: true })
+  email?: string;
+}
+
+@InputType()
+export class UpdateUserNameInput {
+  @Field()
+  @IsNotEmpty()
+  @MinLength(2)
+  username: string;
+}
+
+@InputType()
+export class UpdateUserEmailInput {
+  @Field()
+  @IsNotEmpty()
+  @MinLength(2)
+  email: string;
+}
+
+@InputType()
+export class UpdateUserAvatarInput {
+  @Field()
+  avatarUrl: string;
+}
+
+@InputType()
+export class UpdatePlaygroundSettingsInput {
+  @Field()
+  playgroundSettings: UpdatePlaygroundSettings;
 }
 
 @InputType()

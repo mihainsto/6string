@@ -65,13 +65,17 @@ input LoginInput {
 
 type Mutation {
   addSongToFavorite(input: AddSongToFavoriteInput!): Song!
-  changePassword(data: ChangePasswordInput!): User!
+  changePassword(input: ChangePasswordInput!): User!
   createSong(input: CreateSongInput!): Song!
   login(data: LoginInput!): Auth!
   refreshToken(token: String!): Token!
   removeSongFromFavorite(input: RemoveSongFromFavoriteInput!): Song!
   signup(data: SignupInput!): Auth!
+  updatePlaygroundSettings(input: UpdatePlaygroundSettingsInput!): User!
   updateUser(data: UpdateUserInput!): User!
+  updateUserAvatar(input: UpdateUserAvatarInput!): User!
+  updateUserEmail(input: UpdateUserEmailInput!): User!
+  updateUserName(input: UpdateUserNameInput!): User!
 }
 
 """
@@ -214,10 +218,27 @@ input UpdatePlaygroundSettings {
   guitarType: GuitarType
 }
 
+input UpdatePlaygroundSettingsInput {
+  playgroundSettings: UpdatePlaygroundSettings!
+}
+
+input UpdateUserAvatarInput {
+  avatarUrl: String!
+}
+
+input UpdateUserEmailInput {
+  email: String!
+}
+
 input UpdateUserInput {
   avatarUrl: String
+  email: String
   playgroundSettings: UpdatePlaygroundSettings
   username: String
+}
+
+input UpdateUserNameInput {
+  username: String!
 }
 
 type User {
