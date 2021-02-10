@@ -6,6 +6,7 @@ import {
   MuiThemeProvider,
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react'
+import { Toaster } from 'react-hot-toast'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import { Role, useMeQuery } from './generated/graphql'
@@ -45,6 +46,7 @@ function App() {
   }, [data])
   return (
     <MuiThemeProvider theme={theme}>
+      <Toaster position="bottom-center" />
       <CssBaseline />
       <Router>
         {loading ? (
@@ -71,7 +73,7 @@ function App() {
             </Route>
             <Route path="/settings/admin/songreview">
               {userRole === Role.Admin ? (
-                <PlaygroundSettingsPage />
+                <ReviewNewSongsPage />
               ) : (
                 <NotAdminPage />
               )}
