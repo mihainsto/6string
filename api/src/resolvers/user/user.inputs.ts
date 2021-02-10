@@ -1,7 +1,27 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, registerEnumType } from '@nestjs/graphql';
 import { IsNotEmpty, MinLength } from 'class-validator';
-import { GuitarOrientation, GuitarStyle, GuitarType } from './user.model';
+import { GuitarOrientation, GuitarStyle, GuitarType, Role } from './user.model';
 import { GraphQLBoolean } from 'graphql';
+import { Order } from '../../common/order/order';
+
+export enum UserOrderField {
+  id = 'id',
+  createdAt = 'createdAt',
+  username = 'username',
+  email = 'email',
+  role = 'role',
+}
+
+registerEnumType(UserOrderField, {
+  name: 'UserOrderField',
+  description: 'Properties by which user connections can be ordered.',
+});
+
+@InputType()
+export class UserOrder extends Order {
+  @Field(() => UserOrderField)
+  field: UserOrderField;
+}
 
 @InputType()
 export class UpdatePlaygroundSettings {
@@ -56,6 +76,21 @@ export class UpdateUserAvatarInput {
 export class UpdatePlaygroundSettingsInput {
   @Field()
   playgroundSettings: UpdatePlaygroundSettings;
+}
+
+@InputType()
+export class ChangeUserRoleInput {
+  @Field()
+  userId: string;
+
+  @Field(() => Role)
+  role: Role;
+}
+
+@InputType()
+export class DeleteUserInput {
+  @Field()
+  userId: string;
 }
 
 @InputType()

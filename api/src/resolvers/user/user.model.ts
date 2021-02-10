@@ -6,6 +6,7 @@ import {
 } from '@nestjs/graphql';
 import { BaseModel } from '../../models/base.model';
 import { GraphQLBoolean } from 'graphql';
+import PaginatedResponse from '../../common/pagination/pagination';
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -75,3 +76,6 @@ export class User extends BaseModel {
   @HideField()
   password: string;
 }
+
+@ObjectType()
+export class UserConnection extends PaginatedResponse(User) {}

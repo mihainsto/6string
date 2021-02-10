@@ -20,6 +20,11 @@ input ChangePasswordInput {
   oldPassword: String!
 }
 
+input ChangeUserRoleInput {
+  role: Role!
+  userId: String!
+}
+
 input CreateSongInput {
   artist: String!
   difficulty: Difficulty!
@@ -30,6 +35,10 @@ input CreateSongInput {
 
 """Date custom scalar type"""
 scalar Date
+
+input DeleteUserInput {
+  userId: String!
+}
 
 enum Difficulty {
   EASY
@@ -66,7 +75,9 @@ input LoginInput {
 type Mutation {
   addSongToFavorite(input: AddSongToFavoriteInput!): Song!
   changePassword(input: ChangePasswordInput!): User!
+  changeUserRole(input: ChangeUserRoleInput!): User!
   createSong(input: CreateSongInput!): Song!
+  deleteUser(input: DeleteUserInput!): User!
   login(data: LoginInput!): Auth!
   refreshToken(token: String!): Token!
   removeSongFromFavorite(input: RemoveSongFromFavoriteInput!): Song!
@@ -112,6 +123,8 @@ type Query {
   me: User!
   song(id: String!): Song!
   songs(after: String, before: String, favorite: Boolean, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
+  user(id: String!): User!
+  users(after: String, before: String, first: Int, last: Int, orderBy: UserOrder, query: String, skip: Int): UserConnection!
 }
 
 input RemoveSongFromFavoriteInput {
@@ -262,6 +275,31 @@ type User {
   updatedAt: Date!
   userSettings: UserSettings!
   username: String!
+}
+
+type UserConnection {
+  edges: [UserEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+input UserOrder {
+  direction: OrderDirection!
+  field: UserOrderField!
+}
+
+"""Properties by which user connections can be ordered."""
+enum UserOrderField {
+  createdAt
+  email
+  id
+  role
+  username
 }
 
 type UserSettings {

@@ -10,17 +10,26 @@ import {
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { UserEntity } from '../../decorators/user.decorator';
-import { PlaygroundSettings, User, UserSettings } from './user.model';
+import {
+  PlaygroundSettings,
+  User,
+  UserConnection,
+  UserSettings,
+} from './user.model';
 import { UserService } from 'src/resolvers/user/user.service';
 import {
   ChangePasswordInput,
+  ChangeUserRoleInput,
+  DeleteUserInput,
   ToggleNotificationSettingsInput,
   UpdatePlaygroundSettingsInput,
   UpdateUserAvatarInput,
   UpdateUserEmailInput,
   UpdateUserInput,
   UpdateUserNameInput,
+  UserOrder,
 } from './user.inputs';
+import { PaginationArgs } from '../../common/pagination/pagination.args';
 
 @Resolver((of) => User)
 @UseGuards(GqlAuthGuard)
@@ -33,6 +42,58 @@ export class UserResolver {
   @Query(() => User)
   async me(@UserEntity() user: User): Promise<User> {
     return user;
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => User)
+  async user(@UserEntity() user: User, @Args('id') id: string) {
+    return this.userService.user(
+      {
+        userId: id,
+      },
+      user
+    );
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Query(() => UserConnection)
+  async users(
+    @UserEntity() user: User,
+    @Args() { skip, after, before, first, last }: PaginationArgs,
+    @Args({ name: 'query', type: () => String, nullable: true }) query?: string,
+    @Args({
+      name: 'orderBy',
+      type: () => UserOrder,
+      nullable: true,
+    })
+    orderBy?: UserOrder
+  ) {
+    return this.userService.users(
+      {
+        paginationArgs: { skip, after, before, first, last },
+        query,
+        orderBy,
+      },
+      user
+    );
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async changeUserRole(
+    @UserEntity() user: User,
+    @Args('input') input: ChangeUserRoleInput
+  ) {
+    return this.userService.changeUserRole(user, input);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => User)
+  async deleteUser(
+    @UserEntity() user: User,
+    @Args('input') input: DeleteUserInput
+  ) {
+    return this.userService.deleteUser(user, input);
   }
 
   @UseGuards(GqlAuthGuard)

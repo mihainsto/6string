@@ -119,6 +119,27 @@ query me {
     }
 }
 
+query Users($first: Int!, $after: String, $query: String, $orderBy: UserOrder){
+    users(first: $first, after: $after, query: $query, orderBy: $orderBy) {
+        edges {
+            node {
+                id
+                updatedAt
+                createdAt
+                username
+                email
+                role
+            }
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        totalCount
+    }
+}
+
+
 mutation Login($email: String!, $password: String!) {
     login(data: { email: $email, password: $password }) {
         refreshToken
@@ -131,34 +152,34 @@ mutation Register($username: String!, $email: String!, $password: String!) {
     }
 }
 
-mutation updateUserName($input: UpdateUserNameInput!){
+mutation UpdateUserName($input: UpdateUserNameInput!){
     updateUserName(input: $input){
         id
         username
     }
 }
 
-mutation updateUserAvatar($input: UpdateUserAvatarInput!){
+mutation UpdateUserAvatar($input: UpdateUserAvatarInput!){
     updateUserAvatar(input: $input){
         id
         avatarUrl
     }
 }
 
-mutation updateUserEmail($input: UpdateUserEmailInput!){
+mutation UpdateUserEmail($input: UpdateUserEmailInput!){
     updateUserEmail(input: $input){
         id
         email
     }
 }
 
-mutation changePassword($input: ChangePasswordInput!){
+mutation ChangePassword($input: ChangePasswordInput!){
     changePassword(input: $input){
         id
     }
 }
 
-mutation toggleNotificationSettings($input: ToggleNotificationSettingsInput!){
+mutation ToggleNotificationSettings($input: ToggleNotificationSettingsInput!){
     toggleNotificationSettings(input: $input){
         id
         userSettings {
@@ -169,7 +190,8 @@ mutation toggleNotificationSettings($input: ToggleNotificationSettingsInput!){
         }
     }
 }
-mutation updatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!){
+
+mutation UpdatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!){
     updatePlaygroundSettings(input: $input){
         id
         playgroundSettings{
@@ -181,14 +203,28 @@ mutation updatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!){
     }
 }
 
-mutation addSongToFavorite($input: AddSongToFavoriteInput!){
+mutation ChangeUserRole($input: ChangeUserRoleInput!){
+    changeUserRole(input: $input){
+        id
+        role
+    }
+}
+
+mutation DeleteUser($input: DeleteUserInput!){
+    deleteUser(input: $input){
+        id
+        role
+    }
+}
+
+mutation AddSongToFavorite($input: AddSongToFavoriteInput!){
     addSongToFavorite(input: $input){
         id
         favorite
     }
 }
 
-mutation removeSongFromFavorite($input: RemoveSongFromFavoriteInput!){
+mutation RemoveSongFromFavorite($input: RemoveSongFromFavoriteInput!){
     removeSongFromFavorite(input: $input){
         id
         favorite

@@ -32,6 +32,7 @@ const cache = new InMemoryCache({
     Query: {
       fields: {
         songs: relayStylePagination(),
+        users: relayStylePagination(),
       },
     },
   },

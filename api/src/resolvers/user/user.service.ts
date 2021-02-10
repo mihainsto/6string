@@ -1,12 +1,18 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PasswordService } from '../../services/password.service';
 import { PrismaService } from '../../services/prisma.service';
 import {
   ChangePasswordInput,
+  ChangeUserRoleInput,
+  DeleteUserInput,
   ToggleNotificationSettingsInput,
   UpdateUserInput,
+  UserOrder,
 } from './user.inputs';
-import { PlaygroundSettings, User, UserSettings } from './user.model';
+import { PlaygroundSettings, Role, User, UserSettings } from './user.model';
+import { PaginationArgs } from '../../common/pagination/pagination.args';
+import { SongOrder } from '../song/song.inputs';
+import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 
 @Injectable()
 export class UserService {
@@ -57,7 +63,7 @@ export class UserService {
     });
   }
 
-  toggleNotificationSettings(
+  async toggleNotificationSettings(
     userId: string,
     input: ToggleNotificationSettingsInput
   ) {
@@ -77,10 +83,90 @@ export class UserService {
     });
   }
 
+  async changeUserRole(user: User, input: ChangeUserRoleInput) {
+    if (user.role !== Role.ADMIN) {
+      throw new Error('Unauthorized.');
+    }
+    return this.prisma.user.update({
+      data: {
+        role: input.role,
+      },
+      where: {
+        id: input.userId,
+      },
+    });
+  }
+
+  async deleteUser(user: User, input: DeleteUserInput) {
+    if (user.role !== Role.ADMIN) {
+      throw new Error('Unauthorized.');
+    }
+
+    return this.prisma.user.delete({
+      where: {
+        id: input.userId,
+      },
+    });
+  }
+
   async userSettings(userId: string): Promise<UserSettings> {
     return this.prisma.user
       .findUnique({ where: { id: userId } })
       .userSettings();
+  }
+
+  async user({ userId }: { userId: string }, user: User) {
+    if (user.role !== Role.ADMIN) {
+      throw new Error('Unauthorized.');
+    }
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+  }
+
+  async users(
+    {
+      paginationArgs,
+      query,
+      orderBy,
+    }: {
+      paginationArgs: PaginationArgs;
+      query?: string;
+      orderBy?: UserOrder;
+    },
+    user: User
+  ) {
+    if (user.role !== Role.ADMIN) {
+      throw new Error('Unauthorized.');
+    }
+    return findManyCursorConnection(
+      (args) =>
+        this.prisma.user.findMany({
+          where: {
+            OR: [
+              { username: { contains: query || '' } },
+              { email: { contains: query || '' } },
+            ],
+          },
+          ...(orderBy && { orderBy: { [orderBy.field]: orderBy.direction } }),
+          ...args,
+        }),
+      () =>
+        this.prisma.user.count({
+          where: {
+            OR: [
+              { username: { contains: query || '' } },
+              { email: { contains: query || '' } },
+            ],
+          },
+        }),
+      {
+        first: paginationArgs.first,
+        last: paginationArgs.last,
+        before: paginationArgs.before,
+        after: paginationArgs.after,
+      }
+    );
   }
 
   async playgroundSettings(userId: string): Promise<PlaygroundSettings> {

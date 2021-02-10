@@ -109,7 +109,7 @@ export const HomePage: FC = () => {
                             })
                       }}
                     >
-                      Title{' '}
+                      Title
                     </TableSortLabel>
                   </TableCell>
                   <TableCell align="right">

@@ -41,12 +41,21 @@ export type ChangePasswordInput = {
   oldPassword: Scalars['String']
 }
 
+export type ChangeUserRoleInput = {
+  role: Role
+  userId: Scalars['String']
+}
+
 export type CreateSongInput = {
   artist: Scalars['String']
   difficulty: Difficulty
   style?: Maybe<GuitarStyle>
   title: Scalars['String']
   tuning: Scalars['String']
+}
+
+export type DeleteUserInput = {
+  userId: Scalars['String']
 }
 
 export enum Difficulty {
@@ -80,7 +89,9 @@ export type Mutation = {
   __typename?: 'Mutation'
   addSongToFavorite: Song
   changePassword: User
+  changeUserRole: User
   createSong: Song
+  deleteUser: User
   login: Auth
   refreshToken: Token
   removeSongFromFavorite: Song
@@ -101,8 +112,16 @@ export type MutationChangePasswordArgs = {
   input: ChangePasswordInput
 }
 
+export type MutationChangeUserRoleArgs = {
+  input: ChangeUserRoleInput
+}
+
 export type MutationCreateSongArgs = {
   input: CreateSongInput
+}
+
+export type MutationDeleteUserArgs = {
+  input: DeleteUserInput
 }
 
 export type MutationLoginArgs = {
@@ -178,6 +197,8 @@ export type Query = {
   me: User
   song: Song
   songs: SongConnection
+  user: User
+  users: UserConnection
 }
 
 export type QueryHelloArgs = {
@@ -196,6 +217,20 @@ export type QuerySongsArgs = {
   first?: Maybe<Scalars['Int']>
   last?: Maybe<Scalars['Int']>
   orderBy?: Maybe<SongOrder>
+  query?: Maybe<Scalars['String']>
+  skip?: Maybe<Scalars['Int']>
+}
+
+export type QueryUserArgs = {
+  id: Scalars['String']
+}
+
+export type QueryUsersArgs = {
+  after?: Maybe<Scalars['String']>
+  before?: Maybe<Scalars['String']>
+  first?: Maybe<Scalars['Int']>
+  last?: Maybe<Scalars['Int']>
+  orderBy?: Maybe<UserOrder>
   query?: Maybe<Scalars['String']>
   skip?: Maybe<Scalars['Int']>
 }
@@ -350,6 +385,33 @@ export type User = {
   username: Scalars['String']
 }
 
+export type UserConnection = {
+  __typename?: 'UserConnection'
+  edges?: Maybe<Array<UserEdge>>
+  pageInfo: PageInfo
+  totalCount: Scalars['Int']
+}
+
+export type UserEdge = {
+  __typename?: 'UserEdge'
+  cursor: Scalars['String']
+  node: User
+}
+
+export type UserOrder = {
+  direction: OrderDirection
+  field: UserOrderField
+}
+
+/** Properties by which user connections can be ordered. */
+export enum UserOrderField {
+  CreatedAt = 'createdAt',
+  Email = 'email',
+  Id = 'id',
+  Role = 'role',
+  Username = 'username',
+}
+
 export type UserSettings = {
   __typename?: 'UserSettings'
   /** Identifies the date and time when the object was created. */
@@ -446,6 +508,35 @@ export type MeQuery = { __typename?: 'Query' } & {
     }
 }
 
+export type UsersQueryVariables = Exact<{
+  first: Scalars['Int']
+  after?: Maybe<Scalars['String']>
+  query?: Maybe<Scalars['String']>
+  orderBy?: Maybe<UserOrder>
+}>
+
+export type UsersQuery = { __typename?: 'Query' } & {
+  users: { __typename?: 'UserConnection' } & Pick<
+    UserConnection,
+    'totalCount'
+  > & {
+      edges?: Maybe<
+        Array<
+          { __typename?: 'UserEdge' } & {
+            node: { __typename?: 'User' } & Pick<
+              User,
+              'id' | 'updatedAt' | 'createdAt' | 'username' | 'email' | 'role'
+            >
+          }
+        >
+      >
+      pageInfo: { __typename?: 'PageInfo' } & Pick<
+        PageInfo,
+        'endCursor' | 'hasNextPage'
+      >
+    }
+}
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String']
   password: Scalars['String']
@@ -524,6 +615,22 @@ export type UpdatePlaygroundSettingsMutation = { __typename?: 'Mutation' } & {
         'id' | 'guitarOrientation' | 'guitarStyle' | 'guitarType'
       >
     }
+}
+
+export type ChangeUserRoleMutationVariables = Exact<{
+  input: ChangeUserRoleInput
+}>
+
+export type ChangeUserRoleMutation = { __typename?: 'Mutation' } & {
+  changeUserRole: { __typename?: 'User' } & Pick<User, 'id' | 'role'>
+}
+
+export type DeleteUserMutationVariables = Exact<{
+  input: DeleteUserInput
+}>
+
+export type DeleteUserMutation = { __typename?: 'Mutation' } & {
+  deleteUser: { __typename?: 'User' } & Pick<User, 'id' | 'role'>
 }
 
 export type AddSongToFavoriteMutationVariables = Exact<{
@@ -736,6 +843,74 @@ export function useMeLazyQuery(
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>
+export const UsersDocument = gql`
+  query Users(
+    $first: Int!
+    $after: String
+    $query: String
+    $orderBy: UserOrder
+  ) {
+    users(first: $first, after: $after, query: $query, orderBy: $orderBy) {
+      edges {
+        node {
+          id
+          updatedAt
+          createdAt
+          username
+          email
+          role
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      totalCount
+    }
+  }
+`
+
+/**
+ * __useUsersQuery__
+ *
+ * To run a query within a React component, call `useUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUsersQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      query: // value for 'query'
+ *      orderBy: // value for 'orderBy'
+ *   },
+ * });
+ */
+export function useUsersQuery(
+  baseOptions: Apollo.QueryHookOptions<UsersQuery, UsersQueryVariables>,
+) {
+  return Apollo.useQuery<UsersQuery, UsersQueryVariables>(
+    UsersDocument,
+    baseOptions,
+  )
+}
+export function useUsersLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>,
+) {
+  return Apollo.useLazyQuery<UsersQuery, UsersQueryVariables>(
+    UsersDocument,
+    baseOptions,
+  )
+}
+export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>
+export type UsersLazyQueryHookResult = ReturnType<typeof useUsersLazyQuery>
+export type UsersQueryResult = Apollo.QueryResult<
+  UsersQuery,
+  UsersQueryVariables
+>
 export const LoginDocument = gql`
   mutation Login($email: String!, $password: String!) {
     login(data: { email: $email, password: $password }) {
@@ -832,7 +1007,7 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<
   RegisterMutationVariables
 >
 export const UpdateUserNameDocument = gql`
-  mutation updateUserName($input: UpdateUserNameInput!) {
+  mutation UpdateUserName($input: UpdateUserNameInput!) {
     updateUserName(input: $input) {
       id
       username
@@ -881,7 +1056,7 @@ export type UpdateUserNameMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserNameMutationVariables
 >
 export const UpdateUserAvatarDocument = gql`
-  mutation updateUserAvatar($input: UpdateUserAvatarInput!) {
+  mutation UpdateUserAvatar($input: UpdateUserAvatarInput!) {
     updateUserAvatar(input: $input) {
       id
       avatarUrl
@@ -930,7 +1105,7 @@ export type UpdateUserAvatarMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserAvatarMutationVariables
 >
 export const UpdateUserEmailDocument = gql`
-  mutation updateUserEmail($input: UpdateUserEmailInput!) {
+  mutation UpdateUserEmail($input: UpdateUserEmailInput!) {
     updateUserEmail(input: $input) {
       id
       email
@@ -979,7 +1154,7 @@ export type UpdateUserEmailMutationOptions = Apollo.BaseMutationOptions<
   UpdateUserEmailMutationVariables
 >
 export const ChangePasswordDocument = gql`
-  mutation changePassword($input: ChangePasswordInput!) {
+  mutation ChangePassword($input: ChangePasswordInput!) {
     changePassword(input: $input) {
       id
     }
@@ -1027,7 +1202,7 @@ export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<
   ChangePasswordMutationVariables
 >
 export const ToggleNotificationSettingsDocument = gql`
-  mutation toggleNotificationSettings(
+  mutation ToggleNotificationSettings(
     $input: ToggleNotificationSettingsInput!
   ) {
     toggleNotificationSettings(input: $input) {
@@ -1083,7 +1258,7 @@ export type ToggleNotificationSettingsMutationOptions = Apollo.BaseMutationOptio
   ToggleNotificationSettingsMutationVariables
 >
 export const UpdatePlaygroundSettingsDocument = gql`
-  mutation updatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!) {
+  mutation UpdatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!) {
     updatePlaygroundSettings(input: $input) {
       id
       playgroundSettings {
@@ -1136,8 +1311,106 @@ export type UpdatePlaygroundSettingsMutationOptions = Apollo.BaseMutationOptions
   UpdatePlaygroundSettingsMutation,
   UpdatePlaygroundSettingsMutationVariables
 >
+export const ChangeUserRoleDocument = gql`
+  mutation ChangeUserRole($input: ChangeUserRoleInput!) {
+    changeUserRole(input: $input) {
+      id
+      role
+    }
+  }
+`
+export type ChangeUserRoleMutationFn = Apollo.MutationFunction<
+  ChangeUserRoleMutation,
+  ChangeUserRoleMutationVariables
+>
+
+/**
+ * __useChangeUserRoleMutation__
+ *
+ * To run a mutation, you first call `useChangeUserRoleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangeUserRoleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changeUserRoleMutation, { data, loading, error }] = useChangeUserRoleMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useChangeUserRoleMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ChangeUserRoleMutation,
+    ChangeUserRoleMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    ChangeUserRoleMutation,
+    ChangeUserRoleMutationVariables
+  >(ChangeUserRoleDocument, baseOptions)
+}
+export type ChangeUserRoleMutationHookResult = ReturnType<
+  typeof useChangeUserRoleMutation
+>
+export type ChangeUserRoleMutationResult = Apollo.MutationResult<ChangeUserRoleMutation>
+export type ChangeUserRoleMutationOptions = Apollo.BaseMutationOptions<
+  ChangeUserRoleMutation,
+  ChangeUserRoleMutationVariables
+>
+export const DeleteUserDocument = gql`
+  mutation DeleteUser($input: DeleteUserInput!) {
+    deleteUser(input: $input) {
+      id
+      role
+    }
+  }
+`
+export type DeleteUserMutationFn = Apollo.MutationFunction<
+  DeleteUserMutation,
+  DeleteUserMutationVariables
+>
+
+/**
+ * __useDeleteUserMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserMutation, { data, loading, error }] = useDeleteUserMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteUserMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteUserMutation,
+    DeleteUserMutationVariables
+  >,
+) {
+  return Apollo.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(
+    DeleteUserDocument,
+    baseOptions,
+  )
+}
+export type DeleteUserMutationHookResult = ReturnType<
+  typeof useDeleteUserMutation
+>
+export type DeleteUserMutationResult = Apollo.MutationResult<DeleteUserMutation>
+export type DeleteUserMutationOptions = Apollo.BaseMutationOptions<
+  DeleteUserMutation,
+  DeleteUserMutationVariables
+>
 export const AddSongToFavoriteDocument = gql`
-  mutation addSongToFavorite($input: AddSongToFavoriteInput!) {
+  mutation AddSongToFavorite($input: AddSongToFavoriteInput!) {
     addSongToFavorite(input: $input) {
       id
       favorite
@@ -1186,7 +1459,7 @@ export type AddSongToFavoriteMutationOptions = Apollo.BaseMutationOptions<
   AddSongToFavoriteMutationVariables
 >
 export const RemoveSongFromFavoriteDocument = gql`
-  mutation removeSongFromFavorite($input: RemoveSongFromFavoriteInput!) {
+  mutation RemoveSongFromFavorite($input: RemoveSongFromFavoriteInput!) {
     removeSongFromFavorite(input: $input) {
       id
       favorite
