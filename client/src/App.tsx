@@ -24,6 +24,7 @@ import { PlaygroundSettingsPage } from './Pages/Settings/PlaygroundSettingsPage'
 import { ReviewNewSongsPage } from './Pages/Settings/ReviewNewSongsPage'
 import { Settings } from './Pages/Settings/Settings'
 import { SongPlayPage } from './Pages/SongPlayPage/SongPlayPage'
+import { SubmitTabPage } from './Pages/SubmitTabPage/SubmitTabPage'
 import { useThemeStore } from './State/ThemeState'
 
 function App() {
@@ -70,6 +71,9 @@ function App() {
             </Route>
             <Route path="/settings/playground">
               {loggedIn ? <PlaygroundSettingsPage /> : <NotLoggedInPage />}
+            </Route>
+            <Route path="/submit/tab">
+              {loggedIn ? <SubmitTabPage /> : <NotLoggedInPage />}
             </Route>
             <Route path="/settings/admin/songreview">
               {userRole === Role.Admin ? (
