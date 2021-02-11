@@ -3,7 +3,8 @@
 import { css } from '@emotion/react'
 import {
   Button,
-  Switch,
+  MenuItem,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -14,25 +15,60 @@ import {
   Typography,
 } from '@material-ui/core'
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday'
-import ScheduleIcon from '@material-ui/icons/Schedule'
 import { format } from 'date-fns'
 import React, { FC, useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
 
-import { SettingsCard } from '../../Components/Features/Settings/SettingsCard'
 import { SettingsPageLayout } from '../../Components/Layouts/SettingsPageLayout'
 import {
   OrderDirection,
-  SongOrderField,
+  Role,
+  useChangeUserRoleMutation,
+  useDeleteUserMutation,
   UserOrder,
   UserOrderField,
-  useSongsQuery,
+  UsersDocument,
+  UsersQuery,
   useUsersQuery,
 } from '../../generated/graphql'
+import { useCurrentUser } from '../../Hooks/useCurrentUser'
+
+type RoleSelectFieldProps = {
+  currentRole: Role
+  userId: string
+}
+
+const RoleSelectField: FC<RoleSelectFieldProps> = ({ currentRole, userId }) => {
+  const [role, setRole] = useState<Role>(currentRole)
+  const [changeUserRoleMutation] = useChangeUserRoleMutation({
+    onCompleted: () => {
+      toast('Changed user role!')
+    },
+  })
+
+  useEffect(() => {
+    if (role !== currentRole) {
+      changeUserRoleMutation({
+        variables: { input: { role: role, userId: userId } },
+      })
+    }
+  }, [role])
+
+  return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    <Select value={role} onChange={(e) => setRole(e.target.value)}>
+      <MenuItem value="ADMIN">Admin</MenuItem>
+      <MenuItem value="USER">User</MenuItem>
+    </Select>
+  )
+}
 
 export const ApplicationUsersPage: FC = () => {
   const first = 20
   const [orderBy, setOrderBy] = useState<UserOrder | null>(null)
-
+  const currentUser = useCurrentUser()
+  const [deleteUserMutation] = useDeleteUserMutation()
   const { data, fetchMore, refetch } = useUsersQuery({
     variables: {
       first: first,
@@ -138,11 +174,10 @@ export const ApplicationUsersPage: FC = () => {
                           })
                     }}
                   >
-                    Email
+                    Role
                   </TableSortLabel>
                 </TableCell>
                 <TableCell align="right">
-                  {' '}
                   <TableSortLabel
                     active={
                       (orderBy && orderBy.field === UserOrderField.CreatedAt) ||
@@ -166,7 +201,7 @@ export const ApplicationUsersPage: FC = () => {
                           })
                     }}
                   >
-                    Email
+                    <CalendarTodayIcon />
                   </TableSortLabel>
                 </TableCell>
                 <TableCell align="right" />
@@ -181,12 +216,51 @@ export const ApplicationUsersPage: FC = () => {
                       {row.node.email}
                     </TableCell>
                     <TableCell align="right">{row.node.username}</TableCell>
-                    <TableCell align="right">{row.node.role}</TableCell>
+                    <TableCell align="right">
+                      {row.node.email !== currentUser.data?.me.email ? (
+                        <RoleSelectField
+                          currentRole={row.node.role}
+                          userId={row.node.id}
+                        />
+                      ) : (
+                        <Typography>Admin</Typography>
+                      )}
+                    </TableCell>
                     <TableCell align="right">
                       {format(new Date(row.node.createdAt), 'MM-dd-yyyy')}
                     </TableCell>
                     <TableCell align="right">
-                      <Button>Delete</Button>
+                      {row.node.email !== currentUser.data?.me.email ? (
+                        <Button
+                          onClick={() => {
+                            deleteUserMutation({
+                              variables: {
+                                input: {
+                                  userId: row.node.id,
+                                },
+                              },
+                              update(proxy) {
+                                const query = UsersDocument
+                                const data = proxy.readQuery<UsersQuery>({
+                                  query,
+                                })
+                                proxy.writeQuery({
+                                  query,
+                                  data: {
+                                    users: {
+                                      edges: data?.users?.edges?.filter(
+                                        (edge) => edge.node.id !== row.node.id,
+                                      ),
+                                    },
+                                  },
+                                })
+                              },
+                            })
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      ) : null}
                     </TableCell>
                   </TableRow>
                 ))}

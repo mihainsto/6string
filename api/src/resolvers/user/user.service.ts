@@ -102,6 +102,34 @@ export class UserService {
       throw new Error('Unauthorized.');
     }
 
+    const playgroundSettings = await this.prisma.user
+      .findUnique({
+        where: {
+          id: input.userId,
+        },
+      })
+      .playgroundSettings();
+
+    const userSettings = await this.prisma.user
+      .findUnique({
+        where: {
+          id: input.userId,
+        },
+      })
+      .userSettings();
+
+    this.prisma.playgroundSettings.delete({
+      where: {
+        id: playgroundSettings.id,
+      },
+    });
+
+    this.prisma.userSettings.delete({
+      where: {
+        id: userSettings.id,
+      },
+    });
+
     return this.prisma.user.delete({
       where: {
         id: input.userId,

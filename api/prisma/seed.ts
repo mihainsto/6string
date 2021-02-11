@@ -63,6 +63,70 @@ async function main() {
     },
   });
 
+  const user4: User = await prisma.user.create({
+    data: {
+      email: 'homer@simpson.com',
+      username: 'Homer',
+      avatarUrl: faker.image.cats(),
+      role: 'USER',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
+  const user5: User = await prisma.user.create({
+    data: {
+      email: 'marge@simpson.com',
+      username: 'Marge',
+      avatarUrl: faker.image.cats(),
+      role: 'USER',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
+  const user6: User = await prisma.user.create({
+    data: {
+      email: 'burns@burns.com',
+      username: 'Burns',
+      avatarUrl: faker.image.cats(),
+      role: 'USER',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
+  const user7: User = await prisma.user.create({
+    data: {
+      email: 'ned@flanders.com',
+      username: 'Ned',
+      avatarUrl: faker.image.cats(),
+      role: 'USER',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
   for (let i = 0; i < NUMBER_OF_SONGS; i++) {
     await prisma.song.create({
       data: {
