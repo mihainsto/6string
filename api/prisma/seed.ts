@@ -136,6 +136,7 @@ async function main() {
         postedBy: { connect: { id: user1.id } },
         tuning: 'standard',
         style: 'STRUM',
+        inReview: false,
         tab: {
           create: {
             tempo: fakeTab2.tempo,

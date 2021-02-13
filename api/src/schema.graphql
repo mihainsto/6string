@@ -6,6 +6,10 @@ input AddSongToFavoriteInput {
   songId: ID!
 }
 
+input ApproveSongInput {
+  songId: ID!
+}
+
 type Auth {
   """JWT access token"""
   accessToken: String!
@@ -29,12 +33,17 @@ input CreateSongInput {
   artist: String!
   difficulty: Difficulty!
   style: GuitarStyle
+  tabUrl: String!
   title: String!
   tuning: String!
 }
 
 """Date custom scalar type"""
 scalar Date
+
+input DeleteSongInReviewInput {
+  songId: ID!
+}
 
 input DeleteUserInput {
   userId: String!
@@ -74,14 +83,17 @@ input LoginInput {
 
 type Mutation {
   addSongToFavorite(input: AddSongToFavoriteInput!): Song!
+  approveSong(input: ApproveSongInput!): Song!
   changePassword(input: ChangePasswordInput!): User!
   changeUserRole(input: ChangeUserRoleInput!): User!
   createSong(input: CreateSongInput!): Song!
+  deleteSongInReview(input: DeleteSongInReviewInput!): Song!
   deleteUser(input: DeleteUserInput!): User!
   login(data: LoginInput!): Auth!
   refreshToken(token: String!): Token!
   removeSongFromFavorite(input: RemoveSongFromFavoriteInput!): Song!
   signup(data: SignupInput!): Auth!
+  submitSongToReview(input: SubmitSongToReviewInput!): Song!
   toggleNotificationSettings(input: ToggleNotificationSettingsInput!): User!
   updatePlaygroundSettings(input: UpdatePlaygroundSettingsInput!): User!
   updateUser(data: UpdateUserInput!): User!
@@ -122,7 +134,9 @@ type Query {
   helloWorld: String!
   me: User!
   song(id: String!): Song!
+  songInReview(id: String!): Song!
   songs(after: String, before: String, favorite: Boolean, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
+  songsInReview(after: String, before: String, favorite: Boolean, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
   user(id: String!): User!
   users(after: String, before: String, first: Int, last: Int, orderBy: UserOrder, query: String, skip: Int): UserConnection!
 }
@@ -144,6 +158,7 @@ input SignupInput {
 }
 
 type Song {
+  archived: Boolean!
   artist: String!
 
   """Identifies the date and time when the object was created."""
@@ -151,8 +166,10 @@ type Song {
   difficulty: Difficulty!
   favorite: Boolean!
   id: ID!
+  inReview: Boolean!
   postedBy: User!
   style: GuitarStyle
+  submittedToReview: Boolean!
   tab: Tab!
   title: String!
   tuning: String
@@ -193,6 +210,10 @@ enum SongOrderField {
   style
   title
   tuning
+}
+
+input SubmitSongToReviewInput {
+  songId: ID!
 }
 
 type Tab {

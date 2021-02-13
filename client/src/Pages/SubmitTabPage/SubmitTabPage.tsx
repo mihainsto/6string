@@ -17,13 +17,22 @@ import {
 import { DropzoneArea } from 'material-ui-dropzone'
 import React, { FC, useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { useHistory } from 'react-router-dom'
 
 import { PageLayout } from '../../Components/Layouts/PageLayout'
-import { Difficulty, GuitarStyle } from '../../generated/graphql'
+import {
+  Difficulty,
+  GuitarStyle,
+  useCreateSongMutation,
+  useSubmitSongToReviewMutation,
+} from '../../generated/graphql'
+import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useFileUpload } from '../../Hooks/useFileUpload'
 
 export const SubmitTabPage: FC = () => {
   const uploadFile = useFileUpload()
+  const getCloudinaryUrl = useCloudinaryUrl()
+  const history = useHistory()
 
   const [activeStep, setActiveStep] = useState(0)
   const steps = [
@@ -41,6 +50,28 @@ export const SubmitTabPage: FC = () => {
 
   const [file, setFile] = useState<File | undefined>(undefined)
   const [loading, setLoading] = useState(false)
+
+  const [newSongId, setNewSongId] = useState('')
+  const [createSongMutation] = useCreateSongMutation({
+    onCompleted: (data) => {
+      setLoading(false)
+      setNewSongId(data.createSong.id)
+      toast.success('Song processed successfully!')
+    },
+    onError: () => {
+      toast.error('Unexpected error!')
+    },
+  })
+  const [submitSongToReviewMutation] = useSubmitSongToReviewMutation({
+    onCompleted: () => {
+      toast.success(
+        'Thank you, you will receive a notification as soon as the song is reviewed!',
+      )
+    },
+    onError: () => {
+      toast.error('Unexpected error!')
+    },
+  })
 
   const validateSongDetails = () => {
     if (songTitle === '') {
@@ -76,9 +107,24 @@ export const SubmitTabPage: FC = () => {
   const handleFormCompleted = async () => {
     if (!file) return
     const response = await uploadFile(file)
-    const fileId = response.public_id
+    const fileUrl = getCloudinaryUrl(response.public_id)!.replace(
+      'image',
+      'raw',
+    )
+    createSongMutation({
+      variables: {
+        input: {
+          artist: songArtist,
+          difficulty: songDifficulty as Difficulty,
+          style: songStyle as GuitarStyle,
+          tabUrl: fileUrl,
+          title: songTitle,
+          tuning: songTuning,
+        },
+      },
+    })
 
-    console.log(fileId)
+    console.log(fileUrl)
   }
 
   return (
@@ -217,7 +263,7 @@ export const SubmitTabPage: FC = () => {
                       if (validateSongDetails()) handleNext()
                     }}
                   >
-                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                    Next
                   </Button>
                 </div>
               </div>
@@ -259,7 +305,7 @@ export const SubmitTabPage: FC = () => {
                   }}
                   disabled={!file}
                 >
-                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                  Next
                 </Button>
               </div>
             </div>
@@ -270,7 +316,7 @@ export const SubmitTabPage: FC = () => {
                 margin-top: 40px;
               `}
             >
-              {loading && (
+              {loading ? (
                 <div>
                   <Typography>
                     Please wait, we are processing your song!
@@ -282,7 +328,90 @@ export const SubmitTabPage: FC = () => {
                     `}
                   />
                 </div>
+              ) : (
+                <div>
+                  <Typography>Song processed successfully!</Typography>
+                  <Typography>
+                    Please review your song in the playground and then you can
+                    submit!
+                  </Typography>
+
+                  <Typography
+                    css={css`
+                      margin-top: 40px;
+                    `}
+                  >
+                    Click the button and a new tab with your song will open.
+                  </Typography>
+                  <Button
+                    css={css`
+                      margin-top: 20px;
+                    `}
+                    variant="contained"
+                    onClick={() => {
+                      window.open(`/playsong/${newSongId}`)
+                    }}
+                  >
+                    Review the new song inside the playground
+                  </Button>
+
+                  <div
+                    css={css`
+                      margin-top: 40px;
+                    `}
+                  >
+                    <Button onClick={handleBack}>Back</Button>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        handleNext()
+                      }}
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </div>
               )}
+            </div>
+          )}
+
+          {activeStep === 3 && (
+            <div
+              css={css`
+                margin-top: 40px;
+              `}
+            >
+              <Typography
+                css={css`
+                  margin-top: 20px;
+                `}
+              >
+                If you are ready, please submit the song!
+              </Typography>
+              <div
+                css={css`
+                  margin-top: 50px;
+                `}
+              >
+                <Button onClick={handleBack}>Back</Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    history.push('/')
+                    submitSongToReviewMutation({
+                      variables: {
+                        input: {
+                          songId: newSongId,
+                        },
+                      },
+                    })
+                  }}
+                >
+                  Submit the song to review
+                </Button>
+              </div>
             </div>
           )}
         </div>

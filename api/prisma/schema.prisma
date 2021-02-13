@@ -85,6 +85,9 @@ model Song {
     tuning     String
     style      GuitarStyle?
     tab        Tab?
+    archived   Boolean @default(false)
+    inReview   Boolean @default(true)
+    submittedToReview   Boolean @default(false)
     favoriteUsers User[] @relation("favoriteRelation")
 }
 
@@ -108,12 +111,3 @@ model Track {
     tab        Tab   @relation(fields: [tabId], references: [id])
     tabId      String
 }
-
-//model SongsOnUsersFavorite {
-//    user       User  @relation(fields: [userId], references: [id])
-//    userId     String
-//    song       Song  @relation(fields: [songId], references: [id])
-//    songId     String
-//
-//    @@id([userId, songId])
-//}

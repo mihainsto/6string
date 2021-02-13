@@ -35,6 +35,9 @@ export class CreateSongInput {
 
   @Field(() => GuitarStyle, { nullable: true })
   style?: GuitarStyle;
+
+  @Field()
+  tabUrl: string;
 }
 
 @InputType()
@@ -63,6 +66,24 @@ export class AddSongToFavoriteInput {
 
 @InputType()
 export class RemoveSongFromFavoriteInput {
+  @Field(() => ID)
+  songId: string;
+}
+
+@InputType()
+export class DeleteSongInReviewInput {
+  @Field(() => ID)
+  songId: string;
+}
+
+@InputType()
+export class SubmitSongToReviewInput {
+  @Field(() => ID)
+  songId: string;
+}
+
+@InputType()
+export class ApproveSongInput {
   @Field(() => ID)
   songId: string;
 }

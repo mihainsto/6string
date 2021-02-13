@@ -27,6 +27,10 @@ export type AddSongToFavoriteInput = {
   songId: Scalars['ID']
 }
 
+export type ApproveSongInput = {
+  songId: Scalars['ID']
+}
+
 export type Auth = {
   __typename?: 'Auth'
   /** JWT access token */
@@ -50,8 +54,13 @@ export type CreateSongInput = {
   artist: Scalars['String']
   difficulty: Difficulty
   style?: Maybe<GuitarStyle>
+  tabUrl: Scalars['String']
   title: Scalars['String']
   tuning: Scalars['String']
+}
+
+export type DeleteSongInReviewInput = {
+  songId: Scalars['ID']
 }
 
 export type DeleteUserInput = {
@@ -88,14 +97,17 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation'
   addSongToFavorite: Song
+  approveSong: Song
   changePassword: User
   changeUserRole: User
   createSong: Song
+  deleteSongInReview: Song
   deleteUser: User
   login: Auth
   refreshToken: Token
   removeSongFromFavorite: Song
   signup: Auth
+  submitSongToReview: Song
   toggleNotificationSettings: User
   updatePlaygroundSettings: User
   updateUser: User
@@ -108,6 +120,10 @@ export type MutationAddSongToFavoriteArgs = {
   input: AddSongToFavoriteInput
 }
 
+export type MutationApproveSongArgs = {
+  input: ApproveSongInput
+}
+
 export type MutationChangePasswordArgs = {
   input: ChangePasswordInput
 }
@@ -118,6 +134,10 @@ export type MutationChangeUserRoleArgs = {
 
 export type MutationCreateSongArgs = {
   input: CreateSongInput
+}
+
+export type MutationDeleteSongInReviewArgs = {
+  input: DeleteSongInReviewInput
 }
 
 export type MutationDeleteUserArgs = {
@@ -138,6 +158,10 @@ export type MutationRemoveSongFromFavoriteArgs = {
 
 export type MutationSignupArgs = {
   data: SignupInput
+}
+
+export type MutationSubmitSongToReviewArgs = {
+  input: SubmitSongToReviewInput
 }
 
 export type MutationToggleNotificationSettingsArgs = {
@@ -196,7 +220,9 @@ export type Query = {
   helloWorld: Scalars['String']
   me: User
   song: Song
+  songInReview: Song
   songs: SongConnection
+  songsInReview: SongConnection
   user: User
   users: UserConnection
 }
@@ -209,7 +235,23 @@ export type QuerySongArgs = {
   id: Scalars['String']
 }
 
+export type QuerySongInReviewArgs = {
+  id: Scalars['String']
+}
+
 export type QuerySongsArgs = {
+  after?: Maybe<Scalars['String']>
+  before?: Maybe<Scalars['String']>
+  favorite?: Maybe<Scalars['Boolean']>
+  filter?: Maybe<SongFilter>
+  first?: Maybe<Scalars['Int']>
+  last?: Maybe<Scalars['Int']>
+  orderBy?: Maybe<SongOrder>
+  query?: Maybe<Scalars['String']>
+  skip?: Maybe<Scalars['Int']>
+}
+
+export type QuerySongsInReviewArgs = {
   after?: Maybe<Scalars['String']>
   before?: Maybe<Scalars['String']>
   favorite?: Maybe<Scalars['Boolean']>
@@ -253,14 +295,17 @@ export type SignupInput = {
 
 export type Song = {
   __typename?: 'Song'
+  archived: Scalars['Boolean']
   artist: Scalars['String']
   /** Identifies the date and time when the object was created. */
   createdAt: Scalars['Date']
   difficulty: Difficulty
   favorite: Scalars['Boolean']
   id: Scalars['ID']
+  inReview: Scalars['Boolean']
   postedBy: User
   style?: Maybe<GuitarStyle>
+  submittedToReview: Scalars['Boolean']
   tab: Tab
   title: Scalars['String']
   tuning?: Maybe<Scalars['String']>
@@ -302,6 +347,10 @@ export enum SongOrderField {
   Style = 'style',
   Title = 'title',
   Tuning = 'tuning',
+}
+
+export type SubmitSongToReviewInput = {
+  songId: Scalars['ID']
 }
 
 export type Tab = {
@@ -452,6 +501,51 @@ export type SongsQuery = { __typename?: 'Query' } & {
               | 'difficulty'
               | 'artist'
               | 'favorite'
+              | 'submittedToReview'
+              | 'inReview'
+              | 'archived'
+            >
+          }
+        >
+      >
+      pageInfo: { __typename?: 'PageInfo' } & Pick<
+        PageInfo,
+        'endCursor' | 'hasNextPage'
+      >
+    }
+}
+
+export type SongsInReviewQueryVariables = Exact<{
+  first: Scalars['Int']
+  after?: Maybe<Scalars['String']>
+  query?: Maybe<Scalars['String']>
+  filter?: Maybe<SongFilter>
+  orderBy?: Maybe<SongOrder>
+  favorite?: Maybe<Scalars['Boolean']>
+}>
+
+export type SongsInReviewQuery = { __typename?: 'Query' } & {
+  songsInReview: { __typename?: 'SongConnection' } & Pick<
+    SongConnection,
+    'totalCount'
+  > & {
+      edges?: Maybe<
+        Array<
+          { __typename?: 'SongEdge' } & {
+            node: { __typename?: 'Song' } & Pick<
+              Song,
+              | 'id'
+              | 'title'
+              | 'tuning'
+              | 'style'
+              | 'updatedAt'
+              | 'createdAt'
+              | 'difficulty'
+              | 'artist'
+              | 'favorite'
+              | 'submittedToReview'
+              | 'inReview'
+              | 'archived'
             >
           }
         >
@@ -478,6 +572,9 @@ export type SongQuery = { __typename?: 'Query' } & {
     | 'difficulty'
     | 'artist'
     | 'favorite'
+    | 'submittedToReview'
+    | 'inReview'
+    | 'archived'
   > & {
       tab: { __typename?: 'Tab' } & Pick<Tab, 'tempo' | 'tempoName'> & {
           tracks: Array<
@@ -652,6 +749,47 @@ export type RemoveSongFromFavoriteMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type DeleteSongInReviewMutationVariables = Exact<{
+  input: DeleteSongInReviewInput
+}>
+
+export type DeleteSongInReviewMutation = { __typename?: 'Mutation' } & {
+  deleteSongInReview: { __typename?: 'Song' } & Pick<
+    Song,
+    'id' | 'submittedToReview' | 'inReview' | 'archived'
+  >
+}
+
+export type SubmitSongToReviewMutationVariables = Exact<{
+  input: SubmitSongToReviewInput
+}>
+
+export type SubmitSongToReviewMutation = { __typename?: 'Mutation' } & {
+  submitSongToReview: { __typename?: 'Song' } & Pick<
+    Song,
+    'id' | 'submittedToReview' | 'inReview'
+  >
+}
+
+export type ApproveSongMutationVariables = Exact<{
+  input: ApproveSongInput
+}>
+
+export type ApproveSongMutation = { __typename?: 'Mutation' } & {
+  approveSong: { __typename?: 'Song' } & Pick<
+    Song,
+    'id' | 'submittedToReview' | 'inReview'
+  >
+}
+
+export type CreateSongMutationVariables = Exact<{
+  input: CreateSongInput
+}>
+
+export type CreateSongMutation = { __typename?: 'Mutation' } & {
+  createSong: { __typename?: 'Song' } & Pick<Song, 'id'>
+}
+
 export const SongsDocument = gql`
   query Songs(
     $first: Int!
@@ -680,6 +818,9 @@ export const SongsDocument = gql`
           difficulty
           artist
           favorite
+          submittedToReview
+          inReview
+          archived
         }
       }
       pageInfo {
@@ -734,6 +875,101 @@ export type SongsQueryResult = Apollo.QueryResult<
   SongsQuery,
   SongsQueryVariables
 >
+export const SongsInReviewDocument = gql`
+  query SongsInReview(
+    $first: Int!
+    $after: String
+    $query: String
+    $filter: SongFilter
+    $orderBy: SongOrder
+    $favorite: Boolean
+  ) {
+    songsInReview(
+      first: $first
+      after: $after
+      query: $query
+      filter: $filter
+      orderBy: $orderBy
+      favorite: $favorite
+    ) {
+      edges {
+        node {
+          id
+          title
+          tuning
+          style
+          updatedAt
+          createdAt
+          difficulty
+          artist
+          favorite
+          submittedToReview
+          inReview
+          archived
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      totalCount
+    }
+  }
+`
+
+/**
+ * __useSongsInReviewQuery__
+ *
+ * To run a query within a React component, call `useSongsInReviewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSongsInReviewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSongsInReviewQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *      query: // value for 'query'
+ *      filter: // value for 'filter'
+ *      orderBy: // value for 'orderBy'
+ *      favorite: // value for 'favorite'
+ *   },
+ * });
+ */
+export function useSongsInReviewQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SongsInReviewQuery,
+    SongsInReviewQueryVariables
+  >,
+) {
+  return Apollo.useQuery<SongsInReviewQuery, SongsInReviewQueryVariables>(
+    SongsInReviewDocument,
+    baseOptions,
+  )
+}
+export function useSongsInReviewLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SongsInReviewQuery,
+    SongsInReviewQueryVariables
+  >,
+) {
+  return Apollo.useLazyQuery<SongsInReviewQuery, SongsInReviewQueryVariables>(
+    SongsInReviewDocument,
+    baseOptions,
+  )
+}
+export type SongsInReviewQueryHookResult = ReturnType<
+  typeof useSongsInReviewQuery
+>
+export type SongsInReviewLazyQueryHookResult = ReturnType<
+  typeof useSongsInReviewLazyQuery
+>
+export type SongsInReviewQueryResult = Apollo.QueryResult<
+  SongsInReviewQuery,
+  SongsInReviewQueryVariables
+>
 export const SongDocument = gql`
   query Song($id: String!) {
     song(id: $id) {
@@ -745,6 +981,9 @@ export const SongDocument = gql`
       difficulty
       artist
       favorite
+      submittedToReview
+      inReview
+      archived
       tab {
         tracks {
           measures
@@ -1506,4 +1745,203 @@ export type RemoveSongFromFavoriteMutationResult = Apollo.MutationResult<RemoveS
 export type RemoveSongFromFavoriteMutationOptions = Apollo.BaseMutationOptions<
   RemoveSongFromFavoriteMutation,
   RemoveSongFromFavoriteMutationVariables
+>
+export const DeleteSongInReviewDocument = gql`
+  mutation DeleteSongInReview($input: DeleteSongInReviewInput!) {
+    deleteSongInReview(input: $input) {
+      id
+      submittedToReview
+      inReview
+      archived
+    }
+  }
+`
+export type DeleteSongInReviewMutationFn = Apollo.MutationFunction<
+  DeleteSongInReviewMutation,
+  DeleteSongInReviewMutationVariables
+>
+
+/**
+ * __useDeleteSongInReviewMutation__
+ *
+ * To run a mutation, you first call `useDeleteSongInReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSongInReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSongInReviewMutation, { data, loading, error }] = useDeleteSongInReviewMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useDeleteSongInReviewMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteSongInReviewMutation,
+    DeleteSongInReviewMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    DeleteSongInReviewMutation,
+    DeleteSongInReviewMutationVariables
+  >(DeleteSongInReviewDocument, baseOptions)
+}
+export type DeleteSongInReviewMutationHookResult = ReturnType<
+  typeof useDeleteSongInReviewMutation
+>
+export type DeleteSongInReviewMutationResult = Apollo.MutationResult<DeleteSongInReviewMutation>
+export type DeleteSongInReviewMutationOptions = Apollo.BaseMutationOptions<
+  DeleteSongInReviewMutation,
+  DeleteSongInReviewMutationVariables
+>
+export const SubmitSongToReviewDocument = gql`
+  mutation SubmitSongToReview($input: SubmitSongToReviewInput!) {
+    submitSongToReview(input: $input) {
+      id
+      submittedToReview
+      inReview
+    }
+  }
+`
+export type SubmitSongToReviewMutationFn = Apollo.MutationFunction<
+  SubmitSongToReviewMutation,
+  SubmitSongToReviewMutationVariables
+>
+
+/**
+ * __useSubmitSongToReviewMutation__
+ *
+ * To run a mutation, you first call `useSubmitSongToReviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubmitSongToReviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [submitSongToReviewMutation, { data, loading, error }] = useSubmitSongToReviewMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSubmitSongToReviewMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SubmitSongToReviewMutation,
+    SubmitSongToReviewMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    SubmitSongToReviewMutation,
+    SubmitSongToReviewMutationVariables
+  >(SubmitSongToReviewDocument, baseOptions)
+}
+export type SubmitSongToReviewMutationHookResult = ReturnType<
+  typeof useSubmitSongToReviewMutation
+>
+export type SubmitSongToReviewMutationResult = Apollo.MutationResult<SubmitSongToReviewMutation>
+export type SubmitSongToReviewMutationOptions = Apollo.BaseMutationOptions<
+  SubmitSongToReviewMutation,
+  SubmitSongToReviewMutationVariables
+>
+export const ApproveSongDocument = gql`
+  mutation ApproveSong($input: ApproveSongInput!) {
+    approveSong(input: $input) {
+      id
+      submittedToReview
+      inReview
+    }
+  }
+`
+export type ApproveSongMutationFn = Apollo.MutationFunction<
+  ApproveSongMutation,
+  ApproveSongMutationVariables
+>
+
+/**
+ * __useApproveSongMutation__
+ *
+ * To run a mutation, you first call `useApproveSongMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useApproveSongMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [approveSongMutation, { data, loading, error }] = useApproveSongMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useApproveSongMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ApproveSongMutation,
+    ApproveSongMutationVariables
+  >,
+) {
+  return Apollo.useMutation<ApproveSongMutation, ApproveSongMutationVariables>(
+    ApproveSongDocument,
+    baseOptions,
+  )
+}
+export type ApproveSongMutationHookResult = ReturnType<
+  typeof useApproveSongMutation
+>
+export type ApproveSongMutationResult = Apollo.MutationResult<ApproveSongMutation>
+export type ApproveSongMutationOptions = Apollo.BaseMutationOptions<
+  ApproveSongMutation,
+  ApproveSongMutationVariables
+>
+export const CreateSongDocument = gql`
+  mutation CreateSong($input: CreateSongInput!) {
+    createSong(input: $input) {
+      id
+    }
+  }
+`
+export type CreateSongMutationFn = Apollo.MutationFunction<
+  CreateSongMutation,
+  CreateSongMutationVariables
+>
+
+/**
+ * __useCreateSongMutation__
+ *
+ * To run a mutation, you first call `useCreateSongMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSongMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSongMutation, { data, loading, error }] = useCreateSongMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSongMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateSongMutation,
+    CreateSongMutationVariables
+  >,
+) {
+  return Apollo.useMutation<CreateSongMutation, CreateSongMutationVariables>(
+    CreateSongDocument,
+    baseOptions,
+  )
+}
+export type CreateSongMutationHookResult = ReturnType<
+  typeof useCreateSongMutation
+>
+export type CreateSongMutationResult = Apollo.MutationResult<CreateSongMutation>
+export type CreateSongMutationOptions = Apollo.BaseMutationOptions<
+  CreateSongMutation,
+  CreateSongMutationVariables
 >

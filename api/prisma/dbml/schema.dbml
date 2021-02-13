@@ -51,6 +51,9 @@ Table Song {
   tuning String [not null]
   style GuitarStyle
   tab Tab
+  archived Boolean [not null, default: false]
+  inReview Boolean [not null, default: true]
+  submittedToReview Boolean [not null, default: false]
   favoriteUsers User [not null]
 }
 

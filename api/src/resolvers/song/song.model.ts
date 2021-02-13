@@ -23,6 +23,9 @@ export class Song extends BaseModel {
   tuning?: string;
   style?: GuitarStyle;
   tab: Tab;
+  inReview: boolean;
+  submittedToReview: boolean;
+  archived: boolean;
 }
 
 @ObjectType()

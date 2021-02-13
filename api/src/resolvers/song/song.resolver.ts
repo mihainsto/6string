@@ -21,6 +21,9 @@ import {
   SongFilter,
   SongOrder,
   RemoveSongFromFavoriteInput,
+  DeleteSongInReviewInput,
+  SubmitSongToReviewInput,
+  ApproveSongInput,
 } from './song.inputs';
 import { PaginationArgs } from '../../common/pagination/pagination.args';
 import { GraphQLBoolean } from 'graphql';
@@ -29,18 +32,16 @@ import { GraphQLBoolean } from 'graphql';
 export class SongResolver {
   constructor(private songService: SongService) {}
 
+  @UseGuards(GqlAuthGuardOptional)
   @Query(() => Song)
-  async song(@Args('id') id: string) {
-    return this.songService.song({ songId: id });
+  async song(@Args('id') id: string, @UserEntity() user: User) {
+    return this.songService.song({ songId: id }, user);
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Song)
-  async createSong(
-    @UserEntity() user: User,
-    @Args('input') input: CreateSongInput
-  ) {
-    return this.songService.createSong({ input, user });
+  @Query(() => Song)
+  async songInReview(@UserEntity() user: User, @Args('id') id: string) {
+    return this.songService.songInReview({ songId: id }, user);
   }
 
   @UseGuards(GqlAuthGuardOptional)
@@ -72,6 +73,36 @@ export class SongResolver {
     );
   }
 
+  @UseGuards(GqlAuthGuardOptional)
+  @Query(() => SongConnection)
+  async songsInReview(
+    @UserEntity() user: User,
+    @Args() { skip, after, before, first, last }: PaginationArgs,
+    @Args({ name: 'query', type: () => String, nullable: true }) query?: string,
+    @Args({
+      name: 'orderBy',
+      type: () => SongOrder,
+      nullable: true,
+    })
+    orderBy?: SongOrder,
+    @Args({ name: 'filter', type: () => SongFilter, nullable: true })
+    filter?: SongFilter,
+    @Args({ name: 'favorite', nullable: true })
+    favorite?: boolean
+  ) {
+    return this.songService.songs(
+      {
+        paginationArgs: { skip, after, before, first, last },
+        query,
+        orderBy,
+        filter,
+        favorite,
+        inReview: true,
+      },
+      user
+    );
+  }
+
   @UseGuards(GqlAuthGuard)
   @Mutation(() => Song)
   async addSongToFavorite(
@@ -88,6 +119,42 @@ export class SongResolver {
     @Args('input') input: RemoveSongFromFavoriteInput
   ) {
     return this.songService.removeSongFromFavorite({ user, input });
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Song)
+  async deleteSongInReview(
+    @UserEntity() user: User,
+    @Args('input') input: DeleteSongInReviewInput
+  ) {
+    return this.songService.deleteSongInReview(input, user);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Song)
+  async submitSongToReview(
+    @UserEntity() user: User,
+    @Args('input') input: SubmitSongToReviewInput
+  ) {
+    return this.songService.submitSongToReview(input, user);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Song)
+  async approveSong(
+    @UserEntity() user: User,
+    @Args('input') input: ApproveSongInput
+  ) {
+    return this.songService.approveSong(input, user);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Song)
+  async createSong(
+    @UserEntity() user: User,
+    @Args('input') input: CreateSongInput
+  ) {
+    return this.songService.createSong({ input, user });
   }
 
   @UseGuards(GqlAuthGuardOptional)

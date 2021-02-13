@@ -66,6 +66,35 @@ query Songs($first: Int!, $after: String, $query: String, $filter: SongFilter, $
                 difficulty
                 artist
                 favorite
+                submittedToReview
+                inReview
+                archived
+            }
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        totalCount
+    }
+}
+
+query SongsInReview($first: Int!, $after: String, $query: String, $filter: SongFilter, $orderBy: SongOrder, $favorite: Boolean) {
+    songsInReview(first: $first, after: $after, query: $query, filter: $filter, orderBy: $orderBy, favorite: $favorite) {
+        edges {
+            node {
+                id
+                title
+                tuning
+                style
+                updatedAt
+                createdAt
+                difficulty
+                artist
+                favorite
+                submittedToReview
+                inReview
+                archived
             }
         }
         pageInfo {
@@ -86,6 +115,9 @@ query Song($id: String!) {
         difficulty
         artist
         favorite
+        submittedToReview
+        inReview
+        archived
         tab {
             tracks {
                 measures
@@ -228,5 +260,36 @@ mutation RemoveSongFromFavorite($input: RemoveSongFromFavoriteInput!){
     removeSongFromFavorite(input: $input){
         id
         favorite
+    }
+}
+
+mutation DeleteSongInReview($input: DeleteSongInReviewInput!){
+    deleteSongInReview(input: $input){
+        id
+        submittedToReview
+        inReview
+        archived
+    }
+}
+
+mutation SubmitSongToReview($input: SubmitSongToReviewInput!){
+    submitSongToReview(input: $input){
+        id
+        submittedToReview
+        inReview
+    }
+}
+
+mutation ApproveSong($input: ApproveSongInput!){
+    approveSong(input: $input){
+        id
+        submittedToReview
+        inReview
+    }
+}
+
+mutation CreateSong($input: CreateSongInput!){
+    createSong(input: $input){
+        id
     }
 }

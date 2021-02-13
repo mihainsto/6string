@@ -1,18 +1,20 @@
-import { Injectable, Logger, UseGuards } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../services/prisma.service';
 import { Song } from '@prisma/client';
 import {
-  CreateSongInput,
   AddSongToFavoriteInput,
+  ApproveSongInput,
+  CreateSongInput,
+  DeleteSongInReviewInput,
+  RemoveSongFromFavoriteInput,
   SongFilter,
   SongOrder,
-  RemoveSongFromFavoriteInput,
+  SubmitSongToReviewInput,
 } from './song.inputs';
-import { User } from '../user/user.model';
+import { Role, User } from '../user/user.model';
 import { PaginationArgs } from '../../common/pagination/pagination.args';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 import { TabParserService } from '../../services/tabParserService/tabParser.service';
-import { fakeTab } from '../../../prisma/fakeTab';
 
 @Injectable()
 export class SongService {
@@ -21,11 +23,81 @@ export class SongService {
     private tabParser: TabParserService
   ) {}
 
-  async song({ songId }: { songId: string }) {
-    return this.prisma.song.findUnique({
+  async song({ songId }: { songId: string }, user: User) {
+    const song = await this.prisma.song.findUnique({
       include: { tab: { include: { tracks: true } } },
       where: { id: songId },
     });
+
+    if (song.inReview) {
+      if (song.postedById === user.id || user.role === Role.ADMIN) {
+        return song;
+      } else {
+        throw new Error('Unauthorized.');
+      }
+    }
+    return song;
+  }
+
+  async songInReview({ songId }: { songId: string }, user: User) {
+    const song = await this.prisma.song.findUnique({
+      include: { tab: { include: { tracks: true } } },
+      where: { id: songId },
+    });
+
+    if (song.postedById === user.id || user.role === Role.ADMIN) {
+      return song;
+    } else {
+      throw new Error('Unauthorized.');
+    }
+  }
+
+  async deleteSongInReview({ songId }: DeleteSongInReviewInput, user: User) {
+    const song = await this.prisma.song.findUnique({
+      include: { tab: { include: { tracks: true } } },
+      where: { id: songId },
+    });
+
+    if (song.postedById === user.id || user.role === Role.ADMIN) {
+      return this.prisma.song.update({
+        where: { id: songId },
+        data: { archived: true },
+      });
+    } else {
+      throw new Error('Unauthorized.');
+    }
+  }
+
+  async submitSongToReview({ songId }: SubmitSongToReviewInput, user: User) {
+    const song = await this.prisma.song.findUnique({
+      include: { tab: { include: { tracks: true } } },
+      where: { id: songId },
+    });
+
+    if (song.postedById === user.id || user.role === Role.ADMIN) {
+      return this.prisma.song.update({
+        where: { id: songId },
+        data: { submittedToReview: true },
+      });
+    } else {
+      throw new Error('Unauthorized.');
+    }
+  }
+
+  async approveSong({ songId }: ApproveSongInput, user: User) {
+    const song = await this.prisma.song.findUnique({
+      include: { tab: { include: { tracks: true } } },
+      where: { id: songId },
+    });
+
+    if (user.role === Role.ADMIN) {
+      return this.prisma.song.update({
+        where: { id: songId },
+        data: { inReview: false, submittedToReview: false },
+      });
+    } else {
+      throw new Error('Unauthorized.');
+    }
   }
 
   async songs(
@@ -35,12 +107,14 @@ export class SongService {
       orderBy,
       filter,
       favorite,
+      inReview,
     }: {
       paginationArgs: PaginationArgs;
       query?: string;
       orderBy?: SongOrder;
       filter?: SongFilter;
       favorite?: boolean;
+      inReview?: boolean;
     },
     user: User | undefined
   ) {
@@ -65,6 +139,9 @@ export class SongService {
                   },
                 },
               }),
+            submittedToReview: inReview || false,
+            inReview: inReview || false,
+            archived: false,
           },
           ...(orderBy && { orderBy: { [orderBy.field]: orderBy.direction } }),
           ...args,
@@ -88,6 +165,9 @@ export class SongService {
                   },
                 },
               }),
+            submittedToReview: inReview || false,
+            inReview: inReview || false,
+            archived: false,
           },
         }),
       {
