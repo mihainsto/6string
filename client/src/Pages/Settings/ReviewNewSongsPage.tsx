@@ -12,9 +12,8 @@ import {
   TableSortLabel,
   useTheme,
 } from '@material-ui/core'
-import { Favorite, FavoriteBorder, PlayCircleOutline } from '@material-ui/icons'
+import { PlayCircleOutline } from '@material-ui/icons'
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday'
-import ScheduleIcon from '@material-ui/icons/Schedule'
 import { format } from 'date-fns'
 import React, { FC, useState } from 'react'
 import { toast } from 'react-hot-toast'

@@ -186,8 +186,8 @@ export class SongService {
     input: CreateSongInput;
     user: User;
   }): Promise<Song> {
-    // TODO: Get a file from user input on the frontend
-    const tab = await this.tabParser.parseLocalTab();
+    const tab = await this.tabParser.parseUrlTab(input.tabUrl);
+
     return this.prisma.song.create({
       data: {
         title: input.title,
@@ -201,9 +201,9 @@ export class SongService {
               create: [
                 {
                   offset: tab.tracks[0].offset,
-                  measures: tab.tracks[0].measures.map((x) =>
-                    JSON.stringify(x)
-                  ),
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  measures: tab.tracks[0].measures,
                 },
               ],
             },
