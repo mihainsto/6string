@@ -20,6 +20,7 @@ import { toast } from 'react-hot-toast'
 import { useHistory } from 'react-router-dom'
 
 import { PageLayout } from '../../Components/Layouts/PageLayout'
+import { Pages } from '../../Components/Navigation/LeftNav'
 import {
   Difficulty,
   GuitarStyle,
@@ -128,7 +129,7 @@ export const SubmitTabPage: FC = () => {
   }
 
   return (
-    <PageLayout>
+    <PageLayout page={Pages.Submit_Tab}>
       <div
         css={css`
           margin-top: 40px;

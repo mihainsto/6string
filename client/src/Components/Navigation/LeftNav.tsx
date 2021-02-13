@@ -139,7 +139,7 @@ export const LeftNav: FC<navProps> = ({ page }) => {
             display: flex;
             align-items: center;
             gap: 10px;
-            color: ${page === Pages.Playground && hoverColor};
+            color: ${page === Pages.Submit_Tab && hoverColor};
             &:hover {
               color: ${hoverColor};
             }

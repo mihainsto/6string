@@ -46,9 +46,10 @@ export const RegisterPage: FC = () => {
       setRegisterSuccessAlert(true)
       setEmailErrorMessage('')
       setPasswordErrorMessage('')
-      setTimeout(() => {
-        history.push('/')
-      }, 1000)
+      history.push('/')
+      // setTimeout(() => {
+      //   history.push('/')
+      // }, 1000)
     } catch (e) {
       setRegisterSuccessAlert(false)
       setRegisterErrorAlert(e.message)

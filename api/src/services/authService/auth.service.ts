@@ -37,6 +37,9 @@ export class AuthService {
           playgroundSettings: {
             create: {},
           },
+          userSettings: {
+            create: {},
+          },
         },
       });
 
