@@ -71,6 +71,25 @@ export const LeftNav: FC<navProps> = ({ page }) => {
     >
       <div
         css={css`
+          display: flex;
+          justify-content: center;
+          margin: -20px -40px 30px -40px;
+        `}
+      >
+        <img
+          src={
+            themeType === 'DARK'
+              ? '/IconWhite_NoBackground.png'
+              : '/IconDark_NoBackground.png'
+          }
+          alt={'logo'}
+          css={css`
+            width: 200px;
+          `}
+        />
+      </div>
+      <div
+        css={css`
           display: grid;
           grid-template-columns: auto;
           align-items: center;
