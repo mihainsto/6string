@@ -65,8 +65,7 @@ export const getSingleChordFromMeasure = (measure: MeasureType): Chord => {
   beats.map((beat) => {
     beat.notes.map((note) => {
       const noteString = transformStringNumberIntoEnum(note.string)
-      // TODO: Remove the 3
-      chord[noteString] = note.value - 3
+      chord[noteString] = note.value
     })
   })
   return chord
@@ -102,13 +101,15 @@ export const getChordsFromMeasure = (
   beats.map((beat, beatIndex) => {
     beat.notes.map((note) => {
       const noteString = transformStringNumberIntoEnum(note.string)
+      const currentChordCopy = { ...currentChord }
+      currentChordCopy[noteString] = note.value
 
       if (
-        currentChord[noteString] === 0 ||
-        currentChord[noteString] === note.value - 3
+        (currentChord[noteString] === 0 ||
+          currentChord[noteString] === note.value) &&
+        frettable(currentChordCopy)
       ) {
-        // TODO: Remove the 3
-        currentChord[noteString] = note.value - 3
+        currentChord[noteString] = note.value
       }
       // else getting a conflict because the chord has a value there
       // that means we create a new chord
@@ -133,8 +134,7 @@ export const getChordsFromMeasure = (
           B: 0,
           e: 0,
         }
-        // TODO: Remove the 3
-        currentChord[noteString] = note.value - 3
+        currentChord[noteString] = note.value
       }
     })
   })
@@ -176,13 +176,15 @@ export const getChordsFromTrack = (track: Track): chordsFromTrack[] => {
     beats.map((beat, beatIndex) => {
       beat.notes.map((note) => {
         const noteString = transformStringNumberIntoEnum(note.string)
+        const currentChordCopy = { ...currentChord }
+        currentChordCopy[noteString] = note.value
 
         if (
-          currentChord[noteString] === 0 ||
-          currentChord[noteString] === note.value - 3
+          (currentChord[noteString] === 0 ||
+            currentChord[noteString] === note.value) &&
+          frettable(currentChordCopy)
         ) {
-          // TODO: Remove the 3
-          currentChord[noteString] = note.value - 3
+          currentChord[noteString] = note.value
         }
         // else getting a conflict because the chord has a value there
         // that means we create a new chord
@@ -211,8 +213,7 @@ export const getChordsFromTrack = (track: Track): chordsFromTrack[] => {
             B: 0,
             e: 0,
           }
-          // TODO: Remove the 3
-          currentChord[noteString] = note.value - 3
+          currentChord[noteString] = note.value
         }
       })
     })
@@ -224,6 +225,19 @@ export const getChordsFromTrack = (track: Track): chordsFromTrack[] => {
       })
     }
   })
-  console.log({ chords })
   return chords
+}
+
+// Simple function that determines if a chord is frettable
+// It does not cover all the cases
+export const frettable = (chord: Chord): boolean => {
+  const frets = [chord.E, chord.A, chord.D, chord.G, chord.B, chord.e]
+
+  frets.sort((a, b) => a - b)
+  const fretsNonZero = frets.filter((e) => e !== 0)
+  if (fretsNonZero[fretsNonZero.length - 1] - fretsNonZero[0] >= 4) return false
+
+  const usedFingers = fretsNonZero.length
+
+  return usedFingers <= 4
 }

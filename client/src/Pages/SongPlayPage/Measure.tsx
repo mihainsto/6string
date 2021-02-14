@@ -137,8 +137,7 @@ export const Measure: FC<MeasureProps> = React.memo(
                   left: ${rectLeft + beatPosition - 40}px;
                 `}
               >
-                {/*TODO: Remove the 3*/}
-                {note.value - 3}
+                {note.value}
               </div>
             )
           })

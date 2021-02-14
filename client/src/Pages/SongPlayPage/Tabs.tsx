@@ -18,7 +18,7 @@ import {
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
-const PLAY_SPEED_FACTOR = 0.2
+const PLAY_SPEED_FACTOR = 0.5
 
 type TabsProps = {
   tab: GuitarProTab
