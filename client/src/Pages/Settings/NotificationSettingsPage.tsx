@@ -101,21 +101,24 @@ export const NotificationSettingsPage: FC = () => {
             <Typography variant="subtitle1" color={'textSecondary'}>
               Song review notifications
             </Typography>
-            {!loading && (
-              <Switch
-                checked={data?.me.userSettings.notificationAdminReview}
-                onClick={() => {
-                  toggleNotificationSettingsMutation({
-                    variables: {
-                      input: {
-                        notificationAdminReview: !data?.me.userSettings
-                          .notificationAdminReview,
+            {!loading &&
+              (data?.me.userSettings.notificationEnabled ? (
+                <Switch
+                  checked={data?.me.userSettings.notificationAdminReview}
+                  onClick={() => {
+                    toggleNotificationSettingsMutation({
+                      variables: {
+                        input: {
+                          notificationAdminReview: !data?.me.userSettings
+                            .notificationAdminReview,
+                        },
                       },
-                    },
-                  })
-                }}
-              />
-            )}
+                    })
+                  }}
+                />
+              ) : (
+                <Switch disabled />
+              ))}
           </div>
         </SettingsCard>
       </div>
