@@ -13,7 +13,12 @@ import {
 } from '../../generated/graphql'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 
-export const PlaygroundSettingsCardContent: FC = () => {
+type PlaygroundSettingsCardContentProps = {
+  page?: 'PLAYGROUND' | 'SETTINGS'
+}
+export const PlaygroundSettingsCardContent: FC<PlaygroundSettingsCardContentProps> = ({
+  page,
+}) => {
   const { data } = useCurrentUser()
 
   const [guitarOrientation, setGuitarOrientation] = useState<
@@ -25,6 +30,7 @@ export const PlaygroundSettingsCardContent: FC = () => {
   ] = useUpdatePlaygroundSettingsMutation({
     onCompleted: () => {
       toast.success('Updated playground settings!')
+      page === 'PLAYGROUND' && window.location.reload()
     },
     onError: () => {
       toast.error('Unexpected error')

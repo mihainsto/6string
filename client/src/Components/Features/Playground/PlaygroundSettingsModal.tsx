@@ -33,7 +33,7 @@ export const PlaygroundSettingsModal: FC<PlaygroundSettingsModalProps> = ({
     >
       <Card>
         <CardContent>
-          <PlaygroundSettingsCardContent />
+          <PlaygroundSettingsCardContent page="PLAYGROUND" />
         </CardContent>
       </Card>
     </Modal>

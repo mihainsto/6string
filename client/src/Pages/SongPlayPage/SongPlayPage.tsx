@@ -29,9 +29,6 @@ export const SongPlayPage: FC = () => {
   const { data: userData } = useCurrentUser()
   const loggedIn = useIsLoggedIn()
 
-  useEffect(() => {
-    writeStorage('currentNotes', null)
-  }, [])
   return (
     <>
       <div
