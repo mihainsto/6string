@@ -1,7 +1,7 @@
-import { gql, useQuery } from '@apollo/client'
-
 import { useMeQuery } from '../generated/graphql'
 
 export const useCurrentUser = () => {
-  return useMeQuery()
+  const data = useMeQuery({ pollInterval: 4000 })
+
+  return data
 }

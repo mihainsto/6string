@@ -5,13 +5,13 @@ import {
   ChangePasswordInput,
   ChangeUserRoleInput,
   DeleteUserInput,
+  ReadNotificationInput,
   ToggleNotificationSettingsInput,
   UpdateUserInput,
   UserOrder,
 } from './user.inputs';
-import { PlaygroundSettings, Role, User, UserSettings } from './user.model';
+import { Role, User, UserSettings } from './user.model';
 import { PaginationArgs } from '../../common/pagination/pagination.args';
-import { SongOrder } from '../song/song.inputs';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 
 @Injectable()
@@ -197,11 +197,62 @@ export class UserService {
     );
   }
 
-  async playgroundSettings(userId: string): Promise<PlaygroundSettings> {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
+  async playgroundSettings(userId: string) {
     return this.prisma.user
       .findUnique({ where: { id: userId } })
       .playgroundSettings();
+  }
+
+  async notifications(userId: string) {
+    return this.prisma.user
+      .findUnique({ where: { id: userId } })
+      .notifications({
+        where: { read: false },
+        orderBy: { createdAt: 'desc' },
+      });
+  }
+
+  async readNotification(userId: string, input: ReadNotificationInput) {
+    const notification = await this.prisma.notification.findUnique({
+      where: { id: input.notificationId },
+    });
+    if (notification.userId !== userId) {
+      throw new Error('Unauthorized.');
+    }
+    return this.prisma.notification.update({
+      data: { read: true },
+      where: { id: input.notificationId },
+    });
+  }
+
+  async createNotification({
+    userId,
+    message,
+  }: {
+    userId: string;
+    message: string;
+  }) {
+    return this.prisma.notification.create({
+      data: { message, for: { connect: { id: userId } } },
+    });
+  }
+
+  async createAdminNotification({ message }: { message: string }) {
+    const admins = await this.prisma.user.findMany({
+      where: {
+        role: 'ADMIN',
+      },
+      include: {
+        userSettings: true,
+      },
+    });
+
+    admins.map((admin) => {
+      if (admin.userSettings.notificationAdminReview) {
+        this.createNotification({ userId: admin.id, message });
+      }
+    });
+
+    return true;
   }
 }

@@ -129,6 +129,12 @@ query me {
         email
         avatarUrl
         role
+        notifications {
+            id
+            message
+            createdAt
+            read
+        }
         playgroundSettings {
             id
             guitarOrientation
@@ -287,5 +293,12 @@ mutation ApproveSong($input: ApproveSongInput!){
 mutation CreateSong($input: CreateSongInput!){
     createSong(input: $input){
         id
+    }
+}
+
+mutation ReadNotification($input: ReadNotificationInput!){
+    readNotification(input: $input) {
+        id
+        read
     }
 }

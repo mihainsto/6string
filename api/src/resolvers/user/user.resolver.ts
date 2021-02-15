@@ -15,12 +15,14 @@ import {
   User,
   UserConnection,
   UserSettings,
+  Notification,
 } from './user.model';
 import { UserService } from 'src/resolvers/user/user.service';
 import {
   ChangePasswordInput,
   ChangeUserRoleInput,
   DeleteUserInput,
+  ReadNotificationInput,
   ToggleNotificationSettingsInput,
   UpdatePlaygroundSettingsInput,
   UpdateUserAvatarInput,
@@ -163,6 +165,15 @@ export class UserResolver {
     return this.userService.toggleNotificationSettings(user.id, input);
   }
 
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Notification)
+  async readNotification(
+    @UserEntity() user: User,
+    @Args('input') input: ReadNotificationInput
+  ) {
+    return this.userService.readNotification(user.id, input);
+  }
+
   @ResolveField('playgroundSettings', () => PlaygroundSettings)
   playgroundSettings(@Parent() user: User) {
     return this.userService.playgroundSettings(user.id);
@@ -171,5 +182,10 @@ export class UserResolver {
   @ResolveField('userSettings', () => UserSettings)
   userSettings(@Parent() user: User) {
     return this.userService.userSettings(user.id);
+  }
+
+  @ResolveField('notifications', () => [Notification], { nullable: true })
+  notifications(@Parent() user: User) {
+    return this.userService.notifications(user.id);
   }
 }

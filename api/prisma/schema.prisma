@@ -24,6 +24,7 @@ model User {
   playgroundSettings   PlaygroundSettings?
   userSettings         UserSettings?
   favoriteSongs        Song[] @relation("favoriteRelation")
+  notifications        Notification[]
 }
 
 model PlaygroundSettings {
@@ -50,6 +51,16 @@ model UserSettings {
   notificationAdminReview   Boolean @default(true)
 }
 
+model Notification {
+  id        String @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  message   String
+  for       User? @relation(fields: [userId], references: [id])
+  userId    String?
+  read      Boolean @default(false)
+}
+
 enum Role {
   ADMIN
   USER
@@ -74,6 +85,7 @@ enum GuitarType {
   ACOUSTIC
   ELECTRICAL
 }
+
 model Song {
     id         String   @id @default(cuid())
     createdAt  DateTime @default(now())

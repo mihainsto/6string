@@ -1,4 +1,4 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, InputType, registerEnumType } from '@nestjs/graphql';
 import { IsNotEmpty, MinLength } from 'class-validator';
 import { GuitarOrientation, GuitarStyle, GuitarType, Role } from './user.model';
 import { GraphQLBoolean } from 'graphql';
@@ -119,4 +119,10 @@ export class ToggleNotificationSettingsInput {
 
   @Field(() => GraphQLBoolean, { nullable: true })
   notificationAdminReview?: boolean;
+}
+
+@InputType()
+export class ReadNotificationInput {
+  @Field(() => ID)
+  notificationId: string;
 }

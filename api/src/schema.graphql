@@ -90,6 +90,7 @@ type Mutation {
   deleteSongInReview(input: DeleteSongInReviewInput!): Song!
   deleteUser(input: DeleteUserInput!): User!
   login(data: LoginInput!): Auth!
+  readNotification(input: ReadNotificationInput!): Notification!
   refreshToken(token: String!): Token!
   removeSongFromFavorite(input: RemoveSongFromFavoriteInput!): Song!
   signup(data: SignupInput!): Auth!
@@ -100,6 +101,17 @@ type Mutation {
   updateUserAvatar(input: UpdateUserAvatarInput!): User!
   updateUserEmail(input: UpdateUserEmailInput!): User!
   updateUserName(input: UpdateUserNameInput!): User!
+}
+
+type Notification {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  id: ID!
+  message: String!
+  read: Boolean!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
 }
 
 """
@@ -141,6 +153,10 @@ type Query {
   songsInReview(after: String, before: String, favorite: Boolean, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
   user(id: String!): User!
   users(after: String, before: String, first: Int, last: Int, orderBy: UserOrder, query: String, skip: Int): UserConnection!
+}
+
+input ReadNotificationInput {
+  notificationId: ID!
 }
 
 input RemoveSongFromFavoriteInput {
@@ -292,6 +308,7 @@ type User {
   createdAt: Date!
   email: String!
   id: ID!
+  notifications: [Notification!]
   playgroundSettings: PlaygroundSettings!
   role: Role!
 

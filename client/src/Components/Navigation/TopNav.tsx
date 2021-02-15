@@ -1,14 +1,34 @@
 /** @jsxImportSource @emotion/react **/
 
+import { Notification } from '@babylonjs/inspector/components/actionTabs/tabs/propertyGrids/animations/notification'
 import { css } from '@emotion/react'
-import { Avatar, Button, Menu, MenuItem, TextField } from '@material-ui/core'
-import { Favorite, FavoriteBorder } from '@material-ui/icons'
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  TextField,
+  Typography,
+} from '@material-ui/core'
+import {
+  Favorite,
+  FavoriteBorder,
+  Notifications,
+  NotificationsActive,
+  NotificationsNoneOutlined,
+} from '@material-ui/icons'
 import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
+import { format } from 'date-fns'
 import React, { useRef, useState } from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { useMeQuery } from '../../generated/graphql'
+import {
+  useMeQuery,
+  useReadNotificationMutation,
+} from '../../generated/graphql'
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 import { useIsLoggedIn } from '../../Hooks/useIsLoggedIn'
@@ -26,16 +46,17 @@ export const TopNav: FC<TopNavProps> = ({ homePage }) => {
   const switchTheme = useThemeStore((state) => state.switchTheme)
   const { data, loading } = useCurrentUser()
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
-  const getCloudinaryUrl = useCloudinaryUrl()
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setMenuAnchorEl(event.currentTarget)
-  }
+  const [
+    notificationsAnchorEl,
+    setNotificationsAnchorEl,
+  ] = useState<null | HTMLElement>(null)
 
-  const handleMenuClose = () => {
-    setMenuAnchorEl(null)
-  }
   const history = useHistory()
+  const getCloudinaryUrl = useCloudinaryUrl()
   const textFieldRef = useRef<HTMLDivElement | null>(null)
+
+  const [readNotificationMutation] = useReadNotificationMutation()
+
   return (
     <div
       css={css`
@@ -107,12 +128,91 @@ export const TopNav: FC<TopNavProps> = ({ homePage }) => {
           <div>
             {data && (
               <>
+                <span
+                  css={css`
+                    margin-right: 20px;
+                  `}
+                >
+                  <button
+                    onClick={(e) => setNotificationsAnchorEl(e.currentTarget)}
+                  >
+                    {!data.me.notifications?.filter((e) => e.read === false)
+                      .length ? (
+                      <NotificationsNoneOutlined fontSize={'large'} />
+                    ) : (
+                      <NotificationsActive fontSize={'large'} />
+                    )}
+                  </button>
+                  <Menu
+                    css={css`
+                      margin-top: 40px;
+                    `}
+                    anchorEl={notificationsAnchorEl}
+                    keepMounted
+                    open={Boolean(notificationsAnchorEl)}
+                    onClose={() => setNotificationsAnchorEl(null)}
+                  >
+                    {data.me.notifications?.filter((e) => e.read === false)
+                      .length ? (
+                      <div>
+                        {data.me.notifications?.map(
+                          (notification) =>
+                            !notification.read && (
+                              <MenuItem
+                                key={notification.id}
+                                onClick={() =>
+                                  readNotificationMutation({
+                                    variables: {
+                                      input: {
+                                        notificationId: notification.id,
+                                      },
+                                    },
+                                    optimisticResponse: {
+                                      readNotification: {
+                                        id: notification.id,
+                                        read: true,
+                                      },
+                                    },
+                                  })
+                                }
+                              >
+                                <div
+                                  css={css`
+                                    max-width: 300px;
+                                    white-space: normal;
+                                  `}
+                                >
+                                  <Typography variant="body2">
+                                    {notification.message}
+                                  </Typography>
+                                  <Typography variant="caption">
+                                    {format(
+                                      new Date(notification.createdAt),
+                                      'MMM d, h:m aaa',
+                                    )}
+                                  </Typography>
+                                </div>
+                              </MenuItem>
+                            ),
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <MenuItem>
+                          <Typography variant="body2">
+                            No new notifications!
+                          </Typography>
+                        </MenuItem>
+                      </div>
+                    )}
+                  </Menu>
+                </span>
                 <button
                   css={css`
                     background: transparent;
                     border: none !important;
                   `}
-                  onClick={handleMenuClick}
+                  onClick={(e) => setMenuAnchorEl(e.currentTarget)}
                 >
                   <Avatar
                     css={css`
@@ -131,7 +231,7 @@ export const TopNav: FC<TopNavProps> = ({ homePage }) => {
                   anchorEl={menuAnchorEl}
                   keepMounted
                   open={Boolean(menuAnchorEl)}
-                  onClose={handleMenuClose}
+                  onClose={() => setMenuAnchorEl(null)}
                 >
                   <MenuItem onClick={() => history.push('/settings')}>
                     Settings

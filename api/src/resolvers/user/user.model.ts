@@ -71,6 +71,15 @@ export class UserSettings extends BaseModel {
 }
 
 @ObjectType()
+export class Notification extends BaseModel {
+  @Field()
+  message: string;
+
+  @Field(() => GraphQLBoolean)
+  read: boolean;
+}
+
+@ObjectType()
 export class User extends BaseModel {
   email: string;
   username: string;

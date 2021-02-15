@@ -15,12 +15,14 @@ import { Role, User } from '../user/user.model';
 import { PaginationArgs } from '../../common/pagination/pagination.args';
 import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
 import { TabParserService } from '../../services/tabParserService/tabParser.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class SongService {
   constructor(
     private prisma: PrismaService,
-    private tabParser: TabParserService
+    private tabParser: TabParserService,
+    private userService: UserService
   ) {}
 
   async song({ songId }: { songId: string }, user: User) {
@@ -59,6 +61,10 @@ export class SongService {
     });
 
     if (song.postedById === user.id || user.role === Role.ADMIN) {
+      this.userService.createNotification({
+        userId: song.postedById,
+        message: `We found something wrong with ${song.title} by ${song.artist} and it has been rejected.`,
+      });
       return this.prisma.song.update({
         where: { id: songId },
         data: { archived: true },
@@ -75,6 +81,13 @@ export class SongService {
     });
 
     if (song.postedById === user.id || user.role === Role.ADMIN) {
+      this.userService.createNotification({
+        userId: song.postedById,
+        message: `Thank you! we have received ${song.title} by ${song.artist} and we will review soon`,
+      });
+      this.userService.createAdminNotification({
+        message: `${song.title} by ${song.artist} was submitted to review by ${user.username}. Please review soon.`,
+      });
       return this.prisma.song.update({
         where: { id: songId },
         data: { submittedToReview: true },
@@ -91,6 +104,10 @@ export class SongService {
     });
 
     if (user.role === Role.ADMIN) {
+      this.userService.createNotification({
+        userId: song.postedById,
+        message: `${song.title} by ${song.artist} has been reviewed and accepted!`,
+      });
       return this.prisma.song.update({
         where: { id: songId },
         data: { inReview: false, submittedToReview: false },

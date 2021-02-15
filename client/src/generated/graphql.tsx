@@ -104,6 +104,7 @@ export type Mutation = {
   deleteSongInReview: Song
   deleteUser: User
   login: Auth
+  readNotification: Notification
   refreshToken: Token
   removeSongFromFavorite: Song
   signup: Auth
@@ -148,6 +149,10 @@ export type MutationLoginArgs = {
   data: LoginInput
 }
 
+export type MutationReadNotificationArgs = {
+  input: ReadNotificationInput
+}
+
 export type MutationRefreshTokenArgs = {
   token: Scalars['String']
 }
@@ -186,6 +191,17 @@ export type MutationUpdateUserEmailArgs = {
 
 export type MutationUpdateUserNameArgs = {
   input: UpdateUserNameInput
+}
+
+export type Notification = {
+  __typename?: 'Notification'
+  /** Identifies the date and time when the object was created. */
+  createdAt: Scalars['Date']
+  id: Scalars['ID']
+  message: Scalars['String']
+  read: Scalars['Boolean']
+  /** Identifies the date and time when the object was last updated. */
+  updatedAt: Scalars['Date']
 }
 
 /** Possible directions in which to order a list of items when provided an `orderBy` argument. */
@@ -276,6 +292,10 @@ export type QueryUsersArgs = {
   orderBy?: Maybe<UserOrder>
   query?: Maybe<Scalars['String']>
   skip?: Maybe<Scalars['Int']>
+}
+
+export type ReadNotificationInput = {
+  notificationId: Scalars['ID']
 }
 
 export type RemoveSongFromFavoriteInput = {
@@ -428,6 +448,7 @@ export type User = {
   createdAt: Scalars['Date']
   email: Scalars['String']
   id: Scalars['ID']
+  notifications?: Maybe<Array<Notification>>
   playgroundSettings: PlaygroundSettings
   role: Role
   /** Identifies the date and time when the object was last updated. */
@@ -593,6 +614,14 @@ export type MeQuery = { __typename?: 'Query' } & {
     User,
     'username' | 'email' | 'avatarUrl' | 'role'
   > & {
+      notifications?: Maybe<
+        Array<
+          { __typename?: 'Notification' } & Pick<
+            Notification,
+            'id' | 'message' | 'createdAt' | 'read'
+          >
+        >
+      >
       playgroundSettings: { __typename?: 'PlaygroundSettings' } & Pick<
         PlaygroundSettings,
         | 'id'
@@ -798,6 +827,17 @@ export type CreateSongMutationVariables = Exact<{
 
 export type CreateSongMutation = { __typename?: 'Mutation' } & {
   createSong: { __typename?: 'Song' } & Pick<Song, 'id'>
+}
+
+export type ReadNotificationMutationVariables = Exact<{
+  input: ReadNotificationInput
+}>
+
+export type ReadNotificationMutation = { __typename?: 'Mutation' } & {
+  readNotification: { __typename?: 'Notification' } & Pick<
+    Notification,
+    'id' | 'read'
+  >
 }
 
 export const SongsDocument = gql`
@@ -1048,6 +1088,12 @@ export const MeDocument = gql`
       email
       avatarUrl
       role
+      notifications {
+        id
+        message
+        createdAt
+        read
+      }
       playgroundSettings {
         id
         guitarOrientation
@@ -1956,4 +2002,53 @@ export type CreateSongMutationResult = Apollo.MutationResult<CreateSongMutation>
 export type CreateSongMutationOptions = Apollo.BaseMutationOptions<
   CreateSongMutation,
   CreateSongMutationVariables
+>
+export const ReadNotificationDocument = gql`
+  mutation ReadNotification($input: ReadNotificationInput!) {
+    readNotification(input: $input) {
+      id
+      read
+    }
+  }
+`
+export type ReadNotificationMutationFn = Apollo.MutationFunction<
+  ReadNotificationMutation,
+  ReadNotificationMutationVariables
+>
+
+/**
+ * __useReadNotificationMutation__
+ *
+ * To run a mutation, you first call `useReadNotificationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReadNotificationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [readNotificationMutation, { data, loading, error }] = useReadNotificationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useReadNotificationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ReadNotificationMutation,
+    ReadNotificationMutationVariables
+  >,
+) {
+  return Apollo.useMutation<
+    ReadNotificationMutation,
+    ReadNotificationMutationVariables
+  >(ReadNotificationDocument, baseOptions)
+}
+export type ReadNotificationMutationHookResult = ReturnType<
+  typeof useReadNotificationMutation
+>
+export type ReadNotificationMutationResult = Apollo.MutationResult<ReadNotificationMutation>
+export type ReadNotificationMutationOptions = Apollo.BaseMutationOptions<
+  ReadNotificationMutation,
+  ReadNotificationMutationVariables
 >
