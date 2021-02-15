@@ -232,9 +232,15 @@ export class UserService {
     userId: string;
     message: string;
   }) {
-    return this.prisma.notification.create({
-      data: { message, for: { connect: { id: userId } } },
+    const userSettings = await this.prisma.userSettings.findFirst({
+      where: { userId },
     });
+
+    if (userSettings.notificationEnabled)
+      return this.prisma.notification.create({
+        data: { message, for: { connect: { id: userId } } },
+      });
+    else return false;
   }
 
   async createAdminNotification({ message }: { message: string }) {
