@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { MenuItem, Select, Typography } from '@material-ui/core'
+import { MenuItem, Select, Switch, Typography } from '@material-ui/core'
 import React, { FC, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -13,7 +13,7 @@ import {
 } from '../../generated/graphql'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 
-export const PlaygroundSettingsPage: FC = () => {
+export const PlaygroundSettingsCardContent: FC = () => {
   const { data } = useCurrentUser()
 
   const [guitarOrientation, setGuitarOrientation] = useState<
@@ -35,6 +35,75 @@ export const PlaygroundSettingsPage: FC = () => {
     () => setGuitarOrientation(data?.me.playgroundSettings.guitarOrientation),
     [data],
   )
+
+  return (
+    <div>
+      <Typography variant="h5">Playground Settings</Typography>
+
+      <div
+        css={css`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 10px;
+        `}
+      >
+        <Typography variant="subtitle1" color={'textSecondary'}>
+          Select guitar orientation in playground
+        </Typography>
+
+        <Select
+          value={guitarOrientation}
+          onChange={(e) => {
+            updatePlaygroundSettingsMutation({
+              variables: {
+                input: {
+                  playgroundSettings: {
+                    guitarOrientation: e.target.value as GuitarOrientation,
+                  },
+                },
+              },
+            })
+          }}
+        >
+          <MenuItem value={GuitarOrientation.RightHanded}>
+            Right Handed
+          </MenuItem>
+          <MenuItem value={GuitarOrientation.LeftHanded}>Left Handed</MenuItem>
+        </Select>
+      </div>
+
+      <div
+        css={css`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 10px;
+        `}
+      >
+        <Typography variant="subtitle1" color={'textSecondary'}>
+          Current chord widget
+        </Typography>
+
+        <Switch
+          checked={data?.me.playgroundSettings.chordWidget}
+          onClick={() => {
+            updatePlaygroundSettingsMutation({
+              variables: {
+                input: {
+                  playgroundSettings: {
+                    chordWidget: !data?.me.playgroundSettings.chordWidget,
+                  },
+                },
+              },
+            })
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+export const PlaygroundSettingsPage: FC = () => {
   return (
     <SettingsPageLayout pageName="Playground">
       <div
@@ -43,42 +112,7 @@ export const PlaygroundSettingsPage: FC = () => {
         `}
       >
         <SettingsCard>
-          <Typography variant="h5">Playground Settings</Typography>
-
-          <div
-            css={css`
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              margin-top: 10px;
-            `}
-          >
-            <Typography variant="subtitle1" color={'textSecondary'}>
-              Select guitar orientation in playground
-            </Typography>
-
-            <Select
-              value={guitarOrientation}
-              onChange={(e) => {
-                updatePlaygroundSettingsMutation({
-                  variables: {
-                    input: {
-                      playgroundSettings: {
-                        guitarOrientation: e.target.value as GuitarOrientation,
-                      },
-                    },
-                  },
-                })
-              }}
-            >
-              <MenuItem value={GuitarOrientation.RightHanded}>
-                Right Handed
-              </MenuItem>
-              <MenuItem value={GuitarOrientation.LeftHanded}>
-                Left Handed
-              </MenuItem>
-            </Select>
-          </div>
+          <PlaygroundSettingsCardContent />
         </SettingsCard>
       </div>
     </SettingsPageLayout>

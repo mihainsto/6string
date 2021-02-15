@@ -118,6 +118,8 @@ type PageInfo {
 }
 
 type PlaygroundSettings {
+  chordWidget: Boolean!
+
   """Identifies the date and time when the object was created."""
   createdAt: Date!
   guitarOrientation: GuitarOrientation!
@@ -254,6 +256,7 @@ type Track {
 }
 
 input UpdatePlaygroundSettings {
+  chordWidget: Boolean
   guitarOrientation: GuitarOrientation
   guitarStyle: GuitarStyle
   guitarType: GuitarType

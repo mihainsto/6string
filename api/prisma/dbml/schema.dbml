@@ -26,6 +26,7 @@ Table PlaygroundSettings {
   guitarStyle GuitarStyle [default: 'STRUM']
   guitarOrientation GuitarOrientation [default: 'RIGHT_HANDED']
   guitarType GuitarType [default: 'ACOUSTIC']
+  chordWidget Boolean [not null, default: true]
 }
 
 Table UserSettings {

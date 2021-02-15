@@ -204,6 +204,7 @@ export type PageInfo = {
 
 export type PlaygroundSettings = {
   __typename?: 'PlaygroundSettings'
+  chordWidget: Scalars['Boolean']
   /** Identifies the date and time when the object was created. */
   createdAt: Scalars['Date']
   guitarOrientation: GuitarOrientation
@@ -391,6 +392,7 @@ export type Track = {
 }
 
 export type UpdatePlaygroundSettings = {
+  chordWidget?: Maybe<Scalars['Boolean']>
   guitarOrientation?: Maybe<GuitarOrientation>
   guitarStyle?: Maybe<GuitarStyle>
   guitarType?: Maybe<GuitarType>
@@ -593,7 +595,11 @@ export type MeQuery = { __typename?: 'Query' } & {
   > & {
       playgroundSettings: { __typename?: 'PlaygroundSettings' } & Pick<
         PlaygroundSettings,
-        'id' | 'guitarOrientation' | 'guitarStyle' | 'guitarType'
+        | 'id'
+        | 'guitarOrientation'
+        | 'guitarStyle'
+        | 'guitarType'
+        | 'chordWidget'
       >
       userSettings: { __typename?: 'UserSettings' } & Pick<
         UserSettings,
@@ -709,7 +715,11 @@ export type UpdatePlaygroundSettingsMutation = { __typename?: 'Mutation' } & {
   updatePlaygroundSettings: { __typename?: 'User' } & Pick<User, 'id'> & {
       playgroundSettings: { __typename?: 'PlaygroundSettings' } & Pick<
         PlaygroundSettings,
-        'id' | 'guitarOrientation' | 'guitarStyle' | 'guitarType'
+        | 'id'
+        | 'guitarOrientation'
+        | 'guitarStyle'
+        | 'guitarType'
+        | 'chordWidget'
       >
     }
 }
@@ -1043,6 +1053,7 @@ export const MeDocument = gql`
         guitarOrientation
         guitarStyle
         guitarType
+        chordWidget
       }
       userSettings {
         id
@@ -1505,6 +1516,7 @@ export const UpdatePlaygroundSettingsDocument = gql`
         guitarOrientation
         guitarStyle
         guitarType
+        chordWidget
       }
     }
   }

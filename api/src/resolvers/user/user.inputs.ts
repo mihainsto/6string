@@ -33,6 +33,9 @@ export class UpdatePlaygroundSettings {
 
   @Field(() => GuitarType, { nullable: true })
   guitarType?: GuitarType;
+
+  @Field(() => GraphQLBoolean, { nullable: true })
+  chordWidget?: boolean;
 }
 
 @InputType()

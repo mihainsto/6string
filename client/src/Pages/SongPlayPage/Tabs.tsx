@@ -24,8 +24,8 @@ type TabsProps = {
   tab: GuitarProTab
 }
 
-const useNotesStore = create(NotesStore)
-const useChordStore = create(ChordStore)
+export const useNotesStore = create(NotesStore)
+export const useChordStore = create(ChordStore)
 
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false

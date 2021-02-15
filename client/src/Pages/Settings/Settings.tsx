@@ -13,6 +13,7 @@ import React from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
+import { PlaygroundSettingsModal } from '../../Components/Features/Playground/PlaygroundSettingsModal'
 import { PageLayout } from '../../Components/Layouts/PageLayout'
 import { Pages } from '../../Components/Navigation/LeftNav'
 import { useIsAdmin } from '../../Hooks/useUserRole'

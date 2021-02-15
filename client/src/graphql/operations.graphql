@@ -36,12 +36,6 @@ enum GuitarOrientation {
     RIGHT_HANDED
 }
 
-input UpdatePlaygroundSettings {
-    guitarOrientation: GuitarOrientation
-    guitarStyle: GuitarStyle
-    guitarType: GuitarType
-}
-
 input SongFilter {
     difficulty: Difficulty
     style: GuitarStyle
@@ -140,6 +134,7 @@ query me {
             guitarOrientation
             guitarStyle
             guitarType
+            chordWidget
         }
         userSettings{
             id
@@ -230,7 +225,8 @@ mutation UpdatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!){
             id,
             guitarOrientation,
             guitarStyle,
-            guitarType
+            guitarType,
+            chordWidget
         }
     }
 }

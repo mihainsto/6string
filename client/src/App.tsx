@@ -9,6 +9,8 @@ import React, { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
+import { PlaygroundSettingsModal } from './Components/Features/Playground/PlaygroundSettingsModal'
+import { PageLayout } from './Components/Layouts/PageLayout'
 import { Role, useMeQuery } from './generated/graphql'
 import { useUserRole } from './Hooks/useUserRole'
 import { NotAdminPage } from './Pages/Error/NotAdminPage'
@@ -48,6 +50,7 @@ function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <Toaster position="bottom-center" />
+
       <CssBaseline />
       <Router>
         {loading ? (

@@ -35,6 +35,7 @@ model PlaygroundSettings {
   guitarStyle GuitarStyle?  @default(STRUM)
   guitarOrientation GuitarOrientation? @default( RIGHT_HANDED)
   guitarType GuitarType? @default(ACOUSTIC)
+  chordWidget Boolean @default(true)
 
 }
 

@@ -53,6 +53,9 @@ export class PlaygroundSettings extends BaseModel {
 
   @Field(() => GuitarType)
   guitarType: GuitarType;
+
+  @Field(() => GraphQLBoolean)
+  chordWidget: boolean;
 }
 
 @ObjectType()
