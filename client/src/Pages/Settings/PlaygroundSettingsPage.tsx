@@ -30,7 +30,6 @@ export const PlaygroundSettingsCardContent: FC<PlaygroundSettingsCardContentProp
   ] = useUpdatePlaygroundSettingsMutation({
     onCompleted: () => {
       toast.success('Updated playground settings!')
-      page === 'PLAYGROUND' && window.location.reload()
     },
     onError: () => {
       toast.error('Unexpected error')
@@ -69,7 +68,7 @@ export const PlaygroundSettingsCardContent: FC<PlaygroundSettingsCardContentProp
                   },
                 },
               },
-            })
+            }).then(() => page === 'PLAYGROUND' && window.location.reload())
           }}
         >
           <MenuItem value={GuitarOrientation.RightHanded}>
