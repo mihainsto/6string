@@ -7,11 +7,13 @@ import { GuitarOrientationStore } from '../State/BabylonState'
 const useGuitarOrientationStore = create(GuitarOrientationStore)
 
 export const useCurrentUser = () => {
-  const data = useMeQuery({ pollInterval: 4000 })
+  const data = useMeQuery()
+
   useEffect(() => {
     useGuitarOrientationStore.setState({
       guitarOrientation: data.data?.me.playgroundSettings.guitarOrientation,
     })
   }, [data])
+
   return data
 }

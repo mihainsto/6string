@@ -44,7 +44,7 @@ export const TopNav: FC<TopNavProps> = ({ homePage }) => {
   const favorites = useSearchStore((state) => state.favorites)
   const toggleFavorites = useSearchStore((state) => state.toggleFavorites)
   const switchTheme = useThemeStore((state) => state.switchTheme)
-  const { data, loading } = useCurrentUser()
+  const { data, loading } = useMeQuery({ pollInterval: 4000 })
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
   const [
     notificationsAnchorEl,
