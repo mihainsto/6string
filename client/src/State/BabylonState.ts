@@ -7,6 +7,7 @@ import { Note } from '../Types/guitarProTabs.types'
 
 type NotesStoreType = {
   currentNotes: Note[] | undefined
+  timestamp: Date | undefined
 }
 
 type ChordStoreType = {
@@ -19,6 +20,7 @@ type GuitarOrientationStoreType = {
 
 export const NotesStore = create<NotesStoreType>((set) => ({
   currentNotes: undefined,
+  timestamp: undefined,
 }))
 
 export const ChordStore = create<ChordStoreType>((set) => ({

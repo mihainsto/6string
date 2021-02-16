@@ -7,12 +7,11 @@ import { FC } from 'react'
 import { standard } from 'react-guitar-tunings'
 import { ResizableBox } from 'react-resizable'
 import * as Tone from 'tone'
-import create from 'zustand'
 
+import { useChordStore, useNotesStore } from '../../App'
 import { getChordsFromTrack } from '../../Babylon/utils/GuitarHelpers'
 import useWindowSize from '../../Hooks/useWindowSize'
 import useSound from '../../Packages/react-guitar-sound'
-import { ChordStore, NotesStore } from '../../State/BabylonState'
 import {
   GuitarProTab,
   Measure as MeasureType,
@@ -23,9 +22,6 @@ const PLAY_SPEED_FACTOR = 0.5
 type TabsProps = {
   tab: GuitarProTab
 }
-
-export const useNotesStore = create(NotesStore)
-export const useChordStore = create(ChordStore)
 
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false
@@ -79,19 +75,24 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
               el.measureIndex === currentMeasurePlayed,
           )
           currentChord &&
-            useChordStore.setState({ currentChord: currentChord.chord })
+            useChordStore.setState({
+              currentChord: currentChord.chord,
+            })
 
           // Getting the frets if capo
           currentBeat.notes.forEach((note) => {
-            strings[note.string] = note.value + track.offset
+            strings[note.string - 1] = note.value + track.offset
           })
 
           // Playing the notes
           currentBeat.notes.forEach((note) => {
-            play(note.string, 0, strings)
+            play(note.string - 1, 0, strings)
           })
           // Write the notes inside local storage to get them on the 3D side
-          useNotesStore.setState({ currentNotes: currentBeat.notes })
+          useNotesStore.setState({
+            currentNotes: currentBeat.notes,
+            timestamp: new Date(),
+          })
 
           // offset the currentNotesPlayed and currentMeasurePlayed if we reach the end of a measure
           if (

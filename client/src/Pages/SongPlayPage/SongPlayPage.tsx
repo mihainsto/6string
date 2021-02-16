@@ -30,27 +30,25 @@ export const SongPlayPage: FC = () => {
   const loggedIn = useIsLoggedIn()
 
   return (
-    <>
+    <div
+      css={css`
+        width: 100%;
+        height: 100%;
+      `}
+    >
       <div
         css={css`
+          position: absolute;
           width: 100%;
-          height: 100%;
         `}
       >
-        <div
-          css={css`
-            position: absolute;
-            width: 100%;
-          `}
-        >
-          <PlaygroundNav />
-        </div>
-
-        <BabylonMainPage />
-        {tab && <Tabs tab={tab} />}
-        {userData?.me.playgroundSettings.chordWidget && <CurrentChordWidget />}
-        {!loggedIn && <CurrentChordWidget />}
+        <PlaygroundNav />
       </div>
-    </>
+
+      <BabylonMainPage />
+      {tab && <Tabs tab={tab} />}
+      {userData?.me.playgroundSettings.chordWidget && <CurrentChordWidget />}
+      {!loggedIn && <CurrentChordWidget />}
+    </div>
   )
 }

@@ -3,6 +3,7 @@
 import { css } from '@emotion/react'
 import { Avatar, Button, colors, Menu, MenuItem } from '@material-ui/core'
 import { ArrowBack, Settings } from '@material-ui/icons'
+import InfoIcon from '@material-ui/icons/Info'
 import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
 import React, { useState } from 'react'
 import { FC } from 'react'
@@ -11,14 +12,19 @@ import { useHistory } from 'react-router-dom'
 import { useCloudinaryUrl } from '../../Hooks/useCloudinaryUrl'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 import { useThemeStore } from '../../State/ThemeState'
+import { PlaygroundInformationModal } from '../Features/Playground/PlaygroundInformationModal'
 import { PlaygroundSettingsModal } from '../Features/Playground/PlaygroundSettingsModal'
 
-export const PlaygroundNav: FC = () => {
+type PlaygroundNavProps = {
+  page?: 'SONGPLAY' | 'PLAYGROUND'
+}
+export const PlaygroundNav: FC<PlaygroundNavProps> = ({ page }) => {
   const [token] = useLocalStorage('accessToken')
   const { data, loading } = useCurrentUser()
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null)
   const switchTheme = useThemeStore((data) => data.switchTheme)
   const [settingsModal, setSettingsModal] = useState<boolean>(false)
+  const [informationModal, setInformationModal] = useState<boolean>(false)
   const getCloudinaryUrl = useCloudinaryUrl()
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -56,16 +62,27 @@ export const PlaygroundNav: FC = () => {
           </Button>
         </div>
 
+        {page === 'PLAYGROUND' && (
+          <Button onClick={() => setInformationModal(true)}>
+            <InfoIcon
+              fontSize="large"
+              css={css`
+                color: ${colors.grey[600]};
+              `}
+            />
+          </Button>
+        )}
         {!loading && token && (
           <Button onClick={() => setSettingsModal(true)}>
             <Settings
               css={css`
                 color: ${colors.grey[600]};
               `}
-              fontSize={'large'}
+              fontSize="large"
             />
           </Button>
         )}
+
         <div
           css={css`
             justify-self: flex-end;
@@ -137,6 +154,10 @@ export const PlaygroundNav: FC = () => {
       <PlaygroundSettingsModal
         open={settingsModal}
         onClose={() => setSettingsModal(false)}
+      />
+      <PlaygroundInformationModal
+        open={informationModal}
+        onClose={() => setInformationModal(false)}
       />
     </>
   )

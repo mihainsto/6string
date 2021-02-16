@@ -7,13 +7,16 @@ import { FC } from 'react'
 import Draggable from 'react-draggable'
 import SVG from 'react-inlinesvg'
 
+import { useChordStore } from '../../../App'
 import { useUpdatePlaygroundSettingsMutation } from '../../../generated/graphql'
 import { useChordIllustrator } from '../../../Hooks/useChordIllustrator'
 import { useIsLoggedIn } from '../../../Hooks/useIsLoggedIn'
-import { useChordStore } from '../../../Pages/SongPlayPage/Tabs'
 import { useThemeStore } from '../../../State/ThemeState'
 
-export const CurrentChordWidget: FC = () => {
+type CurrentChordWidgetProps = {
+  page?: 'SONGPLAY' | 'PLAYGROUND'
+}
+export const CurrentChordWidget: FC<CurrentChordWidgetProps> = ({ page }) => {
   const createChordSvg = useChordIllustrator()
   const themeType = useThemeStore((state) => state.theme)
   const chord = useChordStore((state) => state.currentChord)
@@ -30,7 +33,7 @@ export const CurrentChordWidget: FC = () => {
           width: 320px;
           height: 230px;
           position: absolute;
-          bottom: 300px;
+          bottom: ${page === 'PLAYGROUND' ? `20px` : `300px`};
           right: 20px;
         `}
         elevation={0}

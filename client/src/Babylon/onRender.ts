@@ -15,7 +15,8 @@ import {
   StringPaths,
 } from './Vertices'
 
-let oldNotes: Note[] | null = null
+let oldNotes: Note[] | undefined = undefined
+let oldTimestamp: Date | undefined = undefined
 
 const animationValues: {
   E: animateGuitarStringReturnType | null
@@ -58,6 +59,7 @@ export const onRender = (scene: Scene) => {
   }
 
   const currentNotes: Note[] | undefined = getNotes().currentNotes
+  const currentTimestamp = getNotes().timestamp
 
   const chord = getChord().currentChord
   chord && poseLeftHandChord({ scene, chord })
@@ -70,9 +72,12 @@ export const onRender = (scene: Scene) => {
         currentNotes.every(
           (v, i) => oldNotes && v.string === oldNotes[i].string,
         )
-      )
+      ) ||
+      currentTimestamp !== oldTimestamp
     ) {
       oldNotes = currentNotes
+      oldTimestamp = currentTimestamp
+
       currentNotes.forEach((note) => {
         let theString: GuitarString = GuitarString.e
         if (note.string === 2) theString = GuitarString.B
