@@ -195,11 +195,11 @@ export const HomePage: FC = () => {
                       <CalendarTodayIcon />
                     </TableSortLabel>
                   </TableCell>
-                  <TableCell align="right">
-                    <TableSortLabel>
-                      <ScheduleIcon />
-                    </TableSortLabel>
-                  </TableCell>
+                  {/*<TableCell align="right">*/}
+                  {/*  <TableSortLabel>*/}
+                  {/*    <ScheduleIcon />*/}
+                  {/*  </TableSortLabel>*/}
+                  {/*</TableCell>*/}
                 </TableRow>
               </TableHead>
               {edges && (
@@ -279,7 +279,7 @@ export const HomePage: FC = () => {
                       <TableCell align="right">
                         {format(new Date(row.node.createdAt), 'MM-dd-yyyy')}
                       </TableCell>
-                      <TableCell align="right">2:31</TableCell>
+                      {/*<TableCell align="right">2:31</TableCell>*/}
                     </TableRow>
                   ))}
                 </TableBody>
