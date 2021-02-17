@@ -42,7 +42,6 @@ export const Measure: FC<MeasureProps> = React.memo(
     const measureWidth = measureDuration / NOTE_DISTANCE_CONSTANT
 
     let previousBeatPosition = 0
-    console.log({ measureWidth })
     const firstBeatPosition =
       measure.voices[0].beats[0].start - thisMeasureActualStart
     const lastBeatPosition =
