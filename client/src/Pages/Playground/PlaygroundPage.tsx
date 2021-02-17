@@ -28,9 +28,9 @@ export const PlaygroundPage: FC = () => {
       css={css`
         width: 100%;
         height: 100%;
+        overflow: hidden;
       `}
       onKeyDown={(e) => {
-        console.log(e.code)
         if (e.code === 'KeyQ') {
           const currentNotes: Note[] = [
             { string: 6, value: currentChord ? currentChord.E : 0 },
