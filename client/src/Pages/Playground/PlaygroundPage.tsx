@@ -2,7 +2,7 @@
 /*eslint-disable */
 
 import { css } from '@emotion/react'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BabylonMainPage } from '../../Babylon/BabylonMainPage'
@@ -16,12 +16,20 @@ import { useChordStore, useNotesStore } from '../../App'
 import useSound from '../../Packages/react-guitar-sound'
 import { standard } from 'react-guitar-tunings'
 import { Note } from '../../Types/guitarProTabs.types'
+import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
 
 export const PlaygroundPage: FC = () => {
   const { data: userData } = useCurrentUser()
   const loggedIn = useIsLoggedIn()
   const { play } = useSound({ tuning: standard })
   const currentChord = useChordStore((state) => state.currentChord)
+
+  useEffect(() => {
+    useNotesStore.setState({
+      currentNotes: undefined,
+      timestamp: undefined,
+    })
+  }, [])
 
   return (
     <div

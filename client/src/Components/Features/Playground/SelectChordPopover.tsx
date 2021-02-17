@@ -5,9 +5,8 @@ import { Typography, useTheme } from '@material-ui/core'
 import { FC, useEffect, useState } from 'react'
 import Draggable from 'react-draggable'
 
-import { useChordStore } from '../../../App'
+import { useChordStore, useNotesStore } from '../../../App'
 import { CHORDS } from '../../../Babylon/Chords'
-import { useScroll } from '../../../Hooks/useScroll'
 
 const chordSets = {
   '-2': ['A', 'E', 'Bm', 'F#m', 'C#m', 'D'],
@@ -34,15 +33,88 @@ const CircleText: FC = ({ children }) => {
     </div>
   )
 }
+
 type SelectChordPopoverProps = {
   test?: number
 }
+let timerE: NodeJS.Timeout | undefined = undefined
+let timerA: NodeJS.Timeout | undefined = undefined
+let timerD: NodeJS.Timeout | undefined = undefined
+let timerG: NodeJS.Timeout | undefined = undefined
+let timerB: NodeJS.Timeout | undefined = undefined
+let timere: NodeJS.Timeout | undefined = undefined
 
 export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
   const theme = useTheme()
   const [currentChordSet, setCurrentChordSet] = useState<
     '-2' | '-1' | '0' | '1' | '2'
   >('0')
+  const [selectedChord, setSelectedChord] = useState<
+    0 | 1 | 2 | 3 | 4 | 5 | undefined
+  >(undefined)
+  const currentNotesPlayed = useNotesStore((state) => state.currentNotes)
+  const [stringE, setStringE] = useState(false)
+  const [stringA, setStringA] = useState(false)
+  const [stringD, setStringD] = useState(false)
+  const [stringG, setStringG] = useState(false)
+  const [stringB, setStringB] = useState(false)
+  const [stringe, setStringe] = useState(false)
+
+  useEffect(() => {
+    currentNotesPlayed?.map((note) => {
+      switch (note.string) {
+        case 6:
+          clearTimeout(timerE as any)
+          setStringE(true)
+          timerE = setTimeout(() => {
+            setStringE(false)
+          }, 4000)
+          break
+        case 5:
+          clearTimeout(timerA as any)
+          setStringA(true)
+          timerA = setTimeout(() => {
+            setStringA(false)
+          }, 4000)
+
+          break
+        case 4:
+          clearTimeout(timerD as any)
+          setStringD(true)
+          timerD = setTimeout(() => {
+            setStringD(false)
+          }, 4000)
+
+          break
+        case 3:
+          clearTimeout(timerG as any)
+          setStringG(true)
+          timerG = setTimeout(() => {
+            setStringG(false)
+          }, 4000)
+
+          break
+        case 2:
+          clearTimeout(timerB as any)
+          setStringB(true)
+          timerB = setTimeout(() => {
+            setStringB(false)
+          }, 4000)
+
+          break
+        case 1:
+          clearTimeout(timere as any)
+          setStringe(true)
+          timere = setTimeout(() => {
+            setStringe(false)
+          }, 4000)
+
+          break
+        default:
+          break
+      }
+    })
+  }, [currentNotesPlayed])
 
   return (
     <Draggable>
@@ -56,6 +128,12 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
             }
             // @ts-ignore
             setCurrentChordSet(nextStep.toString())
+
+            useChordStore.setState({
+              currentChord:
+                // @ts-ignore
+                CHORDS[chordSets[nextStep.toString()][selectedChord]],
+            })
           } else {
             let nextStep = parseInt(currentChordSet) - 1
             if (nextStep < -2) {
@@ -63,6 +141,11 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
             }
             // @ts-ignore
             setCurrentChordSet(nextStep.toString())
+            useChordStore.setState({
+              currentChord:
+                // @ts-ignore
+                CHORDS[chordSets[nextStep.toString()][selectedChord]],
+            })
           }
         }}
       >
@@ -89,10 +172,12 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               right: 0;
               width: 50%;
               height: 50%;
-              transform-origin: 0% 100%;
+              transform-origin: 0 100%;
               transform: rotate(-30deg) skewY(-30deg);
               user-select: none;
-              background-color: ${theme.palette.background.paper};
+              background-color: ${selectedChord === 0
+                ? theme.palette.action.hover
+                : theme.palette.background.paper};
               &:hover {
                 background-color: ${theme.palette.action.hover};
               }
@@ -101,6 +186,7 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               useChordStore.setState({
                 currentChord: CHORDS[chordSets[currentChordSet][0]],
               })
+              setSelectedChord(0)
             }}
           >
             <CircleText>
@@ -120,7 +206,9 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               height: 50%;
               transform-origin: 0% 100%;
               transform: rotate(30deg) skewY(-30deg);
-              background-color: ${theme.palette.background.paper};
+              background-color: ${selectedChord === 1
+                ? theme.palette.action.hover
+                : theme.palette.background.paper};
               &:hover {
                 background-color: ${theme.palette.action.hover};
               }
@@ -129,6 +217,7 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               useChordStore.setState({
                 currentChord: CHORDS[chordSets[currentChordSet][1]],
               })
+              setSelectedChord(1)
             }}
           >
             <CircleText>
@@ -148,7 +237,9 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               height: 50%;
               transform-origin: 0% 100%;
               transform: rotate(90deg) skewY(-30deg);
-              background-color: ${theme.palette.background.paper};
+              background-color: ${selectedChord === 2
+                ? theme.palette.action.hover
+                : theme.palette.background.paper};
               &:hover {
                 background-color: ${theme.palette.action.hover};
               }
@@ -157,6 +248,7 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               useChordStore.setState({
                 currentChord: CHORDS[chordSets[currentChordSet][2]],
               })
+              setSelectedChord(2)
             }}
           >
             <CircleText>
@@ -176,7 +268,9 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               height: 50%;
               transform-origin: 0% 100%;
               transform: rotate(150deg) skewY(-30deg);
-              background-color: ${theme.palette.background.paper};
+              background-color: ${selectedChord === 3
+                ? theme.palette.action.hover
+                : theme.palette.background.paper};
               &:hover {
                 background-color: ${theme.palette.action.hover};
               }
@@ -185,6 +279,7 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               useChordStore.setState({
                 currentChord: CHORDS[chordSets[currentChordSet][3]],
               })
+              setSelectedChord(3)
             }}
           >
             <CircleText>
@@ -204,7 +299,9 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               height: 50%;
               transform-origin: 0% 100%;
               transform: rotate(210deg) skewY(-30deg);
-              background-color: ${theme.palette.background.paper};
+              background-color: ${selectedChord === 4
+                ? theme.palette.action.hover
+                : theme.palette.background.paper};
               &:hover {
                 background-color: ${theme.palette.action.hover};
               }
@@ -213,6 +310,7 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               useChordStore.setState({
                 currentChord: CHORDS[chordSets[currentChordSet][4]],
               })
+              setSelectedChord(4)
             }}
           >
             <CircleText>
@@ -232,7 +330,9 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               height: 50%;
               transform-origin: 0% 100%;
               transform: rotate(270deg) skewY(-30deg);
-              background-color: ${theme.palette.background.paper};
+              background-color: ${selectedChord === 5
+                ? theme.palette.action.hover
+                : theme.palette.background.paper};
               &:hover {
                 background-color: ${theme.palette.action.hover};
               }
@@ -241,6 +341,7 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
               useChordStore.setState({
                 currentChord: CHORDS[chordSets[currentChordSet][5]],
               })
+              setSelectedChord(5)
             }}
           >
             <CircleText>
@@ -284,8 +385,8 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
                     width: 80px;
                     height: 4px;
                     border-radius: 2px;
-                    background: ${theme.palette.text.disabled};
-                    opacity: 0.7;
+                    background: ${theme.palette.text.primary};
+                    opacity: ${!stringE ? '0.2' : '0.7'};
                   `}
                 />
                 <div
@@ -293,8 +394,8 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
                     width: 110px;
                     height: 4px;
                     border-radius: 2px;
-                    background: ${theme.palette.text.disabled};
-                    opacity: 0.7;
+                    background: ${theme.palette.text.primary};
+                    opacity: ${!stringA ? '0.2' : '0.7'};
                   `}
                 />
                 <div
@@ -302,8 +403,8 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
                     width: 120px;
                     height: 4px;
                     border-radius: 2px;
-                    background: ${theme.palette.text.disabled};
-                    opacity: 0.7;
+                    background: ${theme.palette.text.primary};
+                    opacity: ${!stringD ? '0.2' : '0.7'};
                   `}
                 />
                 <div
@@ -311,8 +412,8 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
                     width: 120px;
                     height: 4px;
                     border-radius: 2px;
-                    background: ${theme.palette.text.disabled};
-                    opacity: 0.7;
+                    background: ${theme.palette.text.primary};
+                    opacity: ${!stringG ? '0.2' : '0.7'};
                   `}
                 />
                 <div
@@ -320,8 +421,8 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
                     width: 110px;
                     height: 4px;
                     border-radius: 2px;
-                    background: ${theme.palette.text.disabled};
-                    opacity: 0.7;
+                    background: ${theme.palette.text.primary};
+                    opacity: ${!stringB ? '0.2' : '0.7'};
                   `}
                 />
                 <div
@@ -329,8 +430,8 @@ export const SelectChordPopover: FC<SelectChordPopoverProps> = ({ test }) => {
                     width: 90px;
                     height: 4px;
                     border-radius: 2px;
-                    background: ${theme.palette.text.disabled};
-                    opacity: 0.7;
+                    background: ${theme.palette.text.primary};
+                    opacity: ${!stringe ? '0.2' : '0.7'};
                   `}
                 />
               </div>

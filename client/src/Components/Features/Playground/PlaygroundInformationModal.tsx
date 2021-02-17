@@ -46,6 +46,9 @@ export const PlaygroundInformationModal: FC<PlaygroundInformationModalProps> = (
             <Typography variant="subtitle1">
               Use the chord selector to select the chord
             </Typography>
+            <Typography variant="subtitle1">
+              To change the chord selector tab use scroll
+            </Typography>
           </div>
         </CardContent>
       </Card>

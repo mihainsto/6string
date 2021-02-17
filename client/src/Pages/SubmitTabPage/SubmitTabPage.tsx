@@ -322,6 +322,7 @@ export const SubmitTabPage: FC = () => {
                   <Typography>
                     Please wait, we are processing your song!
                   </Typography>
+                  <Typography>This can take up to a minute.</Typography>
                   <CircularProgress
                     size={100}
                     css={css`

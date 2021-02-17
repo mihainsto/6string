@@ -1,14 +1,13 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { writeStorage } from '@rehooks/local-storage'
 import React, { useEffect } from 'react'
 import { FC } from 'react'
 import { useParams } from 'react-router-dom'
 
+import { useNotesStore } from '../../App'
 import { BabylonMainPage } from '../../Babylon/BabylonMainPage'
 import { CurrentChordWidget } from '../../Components/Features/Playground/CurrentChordWidget'
-import { PlaygroundSettingsModal } from '../../Components/Features/Playground/PlaygroundSettingsModal'
 import { PlaygroundNav } from '../../Components/Navigation/PlaygroundNav'
 import { useSongQuery } from '../../generated/graphql'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
@@ -28,6 +27,13 @@ export const SongPlayPage: FC = () => {
 
   const { data: userData } = useCurrentUser()
   const loggedIn = useIsLoggedIn()
+
+  useEffect(() => {
+    useNotesStore.setState({
+      currentNotes: undefined,
+      timestamp: undefined,
+    })
+  }, [])
 
   return (
     <div

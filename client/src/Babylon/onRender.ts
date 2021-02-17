@@ -38,6 +38,11 @@ const { getState: getNotes } = NotesStore
 const { getState: getChord } = ChordStore
 
 export const onRender = (scene: Scene) => {
+  const currentNotes: Note[] | undefined = getNotes().currentNotes
+  if (currentNotes === undefined) {
+    return
+  }
+
   for (const guitarString in GuitarString) {
     const theString: GuitarString =
       GuitarString[guitarString as keyof typeof GuitarString]
@@ -58,7 +63,6 @@ export const onRender = (scene: Scene) => {
     }
   }
 
-  const currentNotes: Note[] | undefined = getNotes().currentNotes
   const currentTimestamp = getNotes().timestamp
 
   const chord = getChord().currentChord
