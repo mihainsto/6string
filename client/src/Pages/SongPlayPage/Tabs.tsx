@@ -2,7 +2,7 @@
 
 import { css } from '@emotion/react'
 import { Button, useTheme } from '@material-ui/core'
-import React, { createRef, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FC } from 'react'
 import { standard } from 'react-guitar-tunings'
 import { ResizableBox } from 'react-resizable'
@@ -17,7 +17,7 @@ import {
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
-const PLAY_SPEED_FACTOR = 0.2
+const PLAY_SPEED_FACTOR = 0.8
 
 type TabsProps = {
   tab: GuitarProTab
@@ -26,7 +26,6 @@ type TabsProps = {
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false
   const theme = useTheme()
-  const [firstMeasureTopDistance, setFirstMeasureTopDistance] = useState(0)
   const [playButtonState, setPlayButtonState] = useState<'PLAY' | 'PAUSE'>(
     'PLAY',
   )
@@ -35,16 +34,9 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     position: number
   }>({ measure: 0, position: 0 })
 
-  const contentRef = createRef<HTMLDivElement>()
   const windowSize = useWindowSize()
   const { play } = useSound({ tuning: standard })
   const track = tab.tracks[0]
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setFirstMeasureTopDistance(contentRef.current.getBoundingClientRect().top)
-    }
-  }, [contentRef, windowSize])
 
   const onPlayClicked = async () => {
     let currentMeasurePlayed = cursorPosition.measure
@@ -75,11 +67,7 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
               el.beatIndex === currentNotesPlayed &&
               el.measureIndex === currentMeasurePlayed,
           )
-          console.log({
-            currentNotesPlayed,
-            currentMeasurePlayed,
-            currentChord,
-          })
+
           currentChord &&
             useChordStore.setState({
               currentChord: currentChord.chord,
@@ -188,19 +176,17 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
             row-gap: 40px;
           `}
         >
-          <div ref={contentRef} />
+          <div />
           <Measure
             cursorPosition={
               cursorPosition.measure === 0 ? cursorPosition.position : undefined
             }
-            parentTopRect={firstMeasureTopDistance}
             key={0}
             measure={track.measures[0] as MeasureType}
             nextMeasureStart={
               track.measures[1].voices[0].beats[0].start as number
             }
             previousMeasureEnd={0}
-            windowSize={windowSize}
           />
 
           {track.measures.map((measure, index) => {
@@ -212,7 +198,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       ? cursorPosition.position
                       : undefined
                   }
-                  parentTopRect={firstMeasureTopDistance}
                   key={index}
                   measure={measure as MeasureType}
                   nextMeasureStart={
@@ -223,7 +208,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       track.measures[index - 1].voices[0].beats.length - 1
                     ].start as number
                   }
-                  windowSize={windowSize}
                 />
               )
             }
@@ -235,7 +219,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       ? cursorPosition.position
                       : undefined
                   }
-                  parentTopRect={firstMeasureTopDistance}
                   key={index}
                   measure={measure as MeasureType}
                   nextMeasureStart={
@@ -248,7 +231,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       track.measures[index - 1].voices[0].beats.length - 1
                     ].start as number
                   }
-                  windowSize={windowSize}
                 />
               )
             }

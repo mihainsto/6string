@@ -1,47 +1,33 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { colors, useTheme } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
+import { Typography, useTheme } from '@material-ui/core'
+import React from 'react'
 import { FC } from 'react'
 
 import { Measure as MeasureType } from '../../Types/guitarProTabs.types'
-import { Cursor } from './Cursor'
 
 type MeasureProps = {
   measure: MeasureType
   nextMeasureStart: number
   previousMeasureEnd: number
   key: number
-  parentTopRect: number
   cursorPosition?: number
-  windowSize: { width: number; height: number }
 }
 
 const notePositioning = {
-  1: 12,
-  2: 29,
-  3: 46,
-  4: 63,
-  5: 80,
-  6: 97,
+  1: -110,
+  2: -95,
+  3: -76,
+  4: -60,
+  5: -45,
+  6: -30,
 }
 const NOTE_DISTANCE_CONSTANT = 6
 
 export const Measure: FC<MeasureProps> = React.memo(
-  ({
-    measure,
-    nextMeasureStart,
-    previousMeasureEnd,
-    key,
-    parentTopRect,
-    cursorPosition,
-    windowSize,
-  }) => {
+  ({ measure, nextMeasureStart, previousMeasureEnd, key, cursorPosition }) => {
     const theme = useTheme()
-    const [rectLeft, setRectLeft] = useState(0)
-    const [rectTop, setRectTop] = useState(0)
-    const contentRef = React.createRef<HTMLDivElement>()
     const thisMeasureEnd =
       measure.voices[0].beats[measure.voices[0].beats.length - 1].start
 
@@ -55,111 +41,137 @@ export const Measure: FC<MeasureProps> = React.memo(
 
     const measureWidth = measureDuration / NOTE_DISTANCE_CONSTANT
 
-    useEffect(() => {
-      const rect = contentRef.current?.getBoundingClientRect()
-      if (rect) {
-        setRectLeft(rect.x)
-        setRectTop(rect.y)
-      }
-    }, [contentRef, windowSize])
+    let previousBeatPosition = 0
+    console.log({ measureWidth })
+    const firstBeatPosition =
+      measure.voices[0].beats[0].start - thisMeasureActualStart
+    const lastBeatPosition =
+      measure.voices[0].beats[measure.voices[0].beats.length - 1].start -
+      thisMeasureActualStart
 
-    const topOffset = rectTop - parentTopRect
     return (
       <div
         css={css`
           width: ${measureWidth}px;
           display: grid;
           gap: 15px;
-          grid-template-areas:
-            '1'
-            '2'
-            '3'
-            '4'
-            '5'
-            '6';
-          border-right: 2px solid ${theme.palette.text.primary};
-          border-left: 2px solid ${theme.palette.text.primary};
+          grid-template-rows: auto 25px;
         `}
         key={key}
-        ref={contentRef}
       >
         <div
           css={css`
-            border-top: 2px solid ${theme.palette.text.hint};
-            grid-area: 1;
+            display: grid;
+            gap: 15px;
+            border-right: 2px solid ${theme.palette.text.primary};
+            border-left: 2px solid ${theme.palette.text.primary};
           `}
-        />
-        <div
-          css={css`
-            border-top: 2px solid ${theme.palette.text.hint};
-            grid-area: 2;
-          `}
-        />
-        <div
-          css={css`
-            border-top: 2px solid ${theme.palette.text.hint};
-            grid-area: 3;
-          `}
-        />
-        <div
-          css={css`
-            border-top: 2px solid ${theme.palette.text.hint};
-            grid-area: 4;
-          `}
-        />
-        <div
-          css={css`
-            border-top: 2px solid ${theme.palette.text.hint};
-            grid-area: 5;
-          `}
-        />
-        <div
-          css={css`
-            border-top: 2px solid ${theme.palette.text.hint};
-            grid-area: 6;
-          `}
-        />
-
-        {measure.voices[0].beats.map((beat) => {
-          const beatPosition =
-            (beat.start - thisMeasureActualStart) / NOTE_DISTANCE_CONSTANT
-          return beat.notes.map((note, index) => {
-            return (
-              <div
-                key={index}
-                css={css`
-                  position: absolute;
-                  z-index: 2;
-                  background-color: ${theme.palette.background.default};
-                  padding-left: 2px;
-                  padding-right: 2px;
-                  top: ${topOffset + notePositioning[note.string]}px;
-                  left: ${rectLeft + beatPosition - 40}px;
-                `}
-              >
-                {note.value}
-              </div>
-            )
-          })
-        })}
-
-        {typeof cursorPosition !== 'undefined' && (
+        >
           <div
             css={css`
-              margin-top: -15px;
-              margin-left: -2px;
-              position: absolute;
-              z-index: 3;
-              left: ${rectLeft +
-              (measure.voices[0].beats[cursorPosition].start -
-                thisMeasureActualStart) /
-                NOTE_DISTANCE_CONSTANT -
-              40}px;
+              border-top: 2px solid ${theme.palette.text.hint};
             `}
-          >
-            <Cursor />
-          </div>
-        )}
+          />
+          <div
+            css={css`
+              border-top: 2px solid ${theme.palette.text.hint};
+            `}
+          />
+          <div
+            css={css`
+              border-top: 2px solid ${theme.palette.text.hint};
+            `}
+          />
+          <div
+            css={css`
+              border-top: 2px solid ${theme.palette.text.hint};
+            `}
+          />
+          <div
+            css={css`
+              border-top: 2px solid ${theme.palette.text.hint};
+            `}
+          />
+          <div
+            css={css`
+              border-top: 2px solid ${theme.palette.text.hint};
+            `}
+          />
+        </div>
+        <div
+          css={css`
+            display: flex;
+            align-content: flex-start;
+            padding-left: 5px;
+          `}
+        >
+          {measure.voices[0].beats.map((beat, beatIndex) => {
+            const beatPosition = beat.start - thisMeasureActualStart
+            const normalizedBeatPosition =
+              measureWidth *
+              ((beatPosition - firstBeatPosition) /
+                (lastBeatPosition - firstBeatPosition))
+            const biggestString = Math.max.apply(
+              Math,
+              beat.notes.map((note) => {
+                return note.string
+              }),
+            )
+            const notes = beat.notes.map((note, index) => {
+              return (
+                <div
+                  key={index}
+                  css={css`
+                    z-index: 2;
+                    padding-left: 2px;
+                    padding-right: 2px;
+                    margin-top: ${notePositioning[note.string]}px;
+                    margin-left: ${index === 0
+                      ? beatIndex === 0
+                        ? normalizedBeatPosition - previousBeatPosition
+                        : normalizedBeatPosition - previousBeatPosition - 18
+                      : -13}px;
+                  `}
+                >
+                  <div
+                    css={css`
+                      background-color: ${theme.palette.background.default};
+                    `}
+                  >
+                    <Typography>{note.value}</Typography>
+                  </div>
+                  {note.string === biggestString && (
+                    <div
+                      css={css`
+                        position: relative;
+                        background-color: ${theme.palette.primary.main};
+                        height: 110px;
+                        opacity: 0.4;
+                        filter: blur(0.2px);
+                        visibility: ${cursorPosition === beatIndex
+                          ? 'visible'
+                          : 'hidden'};
+                        top: ${biggestString === 1
+                          ? -25
+                          : biggestString === 2
+                          ? -40
+                          : biggestString === 3
+                          ? -60
+                          : biggestString === 4
+                          ? -75
+                          : biggestString === 5
+                          ? -90
+                          : -100}px;
+                      `}
+                    />
+                  )}
+                </div>
+              )
+            })
+            previousBeatPosition = normalizedBeatPosition
+            return notes
+          })}
+        </div>
       </div>
     )
   },
