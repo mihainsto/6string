@@ -17,7 +17,7 @@ import {
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
-const PLAY_SPEED_FACTOR = 0.5
+const PLAY_SPEED_FACTOR = 0.2
 
 type TabsProps = {
   tab: GuitarProTab
@@ -52,6 +52,7 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     let startTime = 0
 
     const chords = getChordsFromTrack(track)
+
     useChordStore.setState({ currentChord: chords[0].chord })
 
     const playInterval = (time: number) => {
@@ -74,6 +75,11 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
               el.beatIndex === currentNotesPlayed &&
               el.measureIndex === currentMeasurePlayed,
           )
+          console.log({
+            currentNotesPlayed,
+            currentMeasurePlayed,
+            currentChord,
+          })
           currentChord &&
             useChordStore.setState({
               currentChord: currentChord.chord,

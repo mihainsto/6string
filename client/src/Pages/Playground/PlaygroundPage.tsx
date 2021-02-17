@@ -11,12 +11,10 @@ import { SelectChordPopover } from '../../Components/Features/Playground/SelectC
 import { PlaygroundNav } from '../../Components/Navigation/PlaygroundNav'
 import { useCurrentUser } from '../../Hooks/useCurrentUser'
 import { useIsLoggedIn } from '../../Hooks/useIsLoggedIn'
-import { Tabs } from '../SongPlayPage/Tabs'
 import { useChordStore, useNotesStore } from '../../App'
 import useSound from '../../Packages/react-guitar-sound'
 import { standard } from 'react-guitar-tunings'
 import { Note } from '../../Types/guitarProTabs.types'
-import { useLocalStorage, writeStorage } from '@rehooks/local-storage'
 
 export const PlaygroundPage: FC = () => {
   const { data: userData } = useCurrentUser()

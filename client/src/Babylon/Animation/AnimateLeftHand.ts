@@ -98,6 +98,9 @@ export const poseLeftHandChord = ({
 
   // Determining the first fret and the used frets
   const nonZeroChordPairs = chordPairs.filter((e) => e[1] !== 0)
+  if (nonZeroChordPairs.length === 0) {
+    return
+  }
   nonZeroChordPairs.sort((a, b) => a[1]! - b[1]!)
   const firstFret = nonZeroChordPairs[0][1]
 
