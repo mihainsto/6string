@@ -1,6 +1,13 @@
 import { PrismaClient } from '@prisma/client';
 
-const tableNames = ['User', 'PlaygroundSettings', 'Song', 'Tab', 'Track'];
+const tableNames = [
+  'User',
+  'PlaygroundSettings',
+  'Song',
+  'Tab',
+  'Track',
+  'UserSettings',
+];
 const prisma = new PrismaClient();
 
 async function main() {

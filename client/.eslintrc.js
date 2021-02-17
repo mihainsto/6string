@@ -32,20 +32,14 @@ module.exports = {
     'plugin:prettier/recommended', // Make sure this is the last one
   ],
   rules: {
-    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+    'prettier/prettier': 0,
     'react/display-name': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error",
-    'jsx-a11y/anchor-is-valid': [
-      'error',
-      {
-        components: ['Link'],
-        specialLink: ['hrefLeft', 'hrefRight'],
-        aspects: ['invalidHref', 'preferButton'],
-      },
-    ],
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error',
+    'jsx-a11y/anchor-is-valid': 'off',
+    'jsx-a11y/no-autofocus': 'off',
   },
 }

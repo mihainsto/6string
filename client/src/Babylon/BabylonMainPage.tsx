@@ -14,9 +14,13 @@ import {
 import { css } from '@emotion/react'
 import React from 'react'
 
+import { GuitarOrientation } from '../generated/graphql'
+import { GuitarOrientationStore } from '../State/BabylonState'
 import SceneComponent from './BabylonjsHook/babylonjs-hook'
 import { onRender } from './onRender'
 import { StringPaths, StringRadius, strings } from './Vertices'
+
+const { getState: getGuitarOrientation } = GuitarOrientationStore
 
 const onSceneReady = (scene: Scene) => {
   // This creates and positions a free camera (non-mesh)
@@ -34,10 +38,16 @@ const onSceneReady = (scene: Scene) => {
   const light = new HemisphericLight('light', new Vector3(1, 1, -10), scene)
   // Default intensity is 1. Let's dim the light a small amount
   light.intensity = 0.7
-
+  const guitarOrientation = getGuitarOrientation()
   // Adding the guitar and the strings
   SceneLoader.Append('/', 'guitarscene.glb', scene, (scene) => {
-    const scalingFactor = new Vector3(-100, 100, 100)
+    const scalingFactor = new Vector3(
+      guitarOrientation.guitarOrientation === GuitarOrientation.LeftHanded
+        ? 100
+        : -100,
+      100,
+      100,
+    )
     const position = new Vector3(0, -24.584, -0.002)
     scene.meshes.forEach((mesh) => {
       if (mesh.name === '__root__') {
@@ -107,6 +117,15 @@ const onSceneReady = (scene: Scene) => {
       },
       scene,
     )
+
+    if (guitarOrientation.guitarOrientation === GuitarOrientation.LeftHanded) {
+      strings.E.scaling = new Vector3(-1, 1, 1)
+      strings.A.scaling = new Vector3(-1, 1, 1)
+      strings.D.scaling = new Vector3(-1, 1, 1)
+      strings.G.scaling = new Vector3(-1, 1, 1)
+      strings.B.scaling = new Vector3(-1, 1, 1)
+      strings.e.scaling = new Vector3(-1, 1, 1)
+    }
     //animateLeftHand({ chord: {}, scene: scene })
   })
   //scene.debugLayer.show()

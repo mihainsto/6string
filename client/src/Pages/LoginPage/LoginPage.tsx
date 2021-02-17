@@ -15,7 +15,7 @@ import React, { useState } from 'react'
 import { FC } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import { AuthLayout } from '../../Components/AuthLayout'
+import { AuthLayout } from '../../Components/Layouts/AuthLayout'
 import { useLoginMutation } from '../../generated/graphql'
 
 export const LoginPage: FC = () => {
@@ -47,9 +47,7 @@ export const LoginPage: FC = () => {
       setLoginSuccessAlert(true)
       setEmailErrorMessage('')
       setPasswordErrorMessage('')
-      setTimeout(() => {
-        history.push('/')
-      }, 1000)
+      history.push('/')
     } catch (e) {
       setLoginSuccessAlert(false)
       setIncorrectDataAlert(true)
@@ -121,18 +119,6 @@ export const LoginPage: FC = () => {
           margin-top: 20px;
         `}
       >
-        <FormControlLabel
-          control={
-            <Checkbox
-              name="checkedI"
-              color={'primary'}
-              value={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-          }
-          label="Remember Me"
-        />
-
         <div
           css={css`
             margin-top: 40px;

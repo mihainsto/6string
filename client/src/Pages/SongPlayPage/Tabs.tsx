@@ -1,35 +1,31 @@
 /** @jsxImportSource @emotion/react **/
 
 import { css } from '@emotion/react'
-import { Button } from '@material-ui/core'
-import React, { createRef, useEffect, useState } from 'react'
+import { Button, useTheme } from '@material-ui/core'
+import React, { useState } from 'react'
 import { FC } from 'react'
 import { standard } from 'react-guitar-tunings'
 import { ResizableBox } from 'react-resizable'
 import * as Tone from 'tone'
-import create from 'zustand'
 
+import { useChordStore, useNotesStore } from '../../App'
 import { getChordsFromTrack } from '../../Babylon/utils/GuitarHelpers'
 import useWindowSize from '../../Hooks/useWindowSize'
 import useSound from '../../Packages/react-guitar-sound'
-import { ChordStore, NotesStore } from '../../State/BabylonState'
 import {
   GuitarProTab,
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
-const PLAY_SPEED_FACTOR = 0.2
+const PLAY_SPEED_FACTOR = 0.8
 
 type TabsProps = {
   tab: GuitarProTab
 }
 
-const useNotesStore = create(NotesStore)
-const useChordStore = create(ChordStore)
-
 export const Tabs: FC<TabsProps> = ({ tab }) => {
   let toneStarted = false
-  const [firstMeasureTopDistance, setFirstMeasureTopDistance] = useState(0)
+  const theme = useTheme()
   const [playButtonState, setPlayButtonState] = useState<'PLAY' | 'PAUSE'>(
     'PLAY',
   )
@@ -38,16 +34,9 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     position: number
   }>({ measure: 0, position: 0 })
 
-  const contentRef = createRef<HTMLDivElement>()
   const windowSize = useWindowSize()
   const { play } = useSound({ tuning: standard })
   const track = tab.tracks[0]
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setFirstMeasureTopDistance(contentRef.current.getBoundingClientRect().top)
-    }
-  }, [contentRef, windowSize])
 
   const onPlayClicked = async () => {
     let currentMeasurePlayed = cursorPosition.measure
@@ -55,6 +44,7 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
     let startTime = 0
 
     const chords = getChordsFromTrack(track)
+
     useChordStore.setState({ currentChord: chords[0].chord })
 
     const playInterval = (time: number) => {
@@ -77,20 +67,26 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
               el.beatIndex === currentNotesPlayed &&
               el.measureIndex === currentMeasurePlayed,
           )
+
           currentChord &&
-            useChordStore.setState({ currentChord: currentChord.chord })
+            useChordStore.setState({
+              currentChord: currentChord.chord,
+            })
 
           // Getting the frets if capo
           currentBeat.notes.forEach((note) => {
-            strings[note.string] = note.value + track.offset
+            strings[note.string - 1] = note.value + track.offset
           })
 
           // Playing the notes
           currentBeat.notes.forEach((note) => {
-            play(note.string, 0, strings)
+            play(note.string - 1, 0, strings)
           })
           // Write the notes inside local storage to get them on the 3D side
-          useNotesStore.setState({ currentNotes: currentBeat.notes })
+          useNotesStore.setState({
+            currentNotes: currentBeat.notes,
+            timestamp: new Date(),
+          })
 
           // offset the currentNotesPlayed and currentMeasurePlayed if we reach the end of a measure
           if (
@@ -135,7 +131,7 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
       css={css`
         position: absolute;
         bottom: 0;
-        background-color: white;
+        background-color: ${theme.palette.background.default};
         box-shadow: 0 -5px 5px -5px #333;
       `}
       axis={'y'}
@@ -180,19 +176,17 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
             row-gap: 40px;
           `}
         >
-          <div ref={contentRef} />
+          <div />
           <Measure
             cursorPosition={
               cursorPosition.measure === 0 ? cursorPosition.position : undefined
             }
-            parentTopRect={firstMeasureTopDistance}
             key={0}
             measure={track.measures[0] as MeasureType}
             nextMeasureStart={
               track.measures[1].voices[0].beats[0].start as number
             }
             previousMeasureEnd={0}
-            windowSize={windowSize}
           />
 
           {track.measures.map((measure, index) => {
@@ -204,7 +198,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       ? cursorPosition.position
                       : undefined
                   }
-                  parentTopRect={firstMeasureTopDistance}
                   key={index}
                   measure={measure as MeasureType}
                   nextMeasureStart={
@@ -215,7 +208,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       track.measures[index - 1].voices[0].beats.length - 1
                     ].start as number
                   }
-                  windowSize={windowSize}
                 />
               )
             }
@@ -227,7 +219,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       ? cursorPosition.position
                       : undefined
                   }
-                  parentTopRect={firstMeasureTopDistance}
                   key={index}
                   measure={measure as MeasureType}
                   nextMeasureStart={
@@ -240,7 +231,6 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
                       track.measures[index - 1].voices[0].beats.length - 1
                     ].start as number
                   }
-                  windowSize={windowSize}
                 />
               )
             }

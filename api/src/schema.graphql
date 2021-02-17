@@ -2,6 +2,14 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input AddSongToFavoriteInput {
+  songId: ID!
+}
+
+input ApproveSongInput {
+  songId: ID!
+}
+
 type Auth {
   """JWT access token"""
   accessToken: String!
@@ -16,16 +24,30 @@ input ChangePasswordInput {
   oldPassword: String!
 }
 
+input ChangeUserRoleInput {
+  role: Role!
+  userId: String!
+}
+
 input CreateSongInput {
   artist: String!
   difficulty: Difficulty!
   style: GuitarStyle
+  tabUrl: String!
   title: String!
   tuning: String!
 }
 
 """Date custom scalar type"""
 scalar Date
+
+input DeleteSongInReviewInput {
+  songId: ID!
+}
+
+input DeleteUserInput {
+  userId: String!
+}
 
 enum Difficulty {
   EASY
@@ -60,12 +82,36 @@ input LoginInput {
 }
 
 type Mutation {
-  changePassword(data: ChangePasswordInput!): User!
+  addSongToFavorite(input: AddSongToFavoriteInput!): Song!
+  approveSong(input: ApproveSongInput!): Song!
+  changePassword(input: ChangePasswordInput!): User!
+  changeUserRole(input: ChangeUserRoleInput!): User!
   createSong(input: CreateSongInput!): Song!
+  deleteSongInReview(input: DeleteSongInReviewInput!): Song!
+  deleteUser(input: DeleteUserInput!): User!
   login(data: LoginInput!): Auth!
+  readNotification(input: ReadNotificationInput!): Notification!
   refreshToken(token: String!): Token!
+  removeSongFromFavorite(input: RemoveSongFromFavoriteInput!): Song!
   signup(data: SignupInput!): Auth!
+  submitSongToReview(input: SubmitSongToReviewInput!): Song!
+  toggleNotificationSettings(input: ToggleNotificationSettingsInput!): User!
+  updatePlaygroundSettings(input: UpdatePlaygroundSettingsInput!): User!
   updateUser(data: UpdateUserInput!): User!
+  updateUserAvatar(input: UpdateUserAvatarInput!): User!
+  updateUserEmail(input: UpdateUserEmailInput!): User!
+  updateUserName(input: UpdateUserNameInput!): User!
+}
+
+type Notification {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  id: ID!
+  message: String!
+  read: Boolean!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
 }
 
 """
@@ -84,6 +130,8 @@ type PageInfo {
 }
 
 type PlaygroundSettings {
+  chordWidget: Boolean!
+
   """Identifies the date and time when the object was created."""
   createdAt: Date!
   guitarOrientation: GuitarOrientation!
@@ -100,7 +148,19 @@ type Query {
   helloWorld: String!
   me: User!
   song(id: String!): Song!
-  songs(after: String, before: String, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
+  songInReview(id: String!): Song!
+  songs(after: String, before: String, favorite: Boolean, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
+  songsInReview(after: String, before: String, favorite: Boolean, filter: SongFilter, first: Int, last: Int, orderBy: SongOrder, query: String, skip: Int): SongConnection!
+  user(id: String!): User!
+  users(after: String, before: String, first: Int, last: Int, orderBy: UserOrder, query: String, skip: Int): UserConnection!
+}
+
+input ReadNotificationInput {
+  notificationId: ID!
+}
+
+input RemoveSongFromFavoriteInput {
+  songId: ID!
 }
 
 """User role"""
@@ -116,14 +176,18 @@ input SignupInput {
 }
 
 type Song {
+  archived: Boolean!
   artist: String!
 
   """Identifies the date and time when the object was created."""
   createdAt: Date!
   difficulty: Difficulty!
+  favorite: Boolean!
   id: ID!
+  inReview: Boolean!
   postedBy: User!
   style: GuitarStyle
+  submittedToReview: Boolean!
   tab: Tab!
   title: String!
   tuning: String
@@ -166,6 +230,10 @@ enum SongOrderField {
   tuning
 }
 
+input SubmitSongToReviewInput {
+  songId: ID!
+}
+
 type Tab {
   """Identifies the date and time when the object was created."""
   createdAt: Date!
@@ -176,6 +244,12 @@ type Tab {
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: Date!
+}
+
+input ToggleNotificationSettingsInput {
+  notificationAdminReview: Boolean
+  notificationEnabled: Boolean
+  notificationRecommended: Boolean
 }
 
 type Token {
@@ -198,15 +272,33 @@ type Track {
 }
 
 input UpdatePlaygroundSettings {
+  chordWidget: Boolean
   guitarOrientation: GuitarOrientation
   guitarStyle: GuitarStyle
   guitarType: GuitarType
 }
 
+input UpdatePlaygroundSettingsInput {
+  playgroundSettings: UpdatePlaygroundSettings!
+}
+
+input UpdateUserAvatarInput {
+  avatarUrl: String!
+}
+
+input UpdateUserEmailInput {
+  email: String!
+}
+
 input UpdateUserInput {
   avatarUrl: String
+  email: String
   playgroundSettings: UpdatePlaygroundSettings
   username: String
+}
+
+input UpdateUserNameInput {
+  username: String!
 }
 
 type User {
@@ -216,10 +308,49 @@ type User {
   createdAt: Date!
   email: String!
   id: ID!
+  notifications: [Notification!]
   playgroundSettings: PlaygroundSettings!
   role: Role!
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: Date!
+  userSettings: UserSettings!
   username: String!
+}
+
+type UserConnection {
+  edges: [UserEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+input UserOrder {
+  direction: OrderDirection!
+  field: UserOrderField!
+}
+
+"""Properties by which user connections can be ordered."""
+enum UserOrderField {
+  createdAt
+  email
+  id
+  role
+  username
+}
+
+type UserSettings {
+  """Identifies the date and time when the object was created."""
+  createdAt: Date!
+  id: ID!
+  notificationAdminReview: Boolean!
+  notificationEnabled: Boolean!
+  notificationRecommended: Boolean!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: Date!
 }

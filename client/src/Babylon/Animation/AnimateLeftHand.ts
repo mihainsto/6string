@@ -85,6 +85,45 @@ const poseLeftHand = ({
   }
 }
 
+const clearLeftHand = (scene: Scene) => {
+  poseLeftHand({
+    scene,
+    values: {
+      carpal: {
+        lCarpal1: new Vector3(0, 0, 0),
+        lCarpal2: new Vector3(0, 0, 0),
+        lCarpal3: new Vector3(0, 0, 0),
+        lCarpal4: new Vector3(0, 0, 0),
+      },
+      handPosition: new Vector3(50 / 100, 18 / 100, 10 / 100),
+
+      lIndex: {
+        '1': new Vector3(0, 0, 0),
+        '2': new Vector3(0, 0, 0),
+        '3': new Vector3(0, 0, 0),
+      },
+
+      lMid: {
+        '1': new Vector3(0, 0, 0),
+        '2': new Vector3(0, 0, 0),
+        '3': new Vector3(0, 0, 0),
+      },
+
+      lRing: {
+        '1': new Vector3(0, 0, 0),
+        '2': new Vector3(0, 0, 0),
+        '3': new Vector3(0, 0, 0),
+      },
+
+      lPinky: {
+        '1': new Vector3(0, 0, 0),
+        '2': new Vector3(0, 0, 0),
+        '3': new Vector3(0, 0, 0),
+      },
+    },
+  })
+}
+
 // Posing the left hand by a chord input
 export const poseLeftHandChord = ({
   scene,
@@ -98,6 +137,11 @@ export const poseLeftHandChord = ({
 
   // Determining the first fret and the used frets
   const nonZeroChordPairs = chordPairs.filter((e) => e[1] !== 0)
+  if (nonZeroChordPairs.length === 0) {
+    clearLeftHand(scene)
+    return
+  }
+
   nonZeroChordPairs.sort((a, b) => a[1]! - b[1]!)
   const firstFret = nonZeroChordPairs[0][1]
 

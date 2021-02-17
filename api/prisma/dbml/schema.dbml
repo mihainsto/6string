@@ -12,18 +12,43 @@ Table User {
   role Role [not null]
   avatarUrl String
   playgroundSettings PlaygroundSettings
-  Song Song
+  userSettings UserSettings
+  favoriteSongs Song [not null]
+  notifications Notification [not null]
+  Song Song [not null]
 }
 
 Table PlaygroundSettings {
-  id Int [pk, increment]
+  id String [pk]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
-  user User [not null]
-  userId String [not null]
+  user User
+  userId String
   guitarStyle GuitarStyle [default: 'STRUM']
   guitarOrientation GuitarOrientation [default: 'RIGHT_HANDED']
   guitarType GuitarType [default: 'ACOUSTIC']
+  chordWidget Boolean [not null, default: true]
+}
+
+Table UserSettings {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  user User
+  userId String
+  notificationEnabled Boolean [not null, default: true]
+  notificationRecommended Boolean [not null, default: true]
+  notificationAdminReview Boolean [not null, default: true]
+}
+
+Table Notification {
+  id String [pk]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  message String [not null]
+  for User
+  userId String
+  read Boolean [not null, default: false]
 }
 
 Table Song {
@@ -37,7 +62,11 @@ Table Song {
   difficulty Difficulty [not null]
   tuning String [not null]
   style GuitarStyle
-  tab Tab [not null]
+  tab Tab
+  archived Boolean [not null, default: false]
+  inReview Boolean [not null, default: true]
+  submittedToReview Boolean [not null, default: false]
+  favoriteUsers User [not null]
 }
 
 Table Tab {
@@ -48,7 +77,7 @@ Table Tab {
   songId String [not null]
   tempo Int [not null]
   tempoName String [not null]
-  tracks Track
+  tracks Track [not null]
 }
 
 Table Track {
@@ -59,6 +88,11 @@ Table Track {
   measures Json [not null]
   tab Tab [not null]
   tabId String [not null]
+}
+
+Table favoriteRelation {
+  favoritesongsId String [ref: > Song.id]
+  favoriteusersId String [ref: > User.id]
 }
 
 Enum Role {
@@ -89,6 +123,10 @@ Enum GuitarType {
 }
 
 Ref: PlaygroundSettings.userId - User.id
+
+Ref: UserSettings.userId - User.id
+
+Ref: Notification.userId > User.id
 
 Ref: Song.postedById > User.id
 

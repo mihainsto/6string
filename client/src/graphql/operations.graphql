@@ -36,12 +36,6 @@ enum GuitarOrientation {
     RIGHT_HANDED
 }
 
-input UpdatePlaygroundSettings {
-    guitarOrientation: GuitarOrientation
-    guitarStyle: GuitarStyle
-    guitarType: GuitarType
-}
-
 input SongFilter {
     difficulty: Difficulty
     style: GuitarStyle
@@ -53,8 +47,8 @@ input SongOrder {
     field: SongOrderField!
 }
 
-query Songs($first: Int!, $after: String!, $query: String, $filter: SongFilter, $orderBy: SongOrder) {
-    songs(first: $first, after: $after, query: $query, filter: $filter, orderBy: $orderBy) {
+query Songs($first: Int!, $after: String, $query: String, $filter: SongFilter, $orderBy: SongOrder, $favorite: Boolean) {
+    songs(first: $first, after: $after, query: $query, filter: $filter, orderBy: $orderBy, favorite: $favorite) {
         edges {
             node {
                 id
@@ -62,8 +56,39 @@ query Songs($first: Int!, $after: String!, $query: String, $filter: SongFilter, 
                 tuning
                 style
                 updatedAt
+                createdAt
                 difficulty
                 artist
+                favorite
+                submittedToReview
+                inReview
+                archived
+            }
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        totalCount
+    }
+}
+
+query SongsInReview($first: Int!, $after: String, $query: String, $filter: SongFilter, $orderBy: SongOrder, $favorite: Boolean) {
+    songsInReview(first: $first, after: $after, query: $query, filter: $filter, orderBy: $orderBy, favorite: $favorite) {
+        edges {
+            node {
+                id
+                title
+                tuning
+                style
+                updatedAt
+                createdAt
+                difficulty
+                artist
+                favorite
+                submittedToReview
+                inReview
+                archived
             }
         }
         pageInfo {
@@ -83,6 +108,10 @@ query Song($id: String!) {
         updatedAt
         difficulty
         artist
+        favorite
+        submittedToReview
+        inReview
+        archived
         tab {
             tracks {
                 measures
@@ -99,13 +128,50 @@ query me {
         username
         email
         avatarUrl
+        role
+        notifications {
+            id
+            message
+            createdAt
+            read
+        }
         playgroundSettings {
+            id
             guitarOrientation
             guitarStyle
             guitarType
+            chordWidget
         }
+        userSettings{
+            id
+            notificationEnabled
+            notificationRecommended
+            notificationAdminReview
+        }
+
     }
 }
+
+query Users($first: Int!, $after: String, $query: String, $orderBy: UserOrder){
+    users(first: $first, after: $after, query: $query, orderBy: $orderBy) {
+        edges {
+            node {
+                id
+                updatedAt
+                createdAt
+                username
+                email
+                role
+            }
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+        totalCount
+    }
+}
+
 
 mutation Login($email: String!, $password: String!) {
     login(data: { email: $email, password: $password }) {
@@ -119,8 +185,120 @@ mutation Register($username: String!, $email: String!, $password: String!) {
     }
 }
 
-mutation updateUser($playgroundSettings: UpdatePlaygroundSettings, $avatarUrl: String, $username: String){
-    updateUser(data: {playgroundSettings: $playgroundSettings, avatarUrl: $avatarUrl, username: $username}) {
+mutation UpdateUserName($input: UpdateUserNameInput!){
+    updateUserName(input: $input){
         id
+        username
+    }
+}
+
+mutation UpdateUserAvatar($input: UpdateUserAvatarInput!){
+    updateUserAvatar(input: $input){
+        id
+        avatarUrl
+    }
+}
+
+mutation UpdateUserEmail($input: UpdateUserEmailInput!){
+    updateUserEmail(input: $input){
+        id
+        email
+    }
+}
+
+mutation ChangePassword($input: ChangePasswordInput!){
+    changePassword(input: $input){
+        id
+    }
+}
+
+mutation ToggleNotificationSettings($input: ToggleNotificationSettingsInput!){
+    toggleNotificationSettings(input: $input){
+        id
+        userSettings {
+            id
+            notificationAdminReview
+            notificationEnabled
+            notificationRecommended
+        }
+    }
+}
+
+mutation UpdatePlaygroundSettings($input: UpdatePlaygroundSettingsInput!){
+    updatePlaygroundSettings(input: $input){
+        id
+        playgroundSettings{
+            id,
+            guitarOrientation,
+            guitarStyle,
+            guitarType,
+            chordWidget
+        }
+    }
+}
+
+mutation ChangeUserRole($input: ChangeUserRoleInput!){
+    changeUserRole(input: $input){
+        id
+        role
+    }
+}
+
+mutation DeleteUser($input: DeleteUserInput!){
+    deleteUser(input: $input){
+        id
+        role
+    }
+}
+
+mutation AddSongToFavorite($input: AddSongToFavoriteInput!){
+    addSongToFavorite(input: $input){
+        id
+        favorite
+    }
+}
+
+mutation RemoveSongFromFavorite($input: RemoveSongFromFavoriteInput!){
+    removeSongFromFavorite(input: $input){
+        id
+        favorite
+    }
+}
+
+mutation DeleteSongInReview($input: DeleteSongInReviewInput!){
+    deleteSongInReview(input: $input){
+        id
+        submittedToReview
+        inReview
+        archived
+    }
+}
+
+mutation SubmitSongToReview($input: SubmitSongToReviewInput!){
+    submitSongToReview(input: $input){
+        id
+        submittedToReview
+        inReview
+    }
+}
+
+mutation ApproveSong($input: ApproveSongInput!){
+    approveSong(input: $input){
+        id
+        submittedToReview
+        inReview
+    }
+}
+
+mutation CreateSong($input: CreateSongInput!){
+    createSong(input: $input){
+        id
+    }
+}
+
+mutation ReadNotification($input: ReadNotificationInput!){
+    readNotification(input: $input) {
+        id
+        read
     }
 }

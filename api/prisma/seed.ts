@@ -26,6 +26,9 @@ async function main() {
       playgroundSettings: {
         create: {},
       },
+      userSettings: {
+        create: {},
+      },
     },
   });
   const user2: User = await prisma.user.create({
@@ -38,17 +41,87 @@ async function main() {
       playgroundSettings: {
         create: {},
       },
+      userSettings: {
+        create: {},
+      },
     },
   });
 
   const user3: User = await prisma.user.create({
     data: {
-      email: 'agent@gmail.com',
-      username: 'Agent',
+      email: 'mihai@gmail.com',
+      username: 'Mihai',
+      avatarUrl: faker.image.cats(),
+      role: 'ADMIN',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
+  const user4: User = await prisma.user.create({
+    data: {
+      email: 'homer@simpson.com',
+      username: 'Homer',
       avatarUrl: faker.image.cats(),
       role: 'USER',
       password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
       playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
+  const user5: User = await prisma.user.create({
+    data: {
+      email: 'marge@simpson.com',
+      username: 'Marge',
+      avatarUrl: faker.image.cats(),
+      role: 'USER',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
+  const user6: User = await prisma.user.create({
+    data: {
+      email: 'burns@burns.com',
+      username: 'Burns',
+      avatarUrl: faker.image.cats(),
+      role: 'USER',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
+        create: {},
+      },
+    },
+  });
+
+  const user7: User = await prisma.user.create({
+    data: {
+      email: 'ned@flanders.com',
+      username: 'Ned',
+      avatarUrl: faker.image.cats(),
+      role: 'USER',
+      password: '$2b$10$EpRnTzVlqHNP0.fUbXUwSOyuiXe/QLSUG6xNekdHgTGmrpHEfIoxm', // secret42
+      playgroundSettings: {
+        create: {},
+      },
+      userSettings: {
         create: {},
       },
     },
@@ -63,6 +136,7 @@ async function main() {
         postedBy: { connect: { id: user1.id } },
         tuning: 'standard',
         style: 'STRUM',
+        inReview: false,
         tab: {
           create: {
             tempo: fakeTab2.tempo,

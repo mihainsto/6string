@@ -1,4 +1,4 @@
-import { Field, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, ID, InputType, registerEnumType } from '@nestjs/graphql';
 import { GuitarStyle } from '../user/user.model';
 import { Difficulty } from './song.model';
 import { Order } from '../../common/order/order';
@@ -35,6 +35,9 @@ export class CreateSongInput {
 
   @Field(() => GuitarStyle, { nullable: true })
   style?: GuitarStyle;
+
+  @Field()
+  tabUrl: string;
 }
 
 @InputType()
@@ -53,4 +56,34 @@ export class SongFilter {
 
   @Field({ nullable: true })
   tuning: string;
+}
+
+@InputType()
+export class AddSongToFavoriteInput {
+  @Field(() => ID)
+  songId: string;
+}
+
+@InputType()
+export class RemoveSongFromFavoriteInput {
+  @Field(() => ID)
+  songId: string;
+}
+
+@InputType()
+export class DeleteSongInReviewInput {
+  @Field(() => ID)
+  songId: string;
+}
+
+@InputType()
+export class SubmitSongToReviewInput {
+  @Field(() => ID)
+  songId: string;
+}
+
+@InputType()
+export class ApproveSongInput {
+  @Field(() => ID)
+  songId: string;
 }

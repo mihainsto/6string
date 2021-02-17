@@ -63,7 +63,7 @@ describe('Song service', () => {
       },
     });
 
-    const songDb = await prisma.song.findOne({
+    const songDb = await prisma.song.findUnique({
       include: { tab: { include: { tracks: true } } },
       where: { id: newSong.id },
     });
