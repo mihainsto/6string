@@ -4,6 +4,7 @@ import '@babylonjs/inspector'
 
 import * as BABYLON from '@babylonjs/core'
 import {
+  Color4,
   FreeCamera,
   HemisphericLight,
   MeshBuilder,
@@ -36,9 +37,17 @@ const onSceneReady = (scene: Scene) => {
   camera.attachControl(canvas, true)
   // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
   const light = new HemisphericLight('light', new Vector3(1, 1, -10), scene)
+  const light2 = new BABYLON.DirectionalLight(
+    'DirectionalLight',
+    new BABYLON.Vector3(1, 1, -10),
+    scene,
+  )
   // Default intensity is 1. Let's dim the light a small amount
   light.intensity = 0.7
+  light2.intensity = 0.7
+  scene.clearColor = new Color4(0, 0, 0, 0)
   const guitarOrientation = getGuitarOrientation()
+
   // Adding the guitar and the strings
   SceneLoader.Append('/', 'guitarscene.glb', scene, (scene) => {
     const scalingFactor = new Vector3(
