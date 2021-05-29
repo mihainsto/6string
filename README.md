@@ -55,3 +55,5 @@ This project combines multiple fields like: Frontend web development, Backend we
 - [Blender](https://github.com/blender)
 - [Fusion 360](https://www.autodesk.com/products/fusion-360/overview)
 
+## [License](https://github.com/mihainsto/6string/blob/main/LICENSE)
+6string is under the Mozilla Public License 2.0.
