@@ -2,10 +2,10 @@
 
 # ![6string logo](https://github.com/mihainsto/6string/blob/main/client/public/IconWhite_Background.png?raw=true)
 
-6string is a web application that aims to help guitar players learn new songs and visualise the songs and the cords into a frendly 3D enviroment.  
+6string is a web application that aims to help guitar players learn new songs and visualize the songs and the chords into a friendly 3D environment.  
 
 This is my Bachelor's Degree Final Project for the Faculty of Mathematics and Computer Science of the University of Bucharest.
-This project combines multiple fields like: Frontend web development, Backend web Development, Algorithmics, Mathemathics and 3D Modelling and Animation.
+This project combines multiple fields like Frontend web development, Backend web Development, Algorithmics, Mathematics, and 3D Modelling and Animation.
 
 
 
@@ -26,11 +26,11 @@ This project combines multiple fields like: Frontend web development, Backend we
 - Admin management for approving songs sent by the users
 - Application user management by admins
 - Settings for the user profile
-- Song search, filtering and sorting
+- Song search, filtering, and sorting
 - Play a song with the interactive guitar
-- Control the song speed with the coresponding slider
+- Control the song speed with the corresponding slider
 - Left hand guitar feature and current chord popup where you can see the chord currently played
-- Playground page where you can experiment differend chord shapes and use the keys 'q''w''e''a''s''d'' for string picking
+- Playground page where you can experiment with different  chord shapes and use the keys 'q''w''e''a''s''d'' for string picking
 
 ## Installation
 - run `yarn`
