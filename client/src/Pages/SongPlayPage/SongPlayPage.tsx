@@ -41,6 +41,7 @@ export const SongPlayPage: FC = () => {
         width: 100%;
         height: 100%;
       `}
+      className="songPlay"
     >
       <div
         css={css`

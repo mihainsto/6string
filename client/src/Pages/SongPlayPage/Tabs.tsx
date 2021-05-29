@@ -10,6 +10,7 @@ import * as Tone from 'tone'
 
 import { useChordStore, useNotesStore } from '../../App'
 import { getChordsFromTrack } from '../../Babylon/utils/GuitarHelpers'
+import { SpeedSelector } from '../../Components/Features/Playground/SpeedSelector'
 import useWindowSize from '../../Hooks/useWindowSize'
 import useSound from '../../Packages/react-guitar-sound'
 import {
@@ -17,7 +18,9 @@ import {
   Measure as MeasureType,
 } from '../../Types/guitarProTabs.types'
 import { Measure } from './Measure'
-const PLAY_SPEED_FACTOR = 0.8
+let PLAY_SPEED_FACTOR = 0.8
+let previousTime = 0
+let previousTimeStored = 0
 
 type TabsProps = {
   tab: GuitarProTab
@@ -49,7 +52,9 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
 
     const playInterval = (time: number) => {
       if (track) {
-        const tickTime = (time * 1000 - startTime) * PLAY_SPEED_FACTOR
+        const tickTime =
+          (time * 1000 - startTime) * PLAY_SPEED_FACTOR + previousTimeStored
+        previousTime = tickTime
         const currentBeat =
           track.measures[currentMeasurePlayed].voices[0].beats[
             currentNotesPlayed
@@ -103,6 +108,8 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
             setCursorPosition({ measure: 0, position: 0 })
             currentMeasurePlayed = 0
             currentNotesPlayed = 0
+            previousTimeStored = 0
+            previousTime = 0
             setPlayButtonState('PLAY')
           }
         }
@@ -123,7 +130,8 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
   }
 
   const onPauseClicked = () => {
-    Tone.Transport.pause()
+    Tone.Transport.stop()
+    previousTimeStored = previousTime
   }
 
   return (
@@ -140,25 +148,41 @@ export const Tabs: FC<TabsProps> = ({ tab }) => {
       minConstraints={[100, 100]}
       resizeHandles={['n']}
     >
-      <Button
+      <div
         css={css`
+          display: flex;
+          gap: 20px;
+          align-items: center;
           position: relative;
           top: -50px;
           left: 20px;
         `}
-        variant={'contained'}
-        onClick={() => {
-          if (playButtonState === 'PLAY') {
-            setPlayButtonState('PAUSE')
-            onPlayClicked()
-          } else {
-            setPlayButtonState('PLAY')
-            onPauseClicked()
-          }
-        }}
       >
-        {playButtonState}
-      </Button>
+        <Button
+          variant={'contained'}
+          onClick={() => {
+            if (playButtonState === 'PLAY') {
+              setPlayButtonState('PAUSE')
+              onPlayClicked()
+            } else {
+              setPlayButtonState('PLAY')
+              onPauseClicked()
+            }
+          }}
+        >
+          {playButtonState}
+        </Button>
+        <SpeedSelector
+          onDragStart={() => {
+            onPauseClicked()
+          }}
+          onChange={(value) => {
+            PLAY_SPEED_FACTOR = value / 10
+            if (playButtonState === 'PAUSE') onPlayClicked()
+          }}
+        />
+      </div>
+
       <div
         css={css`
           margin-top: -36px;
