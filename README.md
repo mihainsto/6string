@@ -40,6 +40,7 @@ This project combines multiple fields like: Frontend web development, Backend we
 - migrate the db with `yarn workspace api migrate:dev`
 - generate prisma types with `yarn workspace api prisma:generate`
 - seed the database with `yarn workspace api seed`
+- start the gp5-parser with `cd gp5-parser` and `docker-compose up`
 
 ## Built with
 - [React](https://github.com/facebook/react)
