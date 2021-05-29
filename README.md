@@ -5,7 +5,7 @@
 6string is a web application that aims to help guitar players learn new songs and visualize the songs and the chords into a friendly 3D environment.  
 
 This is my Bachelor's Degree Final Project for the Faculty of Mathematics and Computer Science of the University of Bucharest.
-This project combines multiple fields like Frontend web development, Backend web Development, Algorithmics, Mathematics, and 3D Modelling and Animation.
+This project combines multiple fields like Frontend web development, Backend web development, Algorithmics, Mathematics, and 3D Modelling and Animation.
 
 
 
