@@ -19,7 +19,7 @@ This project combines multiple fields like: Frontend web development, Backend we
 
 
 ## Demo
-
+- Youtube video with all features: https://youtu.be/Ymx6AeqlOyk
 
 ## Features
 - Song uploading using the .gp5 file format
