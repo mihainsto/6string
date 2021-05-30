@@ -20,7 +20,7 @@ This project combines multiple fields like Frontend web development, Backend web
 
 ## Demo
 - Youtube video with all features: https://youtu.be/Ymx6AeqlOyk
-
+<img alt="song play page image" src = "https://raw.githubusercontent.com/mihainsto/6string/main/songPlayPage.png?token=AKRZOGD5V5CCHYSHRFV3B3TAXSCOA" />
 ## Features
 - Song uploading using the .gp5 file format
 - Admin management for approving songs sent by the users
