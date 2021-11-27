@@ -19,7 +19,7 @@ module.exports = {
     amd: true, // Enables require() and define() as global variables as per the amd spec.
     node: true, // Enables Node.js global variables and Node.js scoping.
   },
-  plugins: ['simple-import-sort'],
+  // plugins: ['simple-import-sort'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',
@@ -28,17 +28,17 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:jsx-a11y/recommended',
 
-    'prettier/@typescript-eslint',
-    'plugin:prettier/recommended', // Make sure this is the last one
+    // 'prettier/@typescript-eslint',
+    // 'plugin:prettier/recommended', // Make sure this is the last one
   ],
   rules: {
-    'prettier/prettier': 0,
+    // 'prettier/prettier': 'off',
     'react/display-name': 'off',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
-    'simple-import-sort/imports': 'error',
-    'simple-import-sort/exports': 'error',
+    'simple-import-sort/imports': 'off',
+    'simple-import-sort/exports': 'off',
     'jsx-a11y/anchor-is-valid': 'off',
     'jsx-a11y/no-autofocus': 'off',
   },

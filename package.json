@@ -2,8 +2,7 @@
   "private": true,
   "name": "6string",
   "workspaces": [
-    "client",
-    "api"
+    "client"
   ],
   "scripts": {
     "start:client": "yarn workspace client run start",
