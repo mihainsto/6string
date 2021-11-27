@@ -1,5 +1,5 @@
 # 6string
-
+See the playground live at <a href="https://6string.netlify.app/">6string.netlify.app</a>
 # ![6string logo](https://github.com/mihainsto/6string/blob/main/client/public/IconWhite_Background.png?raw=true)
 
 6string is a web application that aims to help guitar players learn new songs and visualize them and their chords in a friendly 3D environment.
