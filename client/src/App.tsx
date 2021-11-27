@@ -56,58 +56,7 @@ function App() {
       <Toaster position="bottom-center" />
 
       <CssBaseline />
-      <Router>
-        {loading ? (
-          <LoadingPage />
-        ) : (
-          <Switch>
-            <Route path="/" exact>
-              <HomePage />
-            </Route>
-            <Route path="/login">
-              <LoginPage />
-            </Route>
-            <Route path="/register">
-              <RegisterPage />
-            </Route>
-            <Route path="/playground">
-              <PlaygroundPage />
-            </Route>
-            <Route path="/settings/basic/account">
-              {loggedIn ? <AccountSettingsPage /> : <NotLoggedInPage />}
-            </Route>
-            <Route path="/settings/basic/notifications">
-              {loggedIn ? <NotificationSettingsPage /> : <NotLoggedInPage />}
-            </Route>
-            <Route path="/settings/playground">
-              {loggedIn ? <PlaygroundSettingsPage /> : <NotLoggedInPage />}
-            </Route>
-            <Route path="/submit/tab">
-              {loggedIn ? <SubmitTabPage /> : <NotLoggedInPage />}
-            </Route>
-            <Route path="/settings/admin/songreview">
-              {userRole === Role.Admin ? (
-                <ReviewNewSongsPage />
-              ) : (
-                <NotAdminPage />
-              )}
-            </Route>
-            <Route path="/settings/admin/users">
-              {userRole === Role.Admin ? (
-                <ApplicationUsersPage />
-              ) : (
-                <NotAdminPage />
-              )}
-            </Route>
-            <Route path="/settings">
-              {loggedIn ? <Settings /> : <NotLoggedInPage />}
-            </Route>
-            <Route path="/playsong/:id">
-              <SongPlayPage />
-            </Route>
-          </Switch>
-        )}
-      </Router>
+      <PlaygroundPage />
     </MuiThemeProvider>
   )
 }

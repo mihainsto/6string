@@ -52,14 +52,14 @@ export const PlaygroundNav: FC<PlaygroundNavProps> = ({ page }) => {
             margin-right: auto;
           `}
         >
-          <Button onClick={() => history.goBack()}>
+          {/* <Button onClick={() => history.goBack()}>
             <ArrowBack
               css={css`
                 color: ${colors.grey[600]};
               `}
               fontSize={'large'}
             />
-          </Button>
+          </Button> */}
         </div>
 
         {page === 'PLAYGROUND' && (
@@ -88,7 +88,7 @@ export const PlaygroundNav: FC<PlaygroundNavProps> = ({ page }) => {
             justify-self: flex-end;
           `}
         >
-          {!token && (
+          {/* {!token && (
             <Button
               css={css`
                 padding: 10px 30px 10px 30px;
@@ -100,7 +100,7 @@ export const PlaygroundNav: FC<PlaygroundNavProps> = ({ page }) => {
             >
               Login
             </Button>
-          )}
+          )} */}
           {!loading && token && (
             <div>
               {data && (
@@ -131,9 +131,9 @@ export const PlaygroundNav: FC<PlaygroundNavProps> = ({ page }) => {
                     open={Boolean(menuAnchorEl)}
                     onClose={handleMenuClose}
                   >
-                    <MenuItem onClick={() => history.push('/settings')}>
+                    {/* <MenuItem onClick={() => history.push('/settings')}>
                       Settings
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem onClick={() => switchTheme()}>
                       Switch theme
                     </MenuItem>

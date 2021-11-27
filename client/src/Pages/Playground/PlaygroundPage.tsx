@@ -2,7 +2,7 @@
 /*eslint-disable */
 
 import { css } from '@emotion/react'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, useRef } from 'react'
 import { useHotkeys } from 'react-hotkeys-hook'
 
 import { BabylonMainPage } from '../../Babylon/BabylonMainPage'
@@ -21,6 +21,7 @@ export const PlaygroundPage: FC = () => {
   const loggedIn = useIsLoggedIn()
   const { play } = useSound({ tuning: standard })
   const currentChord = useChordStore((state) => state.currentChord)
+  const clickRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     useNotesStore.setState({
@@ -122,7 +123,9 @@ export const PlaygroundPage: FC = () => {
         <CurrentChordWidget page="PLAYGROUND" />
       )}
       {!loggedIn && <CurrentChordWidget page="PLAYGROUND" />}
+      <div onKeyDown={(e) => {console.log(e)}}>
       <SelectChordPopover />
+      </div>
     </div>
   )
 }
